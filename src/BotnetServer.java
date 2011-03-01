@@ -4,7 +4,6 @@ import java.util.Scanner;
 import java.util.UUID;
 import org.jibble.pircbot.*;
 
-
 public class BotnetServer extends PircBot {
 	private static final boolean DEBUG = true;
 	private static final String SERVER = "eve.cs.washington.edu";
