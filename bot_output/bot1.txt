@@ -1,0 +1,68 @@
+1299055309256 *** Connected to server.
+1299055309260 >>>NICK bot_e1e464f2-94c9-4ead-8dd0-86e412278e4a
+1299055309260 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
+1299055309300 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
+1299055309301 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
+1299055309301 :botweb.cse484 NOTICE AUTH :*** Checking Ident
+1299055330292 :botweb.cse484 NOTICE AUTH :*** No Ident response
+1299055330293 :botweb.cse484 001 bot_e1e464f2-94c9-4ead-8dd0-86 :Welcome to the DALnet IRC Network bot_e1e464f2-94c9-4ead-8dd0-86!PircBot@c-24-18-189-178.hsd1.wa.comcast.net
+1299055330293 :botweb.cse484 002 bot_e1e464f2-94c9-4ead-8dd0-86 :Your host is botweb.cse484, running version bahamut-1.8(06)
+1299055330293 :botweb.cse484 003 bot_e1e464f2-94c9-4ead-8dd0-86 :This server was created Thu Feb 18 2010 at 11:24:47 PST
+1299055330293 :botweb.cse484 004 bot_e1e464f2-94c9-4ead-8dd0-86 botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
+1299055330293 *** Logged onto server.
+1299055330294 :botweb.cse484 005 bot_e1e464f2-94c9-4ead-8dd0-86 NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
+1299055330294 :botweb.cse484 005 bot_e1e464f2-94c9-4ead-8dd0-86 CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
+1299055330294 :botweb.cse484 251 bot_e1e464f2-94c9-4ead-8dd0-86 :There are 0 users and 8 invisible on 1 servers
+1299055330294 :botweb.cse484 252 bot_e1e464f2-94c9-4ead-8dd0-86 1 :IRC Operators online
+1299055330294 :botweb.cse484 254 bot_e1e464f2-94c9-4ead-8dd0-86 5 :channels formed
+1299055330294 :botweb.cse484 255 bot_e1e464f2-94c9-4ead-8dd0-86 :I have 8 clients and 0 servers
+1299055330294 :botweb.cse484 265 bot_e1e464f2-94c9-4ead-8dd0-86 :Current local users: 8 Max: 144
+1299055330295 >>>JOIN #hacktastic
+1299055330295 >>>MODE #hacktastic +s
+1299055330339 :botweb.cse484 266 bot_e1e464f2-94c9-4ead-8dd0-86 :Current global users: 8 Max: 144
+1299055330339 :botweb.cse484 NOTICE bot_e1e464f2-94c9-4ead-8dd0-86 :*** Notice -- motd was last changed at 8/2/2010 10:47
+1299055330339 :botweb.cse484 375 bot_e1e464f2-94c9-4ead-8dd0-86 :- botweb.cse484 Message of the Day - 
+1299055330339 :botweb.cse484 372 bot_e1e464f2-94c9-4ead-8dd0-86 :-8/2/2010 10:47
+1299055330340 :botweb.cse484 372 bot_e1e464f2-94c9-4ead-8dd0-86 :- Welcome to the CSE484 irc server
+1299055330340 :botweb.cse484 376 bot_e1e464f2-94c9-4ead-8dd0-86 :End of /MOTD command.
+1299055330340 :bot_e1e464f2-94c9-4ead-8dd0-86 MODE bot_e1e464f2-94c9-4ead-8dd0-86 :+iwF
+1299055330378 :bot_e1e464f2-94c9-4ead-8dd0-86!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+Current op:null
+1299055330379 :botweb.cse484 353 bot_e1e464f2-94c9-4ead-8dd0-86 @ #hacktastic :bot_e1e464f2-94c9-4ead-8dd0-86 @bot_5ffb796e-6eb3-4eeb-9f9c-f6 
+1299055330379 :botweb.cse484 366 bot_e1e464f2-94c9-4ead-8dd0-86 #hacktastic :End of /NAMES list.
+1299055330414 :botweb.cse484 482 bot_e1e464f2-94c9-4ead-8dd0-86 #hacktastic :You're not channel operator
+1299055362602 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+Current op:null
+1299055422698 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG bot_e1e464f2-94c9-4ead-8dd0-86 :DCC CHAT chat 403881394 2728
+.RandR.
+true
+in the if, about to accept chat
+1299055425701 PING :botweb.cse484
+1299055425701 >>>PONG :botweb.cse484
+1299055524672 PING :botweb.cse484
+1299055524672 >>>PONG :botweb.cse484
+1299055605152 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Ping timeout
+1299055623172 PING :botweb.cse484
+1299055623172 >>>PONG :botweb.cse484
+1299055722299 PING :botweb.cse484
+1299055722300 >>>PONG :botweb.cse484
+1299055821707 PING :botweb.cse484
+1299055821708 >>>PONG :botweb.cse484
+1299055921042 PING :botweb.cse484
+1299055921042 >>>PONG :botweb.cse484
+1299056019962 PING :botweb.cse484
+1299056019963 >>>PONG :botweb.cse484
+1299056119033 PING :botweb.cse484
+1299056119165 >>>PONG :botweb.cse484
+1299056218108 PING :botweb.cse484
+1299056218108 >>>PONG :botweb.cse484
+1299056316106 PING :botweb.cse484
+1299056316106 >>>PONG :botweb.cse484
+1299056415665 PING :botweb.cse484
+1299056415665 >>>PONG :botweb.cse484
+1299056514560 PING :botweb.cse484
+1299056514579 >>>PONG :botweb.cse484
+1299056613786 PING :botweb.cse484
+1299056613786 >>>PONG :botweb.cse484
+1299056712706 PING :botweb.cse484
+1299056712706 >>>PONG :botweb.cse484

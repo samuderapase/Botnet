@@ -1,5 +1,11 @@
 dir = bot_output
 
+all : 
+	make -f Makefile clean
+	make -f Makefile bots n=3
+	sleep 8
+	make -f Makefile master
+
 #Creates n bots in teh backgound and dumps their outputs into files located in bot_output/botX.txt
 bots :
 	mkdir -p $(dir);
