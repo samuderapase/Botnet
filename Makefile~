@@ -1,0 +1,13 @@
+dir = bot_output
+
+bots :
+	mkdir -p $(dir);
+	chmod +x makebots.sh
+	./makebots.sh $(num) &
+
+master :
+	java -classpath pircbot.jar:bin BotnetServer;
+
+clean :
+	killall java;
+	rm -r $(dir);

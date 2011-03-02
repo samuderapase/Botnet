@@ -1,0 +1,110 @@
+1299045176350 *** Connected to server.
+1299045176352 >>>NICK bot_5d729c55-0973-458d-be48-cf6d5159bec0
+1299045176353 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
+1299045176391 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
+1299045176391 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
+1299045176391 :botweb.cse484 NOTICE AUTH :*** Checking Ident
+1299045197400 :botweb.cse484 NOTICE AUTH :*** No Ident response
+1299045197402 :botweb.cse484 001 bot_5d729c55-0973-458d-be48-cf :Welcome to the DALnet IRC Network bot_5d729c55-0973-458d-be48-cf!PircBot@c-24-18-189-178.hsd1.wa.comcast.net
+1299045197402 :botweb.cse484 002 bot_5d729c55-0973-458d-be48-cf :Your host is botweb.cse484, running version bahamut-1.8(06)
+1299045197402 :botweb.cse484 003 bot_5d729c55-0973-458d-be48-cf :This server was created Thu Feb 18 2010 at 11:24:47 PST
+1299045197402 :botweb.cse484 004 bot_5d729c55-0973-458d-be48-cf botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
+1299045197402 *** Logged onto server.
+1299045197403 :botweb.cse484 005 bot_5d729c55-0973-458d-be48-cf NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
+1299045197403 :botweb.cse484 005 bot_5d729c55-0973-458d-be48-cf CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
+1299045197403 :botweb.cse484 251 bot_5d729c55-0973-458d-be48-cf :There are 0 users and 11 invisible on 1 servers
+1299045197403 :botweb.cse484 252 bot_5d729c55-0973-458d-be48-cf 1 :IRC Operators online
+1299045197403 :botweb.cse484 254 bot_5d729c55-0973-458d-be48-cf 7 :channels formed
+1299045197403 >>>JOIN #hacktastic
+1299045197403 :botweb.cse484 255 bot_5d729c55-0973-458d-be48-cf :I have 11 clients and 0 servers
+1299045197403 >>>MODE #hacktastic +s
+1299045197446 :botweb.cse484 265 bot_5d729c55-0973-458d-be48-cf :Current local users: 11 Max: 144
+1299045197446 :botweb.cse484 266 bot_5d729c55-0973-458d-be48-cf :Current global users: 11 Max: 144
+1299045197446 :botweb.cse484 NOTICE bot_5d729c55-0973-458d-be48-cf :*** Notice -- motd was last changed at 8/2/2010 10:47
+1299045197446 :botweb.cse484 375 bot_5d729c55-0973-458d-be48-cf :- botweb.cse484 Message of the Day - 
+1299045197446 :botweb.cse484 372 bot_5d729c55-0973-458d-be48-cf :-8/2/2010 10:47
+1299045197446 :botweb.cse484 372 bot_5d729c55-0973-458d-be48-cf :- Welcome to the CSE484 irc server
+1299045197446 :botweb.cse484 376 bot_5d729c55-0973-458d-be48-cf :End of /MOTD command.
+1299045197447 :bot_5d729c55-0973-458d-be48-cf MODE bot_5d729c55-0973-458d-be48-cf :+iwF
+1299045197481 :bot_5d729c55-0973-458d-be48-cf!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299045197482 :botweb.cse484 353 bot_5d729c55-0973-458d-be48-cf = #hacktastic :@bot_5d729c55-0973-458d-be48-cf 
+1299045197482 :botweb.cse484 366 bot_5d729c55-0973-458d-be48-cf #hacktastic :End of /NAMES list.
+1299045197516 :bot_5d729c55-0973-458d-be48-cf!PircBot@c-24-18-189-178.hsd1.wa.comcast.net MODE #hacktastic +s 
+1299045199885 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299045248521 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG bot_5d729c55-0973-458d-be48-cf :DCC CHAT chat 403881394 2704
+.RandR.
+true
+1299045290437 PING :botweb.cse484
+1299045290437 >>>PONG :botweb.cse484
+1299045389261 PING :botweb.cse484
+1299045389261 >>>PONG :botweb.cse484
+1299045411328 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Client closed connection
+1299045434119 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299045470277 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG bot_5d729c55-0973-458d-be48-cf :DCC CHAT chat 403881394 2706
+.RandR.
+true
+1299045488513 PING :botweb.cse484
+1299045488513 >>>PONG :botweb.cse484
+1299045587136 PING :botweb.cse484
+1299045587137 >>>PONG :botweb.cse484
+1299045590878 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Client closed connection
+1299045614062 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299045658749 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG bot_5d729c55-0973-458d-be48-cf :DCC CHAT chat 403881394 2708
+.RandR.
+true
+1299045686202 PING :botweb.cse484
+1299045686203 >>>PONG :botweb.cse484
+1299045785599 PING :botweb.cse484
+1299045785599 >>>PONG :botweb.cse484
+1299045884426 PING :botweb.cse484
+1299045884427 >>>PONG :botweb.cse484
+1299045983674 PING :botweb.cse484
+1299045983674 >>>PONG :botweb.cse484
+1299045983758 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Client closed connection
+1299046006496 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299046082240 PING :botweb.cse484
+1299046082240 >>>PONG :botweb.cse484
+1299046181853 PING :botweb.cse484
+1299046181853 >>>PONG :botweb.cse484
+1299046186512 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Client closed connection
+1299046209697 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299046280468 PING :botweb.cse484
+1299046280468 >>>PONG :botweb.cse484
+1299046329882 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Client closed connection
+1299046353019 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299046379743 PING :botweb.cse484
+1299046379744 >>>PONG :botweb.cse484
+1299046381286 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG #hacktastic ::list
+<RandR>: :list
+1299046478983 PING :botweb.cse484
+1299046478983 >>>PONG :botweb.cse484
+1299046568670 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Ping timeout
+1299046577761 PING :botweb.cse484
+1299046577761 >>>PONG :botweb.cse484
+1299046676510 PING :botweb.cse484
+1299046676510 >>>PONG :botweb.cse484
+1299046775809 PING :botweb.cse484
+1299046775809 >>>PONG :botweb.cse484
+1299046874903 PING :botweb.cse484
+1299046874904 >>>PONG :botweb.cse484
+1299046901508 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299046913591 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG #hacktastic :list
+<RandR>: list
+1299046973519 PING :botweb.cse484
+1299046973519 >>>PONG :botweb.cse484
+1299047072898 PING :botweb.cse484
+1299047072899 >>>PONG :botweb.cse484
+1299047081041 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net PRIVMSG bot_5d729c55-0973-458d-be48-cf :DCC CHAT chat 403881394 2710
+.RandR.
+true
+1299047171831 PING :botweb.cse484
+1299047171832 >>>PONG :botweb.cse484
+1299047270337 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Ping timeout
+1299047270337 PING :botweb.cse484
+1299047270337 >>>PONG :botweb.cse484
+1299047369944 PING :botweb.cse484
+1299047369944 >>>PONG :botweb.cse484
+1299047468040 PING :botweb.cse484
+1299047468041 >>>PONG :botweb.cse484
+1299047568006 PING :botweb.cse484
+1299047568006 >>>PONG :botweb.cse484

