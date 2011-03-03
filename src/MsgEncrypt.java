@@ -1,4 +1,10 @@
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.Security;
+
 import javax.crypto.*;
 
 /**
@@ -9,118 +15,80 @@ import javax.crypto.*;
  */
 public class MsgEncrypt {
 
-	private Cipher encryptCipher;
-	private Cipher decrpytCipher;
-	private KeyGenerator key;
-	private SecretKey secretKey;
+	/** Holds the cipher for this object **/
+	private Cipher cipher;
+	/** Holds the public key **/
+	private Key publicKey;
+	/** Holds the private key **/
+	private Key privateKey;
+	
+	/** master key for the master bot **/
+	private static Key masterPublicKey;
 	
 	/**
 	 * Private constructor that creates a new MsgEncrypt object
 	 * 
 	 * @param key != null
 	 * @param secretKey != null
+	 * @param masterPublicKey != null
+	 * @throws Exception if encryption fails
 	 */
-	private MsgEncrypt(KeyGenerator key, SecretKey secretKey) {
-		this.key = key;
-		this.secretKey = secretKey;
-		try {
-			encryptCipher = Cipher.getInstance("AES");
-			encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey);
-			decrpytCipher = Cipher.getInstance("AES");
-			decrpytCipher.init(Cipher.DECRYPT_MODE, secretKey);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+	private MsgEncrypt(Key publicKey, Key privateKey, Key masterPublicKey) throws Exception {
+		this.publicKey = publicKey;
+		this.privateKey = privateKey;
+		if (MsgEncrypt.masterPublicKey == null) 
+			MsgEncrypt.masterPublicKey = masterPublicKey;
+		else if (!MsgEncrypt.masterPublicKey.equals(masterPublicKey))
+			throw new IllegalArgumentException("Compromised");
+		cipher = Cipher.getInstance("RSA");
 	}
 	
 	/**
-	 * Returns a new instantiated MsgEncrypt object with the given public and
-	 * private keys
+	 * Creates an instance of a MsgEncrypt object and returns that object
 	 * 
 	 * @param key != null
-	 * @param secretKey != null
-	 * @return new instantiated MsgEncrypt object with the given public and
-	 * private keys
+	 * @return a new instance of a MsgEncrypt object
+	 * @throws Exception if encryption fails
 	 */
-	public static MsgEncrypt getInstance(KeyGenerator key, SecretKey secretKey) {
-		return new MsgEncrypt(key, secretKey);
+	public static MsgEncrypt getInstance(Key key) throws Exception {
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+		KeyPair kp = kpg.generateKeyPair();
+		Key publicKey = kp.getPublic();
+		Key privateKey = kp.getPrivate();
+		return new MsgEncrypt(publicKey, privateKey, key);
 	}
 	
 	/**
 	 * @return the public key for this MsgEncrypt object
 	 */
-	public KeyGenerator getPublicKey() {
-		return key;
+	public Key getPublicKey() {
+		return publicKey;
 	}
 	
 	/**
-	 * @return the private key for this MsgEncrypt object
-	 */
-	public SecretKey getSecretKey() {
-		return secretKey;
-	}
-	
-	/**
-	 * Encrypts the given msg and returns the encrypted message
+	 * Encrypts the given msg with the public key and returns the SealedObject
+	 * for the encryption of the string
 	 * 
 	 * @param msg != null
-	 * @return the encrypted message
+	 * @param publicKeyOther != null
+	 * @return the encrypted message in a SealedObject
+	 * @throws Exception if encryption fails
 	 */
-	public String encryptMsg(String msg) {
-		byte[] bytemsg = stringToByteArray(msg);
-		try {
-			byte[] cipherbyte = encryptCipher.doFinal(bytemsg);
-			return byteArrayToString(cipherbyte);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
+	public SealedObject encryptMsg(String msg, Key publicKeyOther) throws Exception {
+		cipher.init(Cipher.ENCRYPT_MODE, publicKeyOther);
+		return new SealedObject(msg, cipher);
 	}
 	
 	/**
-	 * Decrypts the given msg and returns the decrypted message
+	 * Decrypts the given SealedObject and returns the decrypted message
 	 * 
 	 * @param msg != null
 	 * @return the decrypted message
+	 * @throws Exception if the decryption fails
 	 */
-	public String decryptMsg(String msg) {
-		byte[] cipherByte = stringToByteArray(msg);
-		try {
-			byte[] plainbyte = decrpytCipher.doFinal(cipherByte);
-			return byteArrayToString(plainbyte);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	
-	/**
-	 * Converts from a string to a byte array
-	 * 
-	 * @param msg != null
-	 * @return the byte array that corresponds to the given string
-	 */
-	private byte[] stringToByteArray(String msg) {
-		byte[] bytemsg = new byte[msg.length()];
-		for (int i = 0; i < msg.length(); i++) {
-			bytemsg[i] = (byte)msg.charAt(i);
-		}
-		return bytemsg;
-	}
-	
-	/**
-	 * Converts the given byte array into a string and returns
-	 * the string
-	 * 
-	 * @param cipher != null
-	 * @return the String that corresponds to the given byte array
-	 */
-	private String byteArrayToString(byte[] cipher) {
-		char[] msg = new char[cipher.length];
-		for (int i = 0; i < cipher.length; i++) {
-			msg[i] = (char)cipher[i];
-		}
-		return new String(msg);
+	public String decryptMsg(SealedObject so) throws Exception {
+		cipher.init(Cipher.DECRYPT_MODE, this.privateKey);
+		return (String)so.getObject(cipher);
 	}
 	
 	/**
@@ -129,15 +97,29 @@ public class MsgEncrypt {
 	 * @param args
 	 * @throws NoSuchAlgorithmException
 	 */
-	public static void main(String[] args) throws NoSuchAlgorithmException {
-		KeyGenerator key = KeyGenerator.getInstance("AES");
-		MsgEncrypt msgE = MsgEncrypt.getInstance(key, key.generateKey());
+	public static void main(String[] args) throws Exception {
+		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
+		KeyPair kp = kpg.generateKeyPair();
+		Key publicKey = kp.getPublic();
+		
+		KeyPairGenerator bad_kpg = KeyPairGenerator.getInstance("RSA");
+		KeyPair bad_kp = bad_kpg.generateKeyPair();
+		Key bad_publicKey = bad_kp.getPublic();
+		
+		MsgEncrypt msgE = MsgEncrypt.getInstance(publicKey);
 		String msg = "kill all humans";
-		String ciphertext = msgE.encryptMsg(msg);
+
+		SealedObject ciphertext = msgE.encryptMsg(msg, msgE.getPublicKey());
 		String plaintext = msgE.decryptMsg(ciphertext);
 		System.out.println("msg = " + msg);
 		System.out.println("ciphertext = " + ciphertext);
 		System.out.println("plaintext = " + plaintext);
+		
+		try {
+			MsgEncrypt m = MsgEncrypt.getInstance(bad_publicKey);
+		} catch (IllegalArgumentException e) {
+			System.out.println("Success");
+		}
 	}
 
 }
