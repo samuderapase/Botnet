@@ -1,73 +1,42 @@
-1299055307262 *** Connected to server.
-1299055307265 >>>NICK bot_5ffb796e-6eb3-4eeb-9f9c-f613f9e0bb07
-1299055307265 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
-1299055307298 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
-1299055307298 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
-1299055307298 :botweb.cse484 NOTICE AUTH :*** Checking Ident
-1299055328309 :botweb.cse484 NOTICE AUTH :*** No Ident response
-1299055328310 :botweb.cse484 001 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :Welcome to the DALnet IRC Network bot_5ffb796e-6eb3-4eeb-9f9c-f6!PircBot@c-24-18-189-178.hsd1.wa.comcast.net
-1299055328311 :botweb.cse484 002 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :Your host is botweb.cse484, running version bahamut-1.8(06)
-1299055328311 :botweb.cse484 003 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :This server was created Thu Feb 18 2010 at 11:24:47 PST
-1299055328311 :botweb.cse484 004 bot_5ffb796e-6eb3-4eeb-9f9c-f6 botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
-1299055328311 *** Logged onto server.
-1299055328311 :botweb.cse484 005 bot_5ffb796e-6eb3-4eeb-9f9c-f6 NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
-1299055328312 :botweb.cse484 005 bot_5ffb796e-6eb3-4eeb-9f9c-f6 CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
-1299055328312 :botweb.cse484 251 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :There are 0 users and 7 invisible on 1 servers
-1299055328312 :botweb.cse484 252 bot_5ffb796e-6eb3-4eeb-9f9c-f6 1 :IRC Operators online
-1299055328312 :botweb.cse484 254 bot_5ffb796e-6eb3-4eeb-9f9c-f6 4 :channels formed
-1299055328312 :botweb.cse484 255 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :I have 7 clients and 0 servers
-1299055328312 :botweb.cse484 265 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :Current local users: 7 Max: 144
-1299055328312 >>>JOIN #hacktastic
-1299055328312 >>>MODE #hacktastic +s
-1299055328354 :botweb.cse484 266 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :Current global users: 7 Max: 144
-1299055328354 :botweb.cse484 NOTICE bot_5ffb796e-6eb3-4eeb-9f9c-f6 :*** Notice -- motd was last changed at 8/2/2010 10:47
-1299055328354 :botweb.cse484 375 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :- botweb.cse484 Message of the Day - 
-1299055328355 :botweb.cse484 372 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :-8/2/2010 10:47
-1299055328355 :botweb.cse484 372 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :- Welcome to the CSE484 irc server
-1299055328355 :botweb.cse484 376 bot_5ffb796e-6eb3-4eeb-9f9c-f6 :End of /MOTD command.
-1299055328355 :bot_5ffb796e-6eb3-4eeb-9f9c-f6 MODE bot_5ffb796e-6eb3-4eeb-9f9c-f6 :+iwF
-1299055328392 :bot_5ffb796e-6eb3-4eeb-9f9c-f6!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299190028920 *** Connected to server.
+1299190028923 >>>NICK bot_57661a1c-b6e4-4890-a256-10a2a74c45ea
+1299190028923 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
+1299190028924 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
+1299190028925 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
+1299190028925 :botweb.cse484 NOTICE AUTH :*** Checking Ident
+1299190028925 :botweb.cse484 NOTICE AUTH :*** No Ident response
+1299190028928 :botweb.cse484 001 bot_57661a1c-b6e4-4890-a256-10 :Welcome to the DALnet IRC Network bot_57661a1c-b6e4-4890-a256-10!PircBot@D-69-91-148-241.dhcp4.washington.edu
+1299190028928 :botweb.cse484 002 bot_57661a1c-b6e4-4890-a256-10 :Your host is botweb.cse484, running version bahamut-1.8(06)
+1299190028928 :botweb.cse484 003 bot_57661a1c-b6e4-4890-a256-10 :This server was created Thu Feb 18 2010 at 11:24:47 PST
+1299190028928 :botweb.cse484 004 bot_57661a1c-b6e4-4890-a256-10 botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
+1299190028928 *** Logged onto server.
+1299190028929 :botweb.cse484 005 bot_57661a1c-b6e4-4890-a256-10 NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
+1299190028929 :botweb.cse484 005 bot_57661a1c-b6e4-4890-a256-10 CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
+1299190028929 :botweb.cse484 251 bot_57661a1c-b6e4-4890-a256-10 :There are 0 users and 8 invisible on 1 servers
+1299190028929 >>>JOIN #hacktastic
+1299190028929 :botweb.cse484 252 bot_57661a1c-b6e4-4890-a256-10 1 :IRC Operators online
+1299190028929 >>>MODE #hacktastic +s
+1299190028929 :botweb.cse484 254 bot_57661a1c-b6e4-4890-a256-10 5 :channels formed
+1299190028929 :botweb.cse484 255 bot_57661a1c-b6e4-4890-a256-10 :I have 8 clients and 0 servers
+1299190028929 :botweb.cse484 265 bot_57661a1c-b6e4-4890-a256-10 :Current local users: 8 Max: 144
+1299190028929 :botweb.cse484 266 bot_57661a1c-b6e4-4890-a256-10 :Current global users: 8 Max: 144
+1299190028930 :botweb.cse484 NOTICE bot_57661a1c-b6e4-4890-a256-10 :*** Notice -- motd was last changed at 8/2/2010 10:47
+1299190028930 :botweb.cse484 375 bot_57661a1c-b6e4-4890-a256-10 :- botweb.cse484 Message of the Day - 
+1299190028930 :botweb.cse484 372 bot_57661a1c-b6e4-4890-a256-10 :-8/2/2010 10:47
+1299190028930 :botweb.cse484 372 bot_57661a1c-b6e4-4890-a256-10 :- Welcome to the CSE484 irc server
+1299190028930 :botweb.cse484 376 bot_57661a1c-b6e4-4890-a256-10 :End of /MOTD command.
+1299190028930 :bot_57661a1c-b6e4-4890-a256-10 MODE bot_57661a1c-b6e4-4890-a256-10 :+iwF
+1299190028933 :bot_57661a1c-b6e4-4890-a256-10!PircBot@D-69-91-148-241.dhcp4.washington.edu JOIN :#hacktastic
 Current op:null
-1299055328393 :botweb.cse484 353 bot_5ffb796e-6eb3-4eeb-9f9c-f6 = #hacktastic :@bot_5ffb796e-6eb3-4eeb-9f9c-f6 
-1299055328394 :botweb.cse484 366 bot_5ffb796e-6eb3-4eeb-9f9c-f6 #hacktastic :End of /NAMES list.
-1299055328428 :bot_5ffb796e-6eb3-4eeb-9f9c-f6!PircBot@c-24-18-189-178.hsd1.wa.comcast.net MODE #hacktastic +s 
-1299055330345 :bot_e1e464f2-94c9-4ead-8dd0-86!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299190028934 :botweb.cse484 353 bot_57661a1c-b6e4-4890-a256-10 = #hacktastic :@bot_57661a1c-b6e4-4890-a256-10 
+1299190028934 :botweb.cse484 366 bot_57661a1c-b6e4-4890-a256-10 #hacktastic :End of /NAMES list.
+1299190028935 :bot_57661a1c-b6e4-4890-a256-10!PircBot@D-69-91-148-241.dhcp4.washington.edu MODE #hacktastic +s 
+1299190031046 :bot_650cf96b-ffe8-4585-a267-4b!PircBot@D-69-91-148-241.dhcp4.washington.edu JOIN :#hacktastic
 Current op:null
-1299055362603 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net JOIN :#hacktastic
+1299190034269 :bot_f11ec484-ecd3-48ca-b6c7-96!PircBot@D-69-91-148-241.dhcp4.washington.edu JOIN :#hacktastic
 Current op:null
-1299055425701 PING :botweb.cse484
-1299055425701 >>>PONG :botweb.cse484
-1299055524672 PING :botweb.cse484
-1299055524672 >>>PONG :botweb.cse484
-1299055605152 :RandR!PircBot@c-24-18-189-178.hsd1.wa.comcast.net QUIT :Ping timeout
-1299055623172 PING :botweb.cse484
-1299055623172 >>>PONG :botweb.cse484
-1299055722299 PING :botweb.cse484
-1299055722300 >>>PONG :botweb.cse484
-1299055821707 PING :botweb.cse484
-1299055821708 >>>PONG :botweb.cse484
-1299055921042 PING :botweb.cse484
-1299055921042 >>>PONG :botweb.cse484
-1299056019965 PING :botweb.cse484
-1299056019965 >>>PONG :botweb.cse484
-1299056118686 PING :botweb.cse484
-1299056118711 >>>PONG :botweb.cse484
-1299056218109 PING :botweb.cse484
-1299056218109 >>>PONG :botweb.cse484
-1299056316106 PING :botweb.cse484
-1299056316106 >>>PONG :botweb.cse484
-1299056415665 PING :botweb.cse484
-1299056415665 >>>PONG :botweb.cse484
-1299056514600 PING :botweb.cse484
-1299056514612 >>>PONG :botweb.cse484
-1299056613786 PING :botweb.cse484
-1299056613786 >>>PONG :botweb.cse484
-1299056712706 PING :botweb.cse484
-1299056712706 >>>PONG :botweb.cse484
-1299056811933 PING :botweb.cse484
-1299056811933 >>>PONG :botweb.cse484
-1299056910954 PING :botweb.cse484
-1299056910955 >>>PONG :botweb.cse484
-1299084917387 >>>PING 1299084917
-1299085217377 >>>PING 1299085217
-1299085429069 *** Disconnected.
+1299190035955 :RandR!PircBot@D-69-91-148-241.dhcp4.washington.edu JOIN :#hacktastic
+Current op:null
+1299190126812 PING :botweb.cse484
+1299190126812 >>>PONG :botweb.cse484
+1299190214760 :RandR!PircBot@D-69-91-148-241.dhcp4.washington.edu QUIT :Client closed connection

