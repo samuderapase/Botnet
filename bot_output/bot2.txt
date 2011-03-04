@@ -1,8 +1,0 @@
-1299215156583 *** Connected to server.
-1299215156587 >>>NICK bot_02616d5a-2fe2-4977-b930-83a5f59133f5
-1299215156587 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
-1299215156621 :botweb.cse484 NOTICE ZUSR :You have been throttled for 2 minutes for too many connections in a short period of time. Further connections in this period will reset your throttle and you will have to wait longer.
-1299215156622 :botweb.cse484 NOTICE ZUSR :When you return, if you are throttled again, your throttle will last longer.
-1299215156622 ERROR :Your host is trying to (re)connect too fast -- throttled.
-1299215156622 *** Logged onto server.
-1299215156623 *** Disconnected.

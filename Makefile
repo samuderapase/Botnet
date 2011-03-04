@@ -3,10 +3,10 @@ dir = bot_output
 all : 
 	make -f Makefile clean
 	make -f Makefile bots n=3
-	sleep 10
+	sleep 15
 	make -f Makefile master
 
-#Creates n bots in teh backgound and dumps their outputs into files located in bot_output/botX.txt
+#Creates n bots in the backgound and dumps their outputs into files located in bot_output/botX.txt
 bots :
 	mkdir -p $(dir);
 	chmod +x makebots.sh

