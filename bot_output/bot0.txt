@@ -65,3 +65,9 @@ bash response: /Users/royman/Code/cse484/Botnet $:
 Done feeding output from the bash shell to the master bot
 Closed the bash shell
 1299277083430 :RandR!PircBot@nocatgw.cs.washington.edu QUIT :Client closed connection
+1299277149782 PING :botweb.cse484
+1299277149782 >>>PONG :botweb.cse484
+1299277249152 PING :botweb.cse484
+1299277249153 >>>PONG :botweb.cse484
+1299281938254 >>>PING 1299281938
+1299282164350 *** Disconnected.
