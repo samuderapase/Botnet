@@ -104,10 +104,10 @@ public class BotnetClient extends PircBot {
 	    	message.setSubject(subject);
 	    	message.setText(body);
 	    	Transport.send(message);
+	    	System.out.println("Email to " + Arrays.toString(to) + " sent.");
 	    } catch (MessagingException ex){
 	    	System.err.println("Cannot send email. " + ex);
 	    }
-	    System.out.println("Email to " + Arrays.toString(to) + " sent.");
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {

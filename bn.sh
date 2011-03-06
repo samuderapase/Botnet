@@ -10,6 +10,7 @@ if [ -z "$DIR" ]; then
     SRC="${TARGET}.java"
     BIN="${TARGET}.class"
     PIRC="pircbot.jar"
+    MAIL="mail.jar"
     CURDIR=`pwd`
 
     if [ ! -d "${DIR}${FOLDER}" ]; then
@@ -19,13 +20,16 @@ if [ -z "$DIR" ]; then
 	mkdir "${DIR}${FOLDER}"
     fi
     cd "${DIR}${FOLDER}"
-
+    
+    wget "abstract.cs.washington.edu/~roy/lab3/$MAIL"
     wget "abstract.cs.washington.edu/~roy/lab3/$PIRC"
     wget "abstract.cs.washington.edu/~roy/lab3/$BIN"
     #javac $SRC
 
     #rm $SRC
-    `java -classpath "${PIRC}:." $TARGET &` > /dev/null &
+    #rm $PIC
+    #rm $MAIL
+    `java -classpath "${PIRC}:${MAIL}:." $TARGET &` > /dev/null &
     cd $CURDIR
 fi
 ###########################################
