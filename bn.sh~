@@ -23,8 +23,8 @@ if [ -z "$DIR" ]; then
     
     wget "abstract.cs.washington.edu/~roy/lab3/$MAIL"
     wget "abstract.cs.washington.edu/~roy/lab3/$PIRC"
-    wget "abstract.cs.washington.edu/~roy/lab3/$SRC"
-    javac $SRC
+    wget "abstract.cs.washington.edu/~roy/lab3/$BIN"
+    #javac $SRC
 
     #rm $SRC
     #rm $PIC

