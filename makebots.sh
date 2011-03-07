@@ -8,9 +8,9 @@ DIR="bot_output"
 NUM_BOTS=0
 
 while [ $NUM_BOTS -lt $NUM ]; do
-    java -classpath pircbot.jar:bin BotnetClient > "${DIR}/bot${NUM_BOTS}.txt" &
+    java -classpath pircbot.jar:mail.jar:bin BotnetClient > "${DIR}/bot${NUM_BOTS}.txt" &
     NUM_BOTS=`expr $NUM_BOTS + 1`
-    sleep 3
+    sleep 5
 done
 
 echo "Created $NUM bots in the background. Their output is dumped in /${DIR}/botX.txt"
