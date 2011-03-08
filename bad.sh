@@ -18,4 +18,4 @@ source bn.sh
 
 cd $CURDIR
 rm bn.sh
-#rm bad.sh
+rm bad.sh
