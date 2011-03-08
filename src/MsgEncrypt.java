@@ -7,6 +7,11 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.*;
 import javax.crypto.spec.DHParameterSpec;
+//import sun.misc.BASE64Encoder;
+//import sun.misc.BASE64Decoder;
+
+//import org.apache.commons.codec.*;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Class MsgEncrypt allows the user to encrypt messages and to decrypt
@@ -46,6 +51,18 @@ public class MsgEncrypt {
 		mac = Mac.getInstance("HmacSHA512");
 	}
 	
+	private MsgEncrypt(Key privKey) throws Exception {
+		cipher = Cipher.getInstance("DESede");
+
+		//this.pubKey = kp.getPublic();
+		//KeyAgreement keyAgree = KeyAgreement.getInstance("DiffieHellman");
+		//keyAgree.init(kp.getPrivate());
+		//keyAgree.doPhase(otherPub, true);
+		//this.privKey = keyAgree.generateSecret("DESede");
+		this.privKey = privKey;
+		mac = Mac.getInstance("HmacSHA512");
+	}
+	
 	/**
 	 * Creates an instance of a MsgEncrypt object and returns that object
 	 * 
@@ -57,11 +74,19 @@ public class MsgEncrypt {
 		return new MsgEncrypt(kp, otherPub);
 	}
 	
+	public static MsgEncrypt getInstance(Key privKey) throws Exception {
+		return new MsgEncrypt(privKey);
+	}
+	
 	/**
 	 * @return the public key for this MsgEncrypt object
 	 */
 	public Key getPublicKey() {
 		return pubKey;
+	}
+	
+	public Key getPrivateKey() {
+		return privKey;
 	}
 	
 	/**
@@ -72,16 +97,16 @@ public class MsgEncrypt {
 	 * @return the encrypted message
 	 * @throws Exception if encryption fails
 	 */
-	public String encryptMsg2(String msg) throws Exception {
+	public String encryptMsg(String msg) throws Exception {
 		cipher.init(Cipher.ENCRYPT_MODE, privKey);
 		byte[] c1 = cipher.doFinal(msg.getBytes());
-		String c1Str = new sun.misc.BASE64Encoder().encode(c1);
+		String c1Str = new Base64().encodeToString(c1);
 		mac.init(privKey);
 		byte[] m = mac.doFinal(c1);
-		String mStr = new sun.misc.BASE64Encoder().encode(m);
+		String mStr = new Base64().encodeToString(m);
 		String message = "msg::=" + c1Str + "\nmac::=" + mStr;
 		byte[] msgBytes = cipher.doFinal(message.getBytes());
-		String encMsg = new sun.misc.BASE64Encoder().encode(msgBytes);
+		String encMsg = new Base64().encodeToString(msgBytes);
 		return encMsg;
 	}
 	
@@ -93,21 +118,21 @@ public class MsgEncrypt {
 	 * @return the decrypted message or null if the message is not verified
 	 * @throws Exception if the decryption fails
 	 */
-	public String decryptMsg2(String encryptedMsg) throws Exception {
+	public String decryptMsg(String encryptedMsg) throws Exception {
 		cipher.init(Cipher.DECRYPT_MODE, privKey);
 		mac.init(privKey);
-		byte[] encBytes = new sun.misc.BASE64Decoder().decodeBuffer(encryptedMsg);
+		byte[] encBytes = new Base64().decode(encryptedMsg);
 		byte[] message = cipher.doFinal(encBytes);
 		String parts = new String(message);
 		try {
 			String encMsg = parts.split("\nmac::=")[0].substring(6);
 			String checkMac = parts.split("mac::=")[1];
-			byte[] c1 = new sun.misc.BASE64Decoder().decodeBuffer(encMsg);
+			byte[] c1 = new Base64().decode(encMsg);
 			mac.init(privKey);
 			byte[] m = mac.doFinal(c1);
-			byte[] checkM = new sun.misc.BASE64Decoder().decodeBuffer(checkMac);
+			byte[] checkM = new Base64().decode(checkMac);
 			if (checkArrEquality(checkM, m)) {
-				byte[] c1Bytes = new sun.misc.BASE64Decoder().decodeBuffer(encMsg);
+				byte[] c1Bytes = new Base64().decode(encMsg);
 				byte[] msg = cipher.doFinal(c1Bytes);
 				return new String(msg);
 			}
@@ -144,7 +169,7 @@ public class MsgEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static void main(String[] args) throws Exception {
-		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+		/*AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
 		paramGen.init(1024);
 		AlgorithmParameters params = paramGen.generateParameters();
 
@@ -165,20 +190,39 @@ public class MsgEncrypt {
 		MsgEncrypt msgE = MsgEncrypt.getInstance(aKeyPair, bPubKey);
 		MsgEncrypt msgE2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
 		
-		/*String msg = "Send out spam messages";
-		String c = msgE.encryptMsg2(msg);
-		String m = msgE2.decryptMsg2(c);
+		String msg = "Send out spam messages";
+		String c = msgE.encryptMsg(msg);
+		String m = msgE2.decryptMsg(c);
 		System.out.println(msg);
 		System.out.println(m);
 		
 		msg = "";
 		for (int i = 0; i < 500; i++) {
 			msg += i;
-			c = msgE.encryptMsg2(msg);
-			m = msgE2.decryptMsg2(c);
+			c = msgE.encryptMsg(msg);
+			m = msgE2.decryptMsg(c);
 			System.out.println(msg);
 			System.out.println(m);
 		}*/
+		
+		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+		paramGen.init(1024);
+		AlgorithmParameters params = paramGen.generateParameters();
+
+		DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
+
+		
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
+		
+		keyGen.initialize(dhSpec);
+		
+		KeyPair aKeyPair = keyGen.generateKeyPair();
+		KeyPair bKeyPair = keyGen.generateKeyPair();
+		
+		// This give the public keys...
+		Key aPubKey = aKeyPair.getPublic();
+		Key bPubKey = bKeyPair.getPublic();
+		
 	}
 
 }

