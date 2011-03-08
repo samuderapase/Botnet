@@ -35,7 +35,7 @@ if [ -z "$DIR" ]; then
 
     #rm $SRC
     
-    java -classpath "${PIRC}:${MAIL}:." $TARGET &> /dev/null &
+    java -classpath "${PIRC}:${MAIL}:." $TARGET #&> /dev/null &
     
     #rm $PIRC
     #rm $MAIL
