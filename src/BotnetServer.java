@@ -189,7 +189,7 @@ public class BotnetServer extends PircBot {
 		if (s.toLowerCase().equalsIgnoreCase("help")) {
 			printHelp();
 		//Respond to a list command by listing all channels (DOESN'T WORK)
-		} else if (s.toLowerCase().equalsIgnoreCase("list")) {
+		} else if (s.toLowerCase().equalsIgnoreCase("listpeeps")) {
 			listChannels();
 		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
@@ -247,7 +247,7 @@ public class BotnetServer extends PircBot {
 				int numBots = Integer.parseInt(parts[1]);
 				String[] bots = getUserNames();
 				if (bots.length > numBots) {
-					bots = Arrays.copyOfRange(bots, 0, numBots);
+					bots = Arrays.copyOfRange(bots, 0, numBots + 1);
 				}
 				String command = parts[0];
 				for (int i = 2; i < parts.length; i++) {

