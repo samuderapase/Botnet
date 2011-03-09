@@ -30,6 +30,8 @@ public class MsgEncrypt {
 	/** Holds the mac for this object **/
 	private Mac mac;
 	
+	private static final Key startKey = MsgEncrypt.getKey();
+	
 	
 	/**
 	 * Private constructor that creates a new MsgEncrypt object
@@ -63,6 +65,38 @@ public class MsgEncrypt {
 		mac = Mac.getInstance("HmacSHA512");
 	}
 	
+	public static Key getKey() {
+		try {
+			AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+			paramGen.init(1024);
+			AlgorithmParameters params = paramGen.generateParameters();
+	
+			DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
+	
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
+			
+			keyGen.initialize(dhSpec);
+			
+			KeyPair aKeyPair = keyGen.generateKeyPair();
+			KeyPair bKeyPair = keyGen.generateKeyPair();
+			
+			// This give the public keys...
+			Key aPubKey = aKeyPair.getPublic();
+			Key bPubKey = bKeyPair.getPublic();
+			
+			MsgEncrypt msgE = MsgEncrypt.getInstance(aKeyPair, bPubKey);
+			MsgEncrypt m2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
+			Key privKey = msgE.getPrivateKey();
+			return privKey;
+		} catch (Exception e) {
+			System.out.println("damn...");
+			return null;
+		}
+	}
+	
+	public static Key getStartKey() {
+		return startKey;
+	}
 	/**
 	 * Creates an instance of a MsgEncrypt object and returns that object
 	 * 
@@ -205,7 +239,7 @@ public class MsgEncrypt {
 			System.out.println(m);
 		}*/
 		
-		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
+		/*AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
 		paramGen.init(1024);
 		AlgorithmParameters params = paramGen.generateParameters();
 
@@ -221,7 +255,10 @@ public class MsgEncrypt {
 		
 		// This give the public keys...
 		Key aPubKey = aKeyPair.getPublic();
-		Key bPubKey = bKeyPair.getPublic();
+		Key bPubKey = bKeyPair.getPublic();*/
+		Key k1 = MsgEncrypt.getStartKey();
+		Key k2 = MsgEncrypt.getStartKey();
+		System.out.println(k1.equals(k2));
 		
 	}
 

