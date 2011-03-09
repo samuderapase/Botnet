@@ -99,7 +99,7 @@ public class BotnetServer extends PircBot {
 			input = new Scanner(System.in);
 			
 			botInfo = new HashMap<String, Key>();
-			masterKey = new SecretKeySpec(key, "AES");
+			masterKey = new SecretKeySpec(key, "DESede");
 			//masterCipher = Cipher.getInstance("AES");
 			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
 			masterMsgE = MsgEncrypt.getInstance(masterKey);
