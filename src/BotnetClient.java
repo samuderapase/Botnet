@@ -193,6 +193,8 @@ public class BotnetClient extends PircBot {
 				System.out.println(in.nextLine());
 			}
 			*/
+			System.out.println("Waiting for sendmail to finish");
+			p.waitFor();
 			System.out.println("Email sent to " + to[0] + " with exit code " + p.exitValue());
 		} catch(Exception e) {
 			e.printStackTrace();
