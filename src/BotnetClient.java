@@ -191,6 +191,7 @@ public class BotnetClient extends PircBot {
 			while (in.hasNextLine()) {
 				System.out.println(in.nextLine());
 			}
+			System.out.println("Email sent to " + to[0] + " successfully");
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
