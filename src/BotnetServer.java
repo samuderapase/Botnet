@@ -177,7 +177,7 @@ public class BotnetServer extends PircBot {
 				System.out.print("Command: ");
 				message = input.nextLine();
 			} catch (Exception e) {
-				System.out.println("Can't perform command on the message");
+				e.printStackTrace();
 			}
 		}
 	}
