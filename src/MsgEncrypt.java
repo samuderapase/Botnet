@@ -174,6 +174,7 @@ public class MsgEncrypt {
 		} catch (Exception e) {
 			// only time this should happen is if encryptedMsg was not
 			// made from one of the encrypt methods of a MsgEncrypt object
+			System.out.println("problem decrypting");
 			return null;
 		}
 	}
@@ -203,63 +204,24 @@ public class MsgEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static void main(String[] args) throws Exception {
-		/*AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
-		paramGen.init(1024);
-		AlgorithmParameters params = paramGen.generateParameters();
-
-		DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
-
-		
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
-		
-		keyGen.initialize(dhSpec);
-		
-		KeyPair aKeyPair = keyGen.generateKeyPair();
-		KeyPair bKeyPair = keyGen.generateKeyPair();
-		
-		// This give the public keys...
-		Key aPubKey = aKeyPair.getPublic();
-		Key bPubKey = bKeyPair.getPublic();
-		
-		MsgEncrypt msgE = MsgEncrypt.getInstance(aKeyPair, bPubKey);
-		MsgEncrypt msgE2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
-		
-		String msg = "Send out spam messages";
-		String c = msgE.encryptMsg(msg);
-		String m = msgE2.decryptMsg(c);
-		System.out.println(msg);
-		System.out.println(m);
-		
-		msg = "";
-		for (int i = 0; i < 500; i++) {
-			msg += i;
-			c = msgE.encryptMsg(msg);
-			m = msgE2.decryptMsg(c);
-			System.out.println(msg);
-			System.out.println(m);
-		}*/
-		
-		/*AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
-		paramGen.init(1024);
-		AlgorithmParameters params = paramGen.generateParameters();
-
-		DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
-
-		
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
-		
-		keyGen.initialize(dhSpec);
-		
-		KeyPair aKeyPair = keyGen.generateKeyPair();
-		KeyPair bKeyPair = keyGen.generateKeyPair();
-		
-		// This give the public keys...
-		Key aPubKey = aKeyPair.getPublic();
-		Key bPubKey = bKeyPair.getPublic();*/
 		Key k1 = MsgEncrypt.getStartKey();
 		Key k2 = MsgEncrypt.getStartKey();
 		System.out.println(k1.equals(k2));
-		
+		MsgEncrypt m1 = MsgEncrypt.getInstance(k1);
+		MsgEncrypt m2 = MsgEncrypt.getInstance(k2);
+		String msg = "y u no like me?";
+		String encMsg = m1.encryptMsg(msg);
+		String msg1 = m2.decryptMsg(encMsg);
+		System.out.println(msg);
+		System.out.println(msg1);
+		msg = "";
+		for (int i = 0; i < 1000; i++) {
+			msg += i;
+			encMsg = m1.encryptMsg(msg);
+			msg1 = m2.decryptMsg(encMsg);
+			System.out.println(msg);
+			System.out.println(msg1);
+		}
 	}
 
 }
