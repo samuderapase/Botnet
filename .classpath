@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="pircbot.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/robert/Desktop/commons-codec-1.4/commons-codec-1.4.jar"/>
 	<classpathentry kind="lib" path="mail.jar"/>
+	<classpathentry kind="lib" path="commons-codec-1.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

