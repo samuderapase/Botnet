@@ -209,7 +209,11 @@ public class MsgEncrypt {
 		System.out.println(k1.equals(k2));
 		MsgEncrypt m1 = MsgEncrypt.getInstance(k1);
 		MsgEncrypt m2 = MsgEncrypt.getInstance(k2);
-		String msg = "y u no like me?";
+		
+		String msg = "J7fhWep5Hp2ecjW9vgYmg7Wf78zsI7R6gBm+V+ajBFjt7nkGyn6j4YTgYX7uE56vs9km9YFaM++O";
+		String msg1 = m2.decryptMsg(msg);
+		System.out.println(msg1);
+		/*String msg = "y u no like me?";
 		String encMsg = m1.encryptMsg(msg);
 		String msg1 = m2.decryptMsg(encMsg);
 		System.out.println(msg);
@@ -221,7 +225,7 @@ public class MsgEncrypt {
 			msg1 = m2.decryptMsg(encMsg);
 			System.out.println(msg);
 			System.out.println(msg1);
-		}
+		}*/
 	}
 
 }

