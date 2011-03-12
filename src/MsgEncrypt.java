@@ -135,13 +135,14 @@ public class MsgEncrypt {
 		cipher.init(Cipher.ENCRYPT_MODE, privKey);
 		byte[] c1 = cipher.doFinal(msg.getBytes());
 		String c1Str = new Base64().encodeToString(c1);
-		mac.init(privKey);
+		return c1Str;
+		/*mac.init(privKey);
 		byte[] m = mac.doFinal(c1);
 		String mStr = new Base64().encodeToString(m);
 		String message = "msg::=" + c1Str + "\nmac::=" + mStr;
 		byte[] msgBytes = cipher.doFinal(message.getBytes());
 		String encMsg = new Base64().encodeToString(msgBytes);
-		return encMsg;
+		return encMsg;*/
 	}
 	
 	/**
@@ -157,7 +158,8 @@ public class MsgEncrypt {
 		mac.init(privKey);
 		byte[] encBytes = new Base64().decode(encryptedMsg);
 		byte[] message = cipher.doFinal(encBytes);
-		String parts = new String(message);
+		return new String(message);
+		/*String parts = new String(message);
 		try {
 			String encMsg = parts.split("\nmac::=")[0].substring(6);
 			String checkMac = parts.split("mac::=")[1];
@@ -176,7 +178,7 @@ public class MsgEncrypt {
 			// made from one of the encrypt methods of a MsgEncrypt object
 			System.out.println("problem decrypting");
 			return null;
-		}
+		}*/
 	}
 	
 	/**
@@ -210,9 +212,15 @@ public class MsgEncrypt {
 		MsgEncrypt m1 = MsgEncrypt.getInstance(k1);
 		MsgEncrypt m2 = MsgEncrypt.getInstance(k2);
 		
-		String msg = "J7fhWep5Hp2ecjW9vgYmg7Wf78zsI7R6gBm+V+ajBFjt7nkGyn6j4YTgYX7uE56vs9km9YFaM++O";
-		String msg1 = m2.decryptMsg(msg);
+		//String msg = "XMb566LbBWxVTLAaoN3Ro9W9OaGbZH6/fsAMOs/eSKTRH2wb77id9DZ0O3Y2vM4Eym9CeT82rE3B";
+		String msg = "hello";
+		String c = m1.encryptMsg(msg);
+		String msg1 = m2.decryptMsg(c);
+		System.out.println(c);
 		System.out.println(msg1);
+		/*System.out.println(m2.decryptMsg("Xdjr3QJIExn3XH9M4a86l4SnGcfZVYz2e79QSV7viFt2fbRQ9moNpigPGWvAJGlYhbOBYdockDBv"+
+"HDuYZ2Cn/luGlX0GtALSODfzN/qGpCII4A9RWqHm+sVGgNjUdCwgUY2x99Q0KtXouenQYBhcWgCP" +
+"Jke3C+Xh\n"));*/
 		/*String msg = "y u no like me?";
 		String encMsg = m1.encryptMsg(msg);
 		String msg1 = m2.decryptMsg(encMsg);

