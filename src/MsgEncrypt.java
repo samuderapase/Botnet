@@ -291,8 +291,6 @@ public class MsgEncrypt {
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
 		System.out.println();
 		System.out.println();
-		String sendKey = m1.getStrKey().replace("\r\n", "_");
-		System.out.println(sendKey);
-		System.out.println(m1.getStrKey().equals(sendKey.replace("_", "\r\n")));
+		System.out.println(m1.getStrKey().length());
 	}
 }
