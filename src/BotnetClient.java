@@ -143,7 +143,7 @@ public class BotnetClient extends PircBot {
 					System.exit(0);
 				} else if (message.toLowerCase().startsWith("key")) {
 					String[] parts = message.split(" ", 2);
-					//Do stuff with parts[1]
+					//TODO: Do stuff with parts[1]
 				} else {
 					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}

