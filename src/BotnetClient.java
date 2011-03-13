@@ -147,7 +147,7 @@ public class BotnetClient extends PircBot {
 					String[] parts = message.split(" ", 3);
 					//System.out.println(Arrays.toString(parts));
 					//TODO: Do stuff with parts[1]
-					String key = parts[1].replace("_hi_", "\r\n");
+					String key = parts[1].replace(" ", "\r\n");
 					String publicInfo = parts[2];
 					m = MsgEncrypt.getInstance();
 					m.setPubParams(publicInfo);
