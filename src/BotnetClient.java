@@ -145,6 +145,7 @@ public class BotnetClient extends PircBot {
 					System.exit(0);
 				} else if (message.toLowerCase().startsWith("key")) {
 					String[] parts = message.split(" ", 3);
+					System.out.println(Arrays.toString(parts));
 					//TODO: Do stuff with parts[1]
 					String key = parts[1];
 					String publicInfo = parts[2];
@@ -156,6 +157,7 @@ public class BotnetClient extends PircBot {
 					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println("There was problems decrypting the message");
 			}
 		} else {
