@@ -300,6 +300,7 @@ public class BotnetServer extends PircBot {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
 			}
 		//Respond to a kill command by sending it to the bots
