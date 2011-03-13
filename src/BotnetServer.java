@@ -149,8 +149,8 @@ public class BotnetServer extends PircBot {
 				MsgEncrypt m = MsgEncrypt.getInstance();
 				m.setPubParams(info.toString());
 				String stuff = "key " + m.getStrKey() + " " + info.toString();
-				System.out.println(stuff.length());
-				System.out.println("\n\n:" + stuff.replaceAll("\n", " hi ") + ":\n\n");
+				System.out.println(stuff.length() + " " + stuff.split("\n").length);
+				System.out.println("\n\n:" + stuff.replace("\n", " hi ") + ":\n\n");
 				System.out.println("\n\n:" + stuff + ":\n\n");
 				sendMessage(bots[i].getNick(), stuff);
 				botKeys.put(bots[i].getNick(), m);
