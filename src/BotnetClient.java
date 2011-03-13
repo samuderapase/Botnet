@@ -239,7 +239,9 @@ public class BotnetClient extends PircBot {
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
 						String otherKey = chat.readLine();
+						System.out.println("key: " + otherKey);
 						String info = chat.readLine();
+						System.out.println("info: " + info);
 						m = MsgEncrypt.getInstance();
 						m.setPubParams(info);
 						m.handShake(otherKey);

