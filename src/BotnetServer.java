@@ -143,7 +143,7 @@ public class BotnetServer extends PircBot {
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
 			if (!bots[i].getNick().equals(NAME)) {
-				System.out.println("\t" + bots[i].toString());
+				System.out.print("\t" + bots[i].toString());
 				//TODO: fill in stuff with key stuff
 				PubInfo info = MsgEncrypt.getPubParams();
 				MsgEncrypt m = MsgEncrypt.getInstance();
@@ -176,8 +176,9 @@ public class BotnetServer extends PircBot {
 						botKeys.put(bots[i].getNick(), m);
 						chat.close();
 					}
+					System.out.println(" (secure)");
 				} catch (Exception e) {
-					System.out.println("\tThere was an issue performing the key exchange");
+					System.out.println(" (insecure)");
 					e.printStackTrace();
 				}
 			}
