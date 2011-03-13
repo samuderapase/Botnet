@@ -279,8 +279,7 @@ public class MsgEncrypt {
 		MsgEncrypt m2 = MsgEncrypt.getInstance();
 		m1.setPubParams(info.toString());
 		m2.setPubParams(info.toString());
-		//MsgEncrypt2 m1 = MsgEncrypt2.getInstance(info.g, info.p, info.l);
-		//MsgEncrypt2 m2 = MsgEncrypt2.getInstance(info.g, info.p, info.l);
+		System.out.println(m1.getStrKey());
 		m1.handShake(m2.getStrKey());
 		m2.handShake(m1.getStrKey());
 
@@ -290,38 +289,5 @@ public class MsgEncrypt {
 		String checkMsg = m2.decryptMsg(c);
 		
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
-	}
-
-	/**
-	 * Private inner class that holds the public information for a DH key exchange
-	 * 
-	 * @author Robert Johnson and Roy McElmurry
-	 *
-	 */
-	private static class PubInfo {
-
-		/** The base g in DH **/
-		public BigInteger g;
-		/** The prime in DH **/
-		public BigInteger p;
-		public int l;
-		
-		/** Creates a new PubInfo object with the given params **/
-		public PubInfo(BigInteger g, BigInteger p, int l) {
-			this.g = g;
-			this.p = p;
-			this.l = l;
-		}
-		
-		/**
-		 * Returns a string representation of this PubInfo object.
-		 * 
-		 * Ex: g p l
-		 * 
-		 * @return a string representation of this object
-		 */
-		public String toString() {
-			return this.g + " " + this.p + " " + this.l;
-		}
 	}
 }
