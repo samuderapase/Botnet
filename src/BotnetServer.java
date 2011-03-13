@@ -280,6 +280,7 @@ public class BotnetServer extends PircBot {
 				
 				if (parts.length < 7) {
 					System.out.println(list);
+					System.out.println(Arrays.toString(parts));
 					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
 				} else {
 					String[] bots = getUserNames();
