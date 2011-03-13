@@ -268,7 +268,7 @@ public class MsgEncrypt {
 	}
 	
 	/**
-	 * Used for testing the object
+	 * Used for testing the object 
 	 * 
 	 * @param args
 	 * @throws NoSuchAlgorithmException
