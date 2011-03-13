@@ -25,7 +25,7 @@ import org.apache.commons.codec.binary.Base64;
  *
  * @author Robert Johnson and Roy McElmurry
  */
-public class MsgEncrypt {
+public class MsgEncrypt { 
 	
 	/** Holds the cipher for this object **/
 	private Cipher cipher;

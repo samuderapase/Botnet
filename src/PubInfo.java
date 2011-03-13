@@ -4,7 +4,7 @@ import java.math.BigInteger;
 	 * Class that holds the public information for a DH key exchange
 	 * 
 	 * @author Robert Johnson and Roy McElmurry
-	 * 
+	 *  
 	 */
 	public class PubInfo {
 
