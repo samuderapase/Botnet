@@ -261,7 +261,7 @@ public class BotnetServer extends PircBot {
 			try {
 				String[] peices = s.split("'");
 				String[] firstArgs = peices[0].trim().split(" ");
-				String[] lastArgs = peices[8].trim().split(" ");
+				String[] lastArgs = peices[8].split(" ");
 				lastArgs = Arrays.copyOfRange(lastArgs, 1, lastArgs.length);
 				
 				List<String> list = new ArrayList<String>();
