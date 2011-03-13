@@ -9,7 +9,7 @@ import java.math.BigInteger;
 	public class PubInfo {
 
 		/** The base g in DH **/
-		public BigInteger g;
+		public BigInteger g; 
 		/** The prime in DH **/
 		public BigInteger p;
 		public int l;

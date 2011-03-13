@@ -105,7 +105,7 @@ public class MsgEncrypt {
 		BigInteger g = new BigInteger(parts[0]);
 		BigInteger p = new BigInteger(parts[1]);
 		int l = Integer.parseInt(parts[2]);
-		KeyPair keyPair = getKeyPair(g, p, l);
+		KeyPair keyPair = getKeyPair(g, p, l); 
 		this.pubKey = keyPair.getPublic();
 		this.privKey = keyPair.getPrivate();
 		ByteArrayOutputStream baos = null;
