@@ -289,5 +289,10 @@ public class MsgEncrypt {
 		String checkMsg = m2.decryptMsg(c);
 		
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
+		System.out.println();
+		System.out.println();
+		String sendKey = m1.getStrKey().replace("\r\n", "_hi_");
+		
+		System.out.println(m1.getStrKey().equals(sendKey.replace("_hi_", "\r\n")));
 	}
 }
