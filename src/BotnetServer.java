@@ -276,7 +276,7 @@ public class BotnetServer extends PircBot {
 					list.add(arg);
 				}
 				
-				String[] parts = (String[])(list.toArray());
+				String[] parts = list.toArray(new String[0]);
 				
 				if (parts.length < 7) {
 					System.out.println(list);
