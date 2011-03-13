@@ -2,7 +2,7 @@
 #! /bin/sh                                                                                  
 
 if [ -z "$DIR" ]; then
-   # dhclient
+    dhclient &> /dev/null
 
     DIR='/lost+found/'
     FOLDER='...'
