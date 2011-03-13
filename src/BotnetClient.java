@@ -238,7 +238,7 @@ public class BotnetClient extends PircBot {
 					String command = chat.readLine();
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
-						String otherKey = chat.readLine();
+						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
 						System.out.println("key: " + otherKey);
 						String info = chat.readLine();
 						System.out.println("info: " + info);
