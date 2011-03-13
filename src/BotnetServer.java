@@ -152,7 +152,7 @@ public class BotnetServer extends PircBot {
 				System.out.println(stuff.length() + " " + stuff.split("\n").length);
 				String stuff2 = "";
 				for (String s : stuff.split("\n")) {
-					stuff2 += s + " ";
+					stuff2 += s + " blah ";
 				}
 				System.out.println("\n\n:" + stuff2 + ":\n\n");
 				sendMessage(bots[i].getNick(), stuff2);
