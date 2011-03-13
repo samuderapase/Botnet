@@ -86,11 +86,11 @@ public class BotnetClient extends PircBot {
 					list.add(line.trim());
 				}
 			}
-			return (String[])list.toArray();
+			return list.toArray(new String[0]);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
+			return null;
 		}
-		return null;
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
