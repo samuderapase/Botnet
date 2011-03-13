@@ -346,7 +346,7 @@ public class BotnetServer extends PircBot {
 		User[] bots = getUsers(CHANNEL);
 		String[] names = new String[bots.length - 1];
 		for (int i = 0; i < bots.length; i++) {
-			if (!names[i].equalsIgnoreCase(NAME)) {
+			if (!bots[i].getNick().equalsIgnoreCase(NAME)) {
 				names[i] = bots[i].getNick();
 			}
 		}
