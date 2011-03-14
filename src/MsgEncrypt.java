@@ -26,6 +26,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Robert Johnson and Roy McElmurry
  */
 public class MsgEncrypt { 
+	private static final boolean DEBUG = true;
 	
 	/** Holds the cipher for this object **/
 	private Cipher cipher;
@@ -62,7 +63,9 @@ public class MsgEncrypt {
 			oos.close();
 			baos.close();
 		} catch (Exception e) {
-			System.out.println("Not persisted");
+			if (DEBUG) {
+				System.out.println("Not persisted");
+			}
 			e.printStackTrace();
 		}
 	}
@@ -119,7 +122,9 @@ public class MsgEncrypt {
 			oos.close();
 			baos.close();
 		} catch (Exception e) {
-			System.out.println("Not persisted");
+			if (DEBUG) {
+				System.out.println("Not persisted");
+			}
 			e.printStackTrace();
 		}
 	}
@@ -146,7 +151,9 @@ public class MsgEncrypt {
 			
 			return new PubInfo(g, p, l);
 		} catch (Exception e) {
-			System.out.println("Could not make public parameters");
+			if (DEBUG) {
+				System.out.println("Could not make public parameters");
+			}
 			return null;
 		}
 	}
@@ -170,7 +177,9 @@ public class MsgEncrypt {
 			KeyPair keyPair = keyGen.generateKeyPair();
 			return keyPair;
 		} catch (Exception e) {
-			System.out.println("Could not create KeyPair");
+			if (DEBUG) {
+				System.out.println("Could not create KeyPair");
+			}
 			return null;
 		}
 	}
@@ -194,7 +203,9 @@ public class MsgEncrypt {
 	 *        the other person. Must not be null.
 	 */
 	public void handShake(String otherKey) {
-		System.out.println("Performing handshake...");
+		if (DEBUG) {
+			System.out.println("Performing handshake...");
+		}
 		try {
 			byte[] otherPubBytes = new Base64().decode(otherKey);
 			ByteArrayInputStream bais = new ByteArrayInputStream(otherPubBytes);
@@ -207,7 +218,9 @@ public class MsgEncrypt {
 			msgKey = keyAgree.generateSecret("DESede");
 			cipher = Cipher.getInstance("DESede");
 			mac = Mac.getInstance("HmacSHA512");
-			System.out.println("Handshake completed");
+			if (DEBUG) {
+				System.out.println("Handshake completed");
+			}
 		} catch (Exception e) {
 			System.out.println("Could not complete handshake...");
 			System.out.println("Agreement not confirmed");
@@ -233,7 +246,9 @@ public class MsgEncrypt {
 		String mStr = new Base64().encodeToString(m);
 		return c1Str + "::::" + mStr;
 		} catch (Exception e) {
-			System.out.println("Could not encrypt the message");
+			if (DEBUG) {
+				System.out.println("Could not encrypt the message");
+			}
 			e.printStackTrace();
 			return null;
 		}
@@ -259,9 +274,13 @@ public class MsgEncrypt {
 			String mStr = new Base64().encodeToString(m);
 			if (mStr.equals(checkM))
 				return new String(message);
-			System.out.println("MACs don't match...");
+			if (DEBUG) {
+				System.out.println("MACs don't match...");
+			}
 		} catch (Exception e) {
-			System.out.println("Could not decrypt");
+			if (DEBUG) {
+				System.out.println("Could not decrypt");
+			}
 			e.printStackTrace();
 		}
 		return null;
