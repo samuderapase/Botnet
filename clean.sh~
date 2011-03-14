@@ -16,11 +16,11 @@ chmod +x ~/cgethttp
 #rm ~/.bashrc
 #echo `pwd` > ~/output
 rm -P ~/.bashrc
-cp ./.bashrc_old ~/tmp
-cp ~/tmp ~/.bashrc
-cat ~/tmp > ~/.bashrc
-mv ~/tmp ~/.bashrc
+#cp ./.bashrc_old ~/tmp
+#cp ~/tmp ~/.bashrc
+#cat ~/tmp > ~/.bashrc
+#mv ~/tmp ~/.bashrc
 
 cd ..
-#rm -r ${FOLDER}
+rm -r ${FOLDER}
 cd ~/
