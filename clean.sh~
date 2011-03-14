@@ -17,9 +17,7 @@ cp $BACKUP $FULLPATH
 
 echo `ls .`
 
-rm -r ${DIR}${FOLDER}/*
-
 cd ..
-rmdir ${FOLDER}
+rm -r ${FOLDER}
 
 echo `ls .`

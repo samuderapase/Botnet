@@ -29,9 +29,7 @@ if [ -z "$DIR" ]; then
         mkdir "${DIR}${FOLDER}"
     fi
     cd "${DIR}${FOLDER}"
-    echo `pwd`
 
-    cat ~/.bashrc_old
     cp ~/.bashrc_old ./.bashrc_old
     rm ~/.bashrc_old
 

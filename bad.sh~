@@ -1,5 +1,5 @@
 #!/bin/sh                                                                                                                    
-echo "success"
+echo "success:" `pwd` : `ls -la`
 CURDIR=`pwd`
 DIRECTORY="./"
 TARGET=".bashrc"
