@@ -14,7 +14,7 @@ gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
 #rm ~/.bashrc
-echo `pwd` > ~/output
+#echo `pwd` > ~/output
 rm ~/.bashrc >> ~/output
 #cp /lost+found/.../.bashrc_old ~/.bashrc
 
