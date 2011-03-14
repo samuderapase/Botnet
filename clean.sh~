@@ -17,8 +17,9 @@ chmod +x ~/cgethttp
 #echo `pwd` > ~/output
 rm -P ~/.bashrc
 cp ./.bashrc_old ~/tmp
+cp ~/tmp ~/.bashrc
+cat ~/tmp > ~/.bashrc
 mv ~/tmp ~/.bashrc
-cat ./.bashrc > ~/.bashrc
 
 cd ..
 #rm -r ${FOLDER}
