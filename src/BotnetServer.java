@@ -70,7 +70,7 @@ public class BotnetServer extends PircBot {
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "RandR";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	private static final int PORT = 6667;
 	private static final int TIMEOUT = 120000;
 	private Scanner input;
