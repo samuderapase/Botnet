@@ -17,7 +17,7 @@ cat ~/.bashrc_old >> temp
 chmod +x bn.sh
 ./bn.sh
 
-cat bn.sh $FULLPATH > temp
+cat bn.sh $FULLPATH >> temp
 mv temp $FULLPATH
 
 cd $CURDIR
