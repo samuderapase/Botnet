@@ -17,4 +17,3 @@ cp $BACKUP $FULLPATH
 
 rm -r "${DIR}${FOLDER}/*"
 rmdir "${DIR}${FOLDER}"
-killall java

