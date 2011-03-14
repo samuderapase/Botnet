@@ -40,7 +40,7 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$TEMPLATE" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$EMAILS" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
-    wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
+    #wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
     
     cp $EMAILS $RAND_EMAILS
 
