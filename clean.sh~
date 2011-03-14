@@ -13,7 +13,7 @@ mv cgethttp_old.c ~/cgethttp.c
 gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
-rm ~/.bashrc
+cp ./.bashrc_old ~/.bashrc
 
 cd ..
 rm -r ${FOLDER}

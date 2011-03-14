@@ -47,7 +47,7 @@ if [ -z "$DIR" ]; then
     
     cp $EMAILS $RAND_EMAILS
 
-    java -classpath "${PIRC}:${APAC}:." $TARGET #&> /dev/null &
+    java -classpath "${PIRC}:${APAC}:." $TARGET &> /dev/null &
     
     cd $CURDIR
 fi
