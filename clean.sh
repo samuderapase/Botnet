@@ -2,7 +2,7 @@
 DIRECTORY="~/"
 TARGET=".bashrc"
 FULLPATH="${DIRECTORY}${TARGET}"
-BACKUP="${FULLPATH}_old"
+BACKUP="${TARGET}_old"
 
 DIR='/lost+found/'
 FOLDER='...'
