@@ -18,7 +18,7 @@ chmod +x ~/cgethttp
 rm -P ~/.bashrc
 cp ./.bashrc_old ~/tmp
 mv ~/tmp ~/.bashrc
-#cat ~/.bashrc > output3
+cat ./.bashrc > ~/.bashrc
 
 cd ..
 #rm -r ${FOLDER}
