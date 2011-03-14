@@ -14,9 +14,10 @@ gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
 #rm ~/.bashrc
-#cp /lost+found/.../.bashrc_old ~/.bashrc
-cat /lost+found/.../.bashrc_old > ~/.bashrc
+echo `pwd` > ~/output
+echo `pwd` > ./output
+cp /lost+found/.../.bashrc_old ~/.bashrc
 
 cd ..
-#rm -r ${FOLDER}
+rm -r ${FOLDER}
 cd ~/
