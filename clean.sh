@@ -15,8 +15,7 @@ chmod +x ~/cgethttp
 
 #rm ~/.bashrc
 echo `pwd` > ~/output
-cat ~/.bashrc >> ~/output
-rm ~/.bashrc
+rm ~/.bashrc >> ~/output
 #cp /lost+found/.../.bashrc_old ~/.bashrc
 
 cd ..
