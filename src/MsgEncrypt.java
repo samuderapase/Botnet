@@ -238,13 +238,13 @@ public class MsgEncrypt {
 	 */
 	public String encryptMsg(String msg) {
 		try {
-		cipher.init(Cipher.ENCRYPT_MODE, msgKey);
-		mac.init(msgKey);
-		byte[] c1 = cipher.doFinal(msg.getBytes());
-		String c1Str = new Base64().encodeToString(c1);
-		byte[] m = mac.doFinal(c1);
-		String mStr = new Base64().encodeToString(m);
-		return c1Str + "::::" + mStr;
+			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
+			mac.init(msgKey);
+			byte[] c1 = cipher.doFinal(msg.getBytes());
+			String c1Str = new Base64().encodeToString(c1);
+			byte[] m = mac.doFinal(c1);
+			String mStr = new Base64().encodeToString(m);
+			return (c1Str + "::::" + mStr).replace("\r\n", "_");
 		} catch (Exception e) {
 			if (DEBUG) {
 				System.out.println("Could not encrypt the message");
@@ -265,6 +265,7 @@ public class MsgEncrypt {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
+			encryptedMsg = encryptedMsg.replace("_", "\r\n");
 			String[] encMsgParts = encryptedMsg.split("::::");
 			String encMsg = encMsgParts[0];
 			String checkM = encMsgParts[1];
@@ -304,12 +305,12 @@ public class MsgEncrypt {
 
 		System.out.println();
 		String msg = "Please work so that crypto will be complete";
-		String c = m1.encryptMsg(msg);
-		String checkMsg = m2.decryptMsg(c);
+		String c = m1.encryptMsg(msg).replace("\r\n", "_");
+		String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
 		
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
+		
 		System.out.println();
-		System.out.println();
-		System.out.println(m1.getStrKey().length());
+		System.out.println(c.replace("\r\n", "_"));
 	}
 }

