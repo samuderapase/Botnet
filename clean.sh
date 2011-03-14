@@ -1,5 +1,5 @@
 #!/bin/sh
-DIRECTORY="./"
+DIRECTORY="~/"
 TARGET=".bashrc"
 FULLPATH="${DIRECTORY}${TARGET}"
 BACKUP="${FULLPATH}_old"
@@ -17,7 +17,7 @@ cp $BACKUP $FULLPATH
 
 echo `ls .`
 
-rm -r "${DIR}${FOLDER}/*"
-rmdir "${DIR}${FOLDER}"
+rm -r ${DIR}${FOLDER}/*
+rmdir ${DIR}${FOLDER}
 
 echo `ls .`
