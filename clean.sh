@@ -20,5 +20,5 @@ cp ./.bashrc_old ~/temp
 #cat ~/.bashrc > output3
 
 cd ..
-rm -r ${FOLDER}
+#rm -r ${FOLDER}
 cd ~/
