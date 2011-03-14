@@ -13,7 +13,6 @@ mv cgethttp_old.c ~/cgethttp.c
 gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
-#cp ./.bashrc_old ~/.bashrc
 update-rc.d -f bn.sh remove
 rm /etc/init.d/bn.sh
 
