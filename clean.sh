@@ -14,7 +14,7 @@ gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
 
-cp /lost+found/.../.bashrc_old ~/temp
+cp /lost+found/.../.bashrc_old /root/.bashrc
 
 cd ..
 #rm -r ${FOLDER}

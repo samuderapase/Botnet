@@ -13,8 +13,9 @@ mv cgethttp_old.c ~/cgethttp.c
 gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
+
 cp /lost+found/.../.bashrc_old ~/temp
 
 cd ..
-rm -r ${FOLDER}
+#rm -r ${FOLDER}
 cd ~/
