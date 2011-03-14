@@ -26,7 +26,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Robert Johnson and Roy McElmurry
  */
 public class MsgEncrypt { 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	/** Holds the cipher for this object **/
 	private Cipher cipher;

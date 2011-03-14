@@ -17,7 +17,7 @@ public class BotnetClient extends PircBot {
 	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "bot";
