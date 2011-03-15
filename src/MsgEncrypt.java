@@ -14,6 +14,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
+import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
  
@@ -351,6 +352,19 @@ public class MsgEncrypt {
 		}
 	}
 	
+	public void genRSAPrivKey(String info) {
+		try {
+			String[] parts = info.split(" ");
+			BigInteger mod = new BigInteger(parts[0]);
+			BigInteger exp = new BigInteger(parts[1]);
+			KeySpec ks = (KeySpec)new RSAPrivateKeySpec(mod, exp);
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			privRSAKey = kf.generatePrivate(ks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public String encryptRSA(String msg) {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -397,14 +411,18 @@ public class MsgEncrypt {
 		//System.out.println(m1.getRSAPubInfo());
 		m2.genRSAPubKey(m1.getRSAPubInfo());
 		
-		System.out.println(m1.pubRSAKey.equals(m2.pubRSAKey));
+		System.out.println(m1.privRSAKey);
 		
-		String msg = "please work you fucking piece of shit";
+		/*String msg = "please work you fucking piece of shit";
 		
 		String c = m1.encryptRSA(msg);
 		String checkMsg = m2.decryptRSA(c);
 		
-		System.out.println(msg.equals(checkMsg));
+		System.out.println(msg.equals(checkMsg));*/
+		
+		// 
+		
+		
 		//System.out.println(info);
 /*		System.out.println();
 		String msg = "Please work so that crypto will be complete";
