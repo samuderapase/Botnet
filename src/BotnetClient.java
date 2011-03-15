@@ -113,6 +113,7 @@ public class BotnetClient extends PircBot {
 	}
 	
 	private boolean runCommand(String message, String hostname, String sender) {
+		System.out.println(sender + ": " + message);
 		try {
 			// TODO: maybe need to put this back
 			//System.out.println(message);

