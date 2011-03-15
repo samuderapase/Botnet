@@ -16,6 +16,10 @@ bots :
 master :
 	java -classpath pircbot.jar:mail.jar:bin BotnetServer
 
+#Creates a LeaseMaster bot
+leaseMaster :
+	java -classpath pircbot.jar:commons-codec-1.4.jar:bin BotnetLeaseServer
+
 #Kills all background bot processes and deletes the bot_output directory
 clean :
 	killall java;

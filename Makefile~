@@ -14,7 +14,7 @@ bots :
 
 #Creates the master bot in the foreground
 master :
-	java -classpath pircbot.jar;mail.jar;bin BotnetServer
+	java -classpath pircbot.jar:mail.jar:bin BotnetServer
 
 #Kills all background bot processes and deletes the bot_output directory
 clean :
