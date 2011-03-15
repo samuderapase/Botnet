@@ -268,6 +268,7 @@ public class MsgEncrypt {
 	 * @throws Exception if encryption fails
 	 */
 	public String encryptMsg(String msg) {
+		System.out.println("M: " + msg);
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
 			mac.init(msgKey);
@@ -294,6 +295,7 @@ public class MsgEncrypt {
 	 */
 	public String decryptMsg(String encryptedMsg) {
 		try {
+			System.out.println("C: " + encryptedMsg);
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
 			encryptedMsg = encryptedMsg.replace("~", "\n").replace("-", "\r").replace("_", "\r\n");
@@ -430,8 +432,8 @@ public class MsgEncrypt {
 		m1.setPubParams(info.toString());
 		m2.setPubParams(info.toString());
 		//System.out.println(m1.getStrKey());
-		//m1.handShake(m2.getStrKey());
-		//m2.handShake(m1.getStrKey());
+		m1.handShake(m2.getStrKey());
+		m2.handShake(m1.getStrKey());
 		m1.getRSAPair();
 		System.out.println(m1.getRSAPubInfo());
 		m2.genRSAPubKey(m1.getRSAPubInfo());
@@ -452,14 +454,14 @@ public class MsgEncrypt {
 		
 		
 		//System.out.println(info);
-/*		System.out.println();
+		System.out.println();
 		String msg = "Please work so that crypto will be complete";
 		String c = m1.encryptMsg(msg).replace("\r\n", "_");
 		String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
 		
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
 		
-		System.out.println();
+		/*System.out.println();
 		System.out.println(c.replace("\r\n", "_"));*/
 		/*System.out.println(m1.pubKey);
 		System.out.println(m2.pubKey);*/		

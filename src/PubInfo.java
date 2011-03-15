@@ -11,7 +11,7 @@ import java.math.BigInteger;
 		/** The base g in DH **/
 		public BigInteger g; 
 		/** The prime in DH **/
-		public BigInteger p; 
+		public BigInteger p;
 		public int l;
 		
 		/** Creates a new PubInfo object with the given params **/
