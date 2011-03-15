@@ -314,7 +314,7 @@ public class MsgEncrypt {
 			SecureRandom random = new SecureRandom();
 		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 
-		    generator.initialize(512, random);
+		    generator.initialize(4096, random);
 		    KeyPair pair = generator.generateKeyPair();
 		    PublicKey pubKey = pair.getPublic();
 		    PrivateKey privKey = pair.getPrivate();
@@ -400,11 +400,11 @@ public class MsgEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static void main(String[] args) throws Exception {
-		//PubInfo info = MsgEncrypt.getPubParams();
+		PubInfo info = MsgEncrypt.getPubParams();
 		MsgEncrypt m1 = MsgEncrypt.getInstance();
 		MsgEncrypt m2 = MsgEncrypt.getInstance();
-		//m1.setPubParams(info.toString());
-		//m2.setPubParams(info.toString());
+		m1.setPubParams(info.toString());
+		m2.setPubParams(info.toString());
 		//System.out.println(m1.getStrKey());
 		//m1.handShake(m2.getStrKey());
 		//m2.handShake(m1.getStrKey());
@@ -414,12 +414,12 @@ public class MsgEncrypt {
 		
 		System.out.println(m1.privRSAKey);
 		
-		String msg = "please work you fucking piece of shit";
+		//String msg = "please work you fucking piece of shit";
 		
-		String c = m1.encryptRSA(msg);
+		String c = m1.encryptRSA(m1.getStrKey());
 		String checkMsg = m2.decryptRSA(c);
 		
-		System.out.println(msg.equals(checkMsg));
+		System.out.println(m1.getStrKey().equals(checkMsg));
 		
 		// 
 		
