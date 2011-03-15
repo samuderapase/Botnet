@@ -278,6 +278,33 @@ public class MsgEncrypt {
 	}
 	
 	/**
+	 * Encrypts the given msg and returns the ciphertext for the
+	 * encryted message
+	 * 
+	 * @param msg != null
+	 * @param nonce must be a nonce given from the proper sendee
+	 * @return the encrypted message or null if encryption fails
+	 * @throws Exception if encryption fails
+	 */
+	public String encryptMsg(String msg, int nonce) {
+		try {
+			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
+			mac.init(msgKey);
+			byte[] c1 = cipher.doFinal(msg.getBytes());
+			String c1Str = new Base64().encodeToString(c1);
+			byte[] m = mac.doFinal(c1);
+			String mStr = new Base64().encodeToString(m);
+			return (c1Str + "::::" + mStr + "::::" + nonce).replace("\r\n", "_");
+		} catch (Exception e) {
+			if (DEBUG) {
+				System.out.println("Could not encrypt the message");
+			}
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
 	 * Decrypts the given String and returns the decrypted message if the
 	 * message is verified to come from the correct sender, or null otherwise
 	 * 
@@ -285,6 +312,41 @@ public class MsgEncrypt {
 	 * @return the decrypted message or null if the message is not verified
 	 */
 	public String decryptMsg(String encryptedMsg) {
+		try {
+			cipher.init(Cipher.DECRYPT_MODE, msgKey);
+			mac.init(msgKey);
+			encryptedMsg = encryptedMsg.replace("_", "\r\n");
+			String[] encMsgParts = encryptedMsg.split("::::");
+			String encMsg = encMsgParts[0];
+			String checkM = encMsgParts[1];
+			byte[] encBytes = new Base64().decode(encMsg);
+			byte[] message = cipher.doFinal(encBytes);
+			byte[] m = mac.doFinal(encBytes);
+			String mStr = new Base64().encodeToString(m);
+			if (mStr.equals(checkM))
+				return new String(message);
+			if (DEBUG) {
+				System.out.println("MACs don't match...");
+			}
+		} catch (Exception e) {
+			if (DEBUG) {
+				System.out.println("Could not decrypt");
+			}
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Decrypts the given String and returns the decrypted message if the
+	 * message is verified to come from the correct sender, or null otherwise
+	 * 
+	 * @param encryptedMsg != null
+	 * @param nonce must be the nonce sent to the sender to use in the encryption
+	 *        of the message
+	 * @return the decrypted message or null if the message is not verified
+	 */
+	public String decryptMsg(String encryptedMsg, int nonce) {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
