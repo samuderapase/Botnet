@@ -424,20 +424,20 @@ public class MsgEncrypt {
 		//m1.handShake(m2.getStrKey());
 		//m2.handShake(m1.getStrKey());
 		m1.getRSAPair();
-		//System.out.println(m1.getRSAPubInfo());
+		System.out.println(m1.getRSAPubInfo());
 		m2.genRSAPubKey(m1.getRSAPubInfo());
 		
-		//System.out.println(m1.privRSAKey);
+		System.out.println(m1.privRSAKey);
 		
 		//String msg = "please work you fucking piece of shit";
 		
-		System.out.println(m1.getStrKey());
-		String c = m1.encryptRSA(m1.getStrKey());
+		//System.out.println(m1.getStrKey());
+		//String c = m1.encryptRSA(m1.getStrKey());
 		//System.out.println(c);
-		String checkMsg = m2.decryptRSA(c);
-		System.out.println(checkMsg);
+		//String checkMsg = m2.decryptRSA(c);
+		//System.out.println(checkMsg);
 		
-		System.out.println(m1.getStrKey().equals(checkMsg));
+		//System.out.println(m1.getStrKey().equals(checkMsg));
 		
 		// 
 		
