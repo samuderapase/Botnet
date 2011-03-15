@@ -1,0 +1,19 @@
+README
+
+Robert Johnson and Roy McElmurry
+(johnsr7, johnsr7), (mcelmr, roy)
+
+Our Botnet communicates over an IRC network, mostly using private chats between
+the command and control bot and the slave bots. Our Botnet has a main CC bot that
+is in control of the whole net and it mainly talks to the slave bots to give
+commands that will be carried out. The CC talks to each bot individually instead
+of all at once. The net also uses multi-part cryptography. This means that it
+uses many different types of crypto. The Botnet uses RSA crypto to initialize the
+communications between the CC and the bots. Once a connection is established, the
+CC and the bots perform a Diffie-Hellman key exchange and generate a secret key
+that will be used in a triple DES block cipher for all messages. 
+
+To build our code, you should run the make files that are on the system. To start
+the slave bots, you run "make bots n", where n can be some number. To start the 
+CC bot, you run "make master". To start a leasing bot, one that can lease from our
+net, you run make leaseMaster. 
