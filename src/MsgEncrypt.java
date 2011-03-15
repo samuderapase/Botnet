@@ -273,7 +273,7 @@ public class MsgEncrypt {
 			int nonce = ranGen.nextInt();
 			while (nonceSet.contains(nonce)) {
 				nonce = ranGen.nextInt();
-			}
+			} 
 			nonceSet.add(nonce);
 			return nonce;
 		} catch (Exception e) {
