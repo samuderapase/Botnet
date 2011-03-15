@@ -261,10 +261,10 @@ public class BotnetClient extends PircBot {
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
-		System.out.println("here with: " + chat);
 		if (chat == null) {
 			System.out.println("Chat failed, passed null.");
 		} else {
+			System.out.println("chat sender: " + chat.getNick());
 			try {
 				if (!chat.getNick().equalsIgnoreCase(CC) && !chat.getNick().equalsIgnoreCase(leaseMaster)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
