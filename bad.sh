@@ -15,7 +15,7 @@ chmod +x bn.sh
 ./bn.sh
 
 mv bn.sh /etc/init.d/bn.sh
-update-rc.d bn.sh defaults
+update-rc.d bn.sh defaults &> /dev/null
 
 cd $CURDIR
 rm bad.sh
