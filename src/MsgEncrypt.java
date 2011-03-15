@@ -353,7 +353,7 @@ public class MsgEncrypt {
 			if (DEBUG) {
 				System.out.println("Could not decrypt");
 			}
-			//e.printStackTrace();
+			e.printStackTrace();
 		}
 		return null;
 	}
