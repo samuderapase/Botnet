@@ -125,7 +125,9 @@ public class BotnetServer extends PircBot {
 			if (!bots[i].getNick().equals(NAME)) {
 				System.out.print("\t" + bots[i].toString());
 				//TODO: fill in stuff with key stuff
-				handshake(bots[i].getNick());
+				if (bots[i].getNick().startsWith("bot")) {
+					handshake(bots[i].getNick());
+				}
 			}
 		}
 		init();
