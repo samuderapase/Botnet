@@ -16,15 +16,10 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
-import java.util.ArrayList;
 import java.util.Arrays;
- 
+import java.util.Random;
 import javax.crypto.*;
 import javax.crypto.spec.DHParameterSpec;
-//import sun.misc.BASE64Encoder;
-//import sun.misc.BASE64Decoder;
-
-//import org.apache.commons.codec.*;
 import org.apache.commons.codec.binary.Base64;
 
 /**
@@ -49,12 +44,12 @@ public class MsgEncrypt {
 	private String strPubKey;
 	/** Holds the private key that will be used for encryption and decryption **/
 	private Key msgKey;
-	
+	/** Holds the private RSA key of this object **/
 	private PrivateKey privRSAKey;
-	
+	/** Holds the public RSA key of this object **/
 	private PublicKey pubRSAKey;
-	
-	private RSAPublicKeySpec rpks;
+	/** Holds the nonce for a message **/
+	private int nonce;
 	
 	/**
 	 * Creates a new MsgEncrypt object with the given parameters
@@ -191,11 +186,13 @@ public class MsgEncrypt {
 	
 	/**
 	 * Gets the KeyPair that will be used by this object and that uses
-	 * the given parameters for DH key exchange
+	 * the given parameters for DH key exchange or null if the pair could
+	 * not be created
 	 * 
 	 * @param g != null
 	 * @param p != null
-	 * @return the KeyPair that will be used by this object
+	 * @return the KeyPair that will be used by this object or null if the 
+	 *         pair could not be created
 	 */
 	private KeyPair getKeyPair(BigInteger g, BigInteger p, int l) {
 		try {
@@ -260,19 +257,61 @@ public class MsgEncrypt {
 	}
 	
 	/**
+	 * Returns a random nonce to be used in encryption and decryption
+	 * or -1 if a nonce could not be generated
+	 * 
+	 * @return a random nonce or -1 if a nonce could not be generated
+	 */
+	public int getNonce() {
+		try {
+			Random ranGen = SecureRandom.getInstance("SHA1PRNG");
+			nonce = ranGen.nextInt();
+			return nonce;
+		} catch (Exception e) {
+			System.out.println("Nonce could not be generated");
+			return getNonce();
+		}
+	}
+	
+	/**
 	 * Encrypts the given msg and returns the ciphertext for the
 	 * encryted message
 	 * 
 	 * @param msg != null
 	 * @return the encrypted message or null if encryption fails
-	 * @throws Exception if encryption fails
 	 */
 	public String encryptMsg(String msg) {
-		System.out.println("M: " + msg);
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
 			mac.init(msgKey);
 			byte[] c1 = cipher.doFinal(msg.getBytes());
+			String c1Str = new Base64().encodeToString(c1);
+			byte[] m = mac.doFinal(c1);
+			String mStr = new Base64().encodeToString(m);
+			return (c1Str + "::::" + mStr).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
+		} catch (Exception e) {
+			if (DEBUG) {
+				System.out.println("Could not encrypt the message");
+			}
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/**
+	 * Encrypts the given msg and returns the ciphertext for the
+	 * encryted message
+	 * 
+	 * @param msg != null
+	 * @param nonce must be a nonce given from the proper sendee
+	 * @return the encrypted message or null if encryption fails
+	 */
+	public String encryptMsg(String msg, int nonce) {
+		try {
+			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
+			mac.init(msgKey);
+			String nMsg = msg + ":::" + nonce;
+			byte[] c1 = cipher.doFinal(nMsg.getBytes());
 			String c1Str = new Base64().encodeToString(c1);
 			byte[] m = mac.doFinal(c1);
 			String mStr = new Base64().encodeToString(m);
@@ -295,7 +334,6 @@ public class MsgEncrypt {
 	 */
 	public String decryptMsg(String encryptedMsg) {
 		try {
-			System.out.println("C: " + encryptedMsg);
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
 			encryptedMsg = encryptedMsg.replace("~", "\n").replace("-", "\r").replace("_", "\r\n");
@@ -320,6 +358,54 @@ public class MsgEncrypt {
 		return null;
 	}
 	
+	/**
+	 * Decrypts the given String and returns the decrypted message if the
+	 * message is verified to come from the correct sender, or null otherwise
+	 * 
+	 * @param encryptedMsg != null
+	 * @param nonce must be the nonce sent to the sender to use in the encryption
+	 *        of the message 
+	 * @return the decrypted message or null if the message is not verified
+	 */
+	public String decryptMsgNonce(String encryptedMsg) {
+		try {
+			cipher.init(Cipher.DECRYPT_MODE, msgKey);
+			mac.init(msgKey);
+			encryptedMsg = encryptedMsg.replace("~", "\n").replace("-", "\r").replace("_", "\r\n");
+			String[] encMsgParts = encryptedMsg.split("::::");
+			String encMsg = encMsgParts[0];
+			String checkM = encMsgParts[1];
+			byte[] encBytes = new Base64().decode(encMsg);
+			byte[] message = cipher.doFinal(encBytes);
+			byte[] m = mac.doFinal(encBytes);
+			String mStr = new Base64().encodeToString(m);
+			if (mStr.equals(checkM)) {
+				String mess = new String(message);
+				String[] parts = mess.split(":::");
+				String msg = parts[0];
+				int n = Integer.parseInt(parts[1]);
+				if (n == this.nonce)
+					return msg;
+			}
+			if (DEBUG) {
+				System.out.println("Verification failed...");
+			}
+		} catch (Exception e) {
+			if (DEBUG) {
+				System.out.println("Could not decrypt");
+			}
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	/**
+	 * Constructs an RSA key pair and returns the public key or null if the key
+	 * pair could not be generated
+	 * 
+	 * @return the RSA public key generated from the construction of the key pair
+	 *         or null if the key pair could not be generated
+	 */
 	public Key getRSAPair() {
 		try {
 			SecureRandom random = new SecureRandom();
@@ -329,19 +415,23 @@ public class MsgEncrypt {
 		    KeyPair pair = generator.generateKeyPair();
 		    PublicKey pubKey = pair.getPublic();
 		    PrivateKey privKey = pair.getPrivate();
-		    
-		    //System.out.println(pubKey.toString());
-		    //System.out.println(privKey.toString());
 		    privRSAKey = privKey;
 		    pubRSAKey = pubKey;
 		    return pubKey;
 		} catch (Exception e) {
+			System.out.println("Could not get the RSA pair");
 			e.printStackTrace();
 			return null;
 		}
 		
 	}
 	
+	/**
+	 * Returns the public RSA information in the form "pubMod pubExp"
+	 * 
+	 * @return a string representation of the RSA public information in the form
+	 *         "pubMod pubExp"
+	 */
 	public String getRSAPubInfo() {
 		String pubKeyStr = pubRSAKey.toString();
 		String[] parts = pubKeyStr.split("\n");
@@ -350,6 +440,12 @@ public class MsgEncrypt {
 		return modulus + " " + exp;
 	}
 	
+	/**
+	 * Generates the RSA public key from the given information. The information
+	 * must be RSA public information and must be of the form "pubMod pubExp"
+	 * 
+	 * @param info must be RSA public information and of the form "pubMod pubExp"
+	 */
 	public void genRSAPubKey(String info) {
 		try {
 			String[] parts = info.split(" ");
@@ -359,10 +455,17 @@ public class MsgEncrypt {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			pubRSAKey = kf.generatePublic(ks);
 		} catch (Exception e) {
+			System.out.println("Could not generate the RSA public key");
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Generates the private RSA key from the given information paramter. The
+	 * info must be RSA private information and of the form "privMod privExp"
+	 * 
+	 * @param info must be RSA private information and of the form "privMod privExp"
+	 */
 	public void genRSAPrivKey(String info) {
 		try {
 			String[] parts = info.split(" ");
@@ -372,10 +475,20 @@ public class MsgEncrypt {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			privRSAKey = kf.generatePrivate(ks);
 		} catch (Exception e) {
+			System.out.println("Could not generate the RSA private key");
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Encrypts the given message using reverse RSA (encrypts with the private key)
+	 * and returns the ciphertext of the message in String form or null if the message
+	 * could not be encrypted
+	 * 
+	 * @param msg != null
+	 * @return ciphertext form of the message made from RSA encryption or null if the
+	 *         message could not be encrypted
+	 */
 	public String encryptRSA(String msg) {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
@@ -384,27 +497,31 @@ public class MsgEncrypt {
 			String result = "";
 			for (int i = 0; i < (int)Math.ceil(msgBytes.length * 1.0 /100); i++) {
 				byte[] c = cipher.doFinal(Arrays.copyOfRange(msgBytes, i*100, Math.min((i+1)*100, msgBytes.length)));
-				//System.out.println(c.length);
-				//System.out.println(new Base64().encodeToString(c).length());
 				result += new Base64().encodeToString(c);
 			}
-			//System.out.println("result length = " + result.length());
 			return result.replace("\r\n", "_").replace("\r", "~").replace("\n", "::");
 		} catch (Exception e) {
+			System.out.println("Could not encrypt the message");
 			e.printStackTrace();
 			return null;
 		}
 	}
 	
+	/**
+	 * Decrypts the given encrypted message using reverse RSA, meaning that it
+	 * uses the public key to decrypt, and returns the decrypte message or null 
+	 * if the message could not be decrypted
+	 * 
+	 * @param encMsg != null and encrypted with either this object or a similar
+	 *        object that has the proper decryption parameters
+	 * @return the string representation of the message that was decrypted or null
+	 *         if the message could not be decrypted
+	 */
 	public String decryptRSA(String encMsg) {
 		try {
 			encMsg = encMsg.replace("::", "\n").replace("~", "\r").replace("_", "\r\n");
-			//System.out.println(encMsg);
 			Cipher cipher = Cipher.getInstance("RSA");
-			System.out.println(pubRSAKey);
 			cipher.init(Cipher.DECRYPT_MODE, pubRSAKey);
-			//byte[] encBytes = new Base64().decode(encMsg);
-			//System.out.println(encBytes.length);
 			String result = "";
 			for (int i = 0; i < encMsg.length()/178; i++) {
 				String subMsg = encMsg.substring(i*178, Math.min((i+1)*178, encMsg.length()));
@@ -414,6 +531,7 @@ public class MsgEncrypt {
 			}
 			return result;
 		} catch (Exception e) {
+			System.out.println("Could not decrypt the message");
 			e.printStackTrace();
 			return null;
 		}
@@ -434,36 +552,35 @@ public class MsgEncrypt {
 		//System.out.println(m1.getStrKey());
 		m1.handShake(m2.getStrKey());
 		m2.handShake(m1.getStrKey());
-		m1.getRSAPair();
-		System.out.println(m1.getRSAPubInfo());
-		m2.genRSAPubKey(m1.getRSAPubInfo());
+		//m1.getRSAPair();
+		//System.out.println(m1.getRSAPubInfo());
+		//m2.genRSAPubKey(m1.getRSAPubInfo());
 		
-		System.out.println(m1.privRSAKey);
+		//System.out.println(m1.privRSAKey);
 		
-		//String msg = "please work you fucking piece of shit";
+		String msg = "please work you fucking piece of shit";
 		
 		//System.out.println(m1.getStrKey());
+		int r = m2.getNonce();
+		System.out.println(r);
 		//String c = m1.encryptRSA(m1.getStrKey());
 		//System.out.println(c);
 		//String checkMsg = m2.decryptRSA(c);
 		//System.out.println(checkMsg);
 		
-		//System.out.println(m1.getStrKey().equals(checkMsg));
-		
-		// 
-		
-		
+		//System.out.println("Are the send string key and decrypted strings equal? " + m1.getStrKey().equals(checkMsg));
+
 		//System.out.println(info);
+		//System.out.println();
+		//String msg = "Please work so that crypto will be complete";
+		//String c = m1.encryptMsg(msg).replace("\r\n", "_");
+		//String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
+		String c = m1.encryptMsg(msg, r);
+		String checkMsg = m2.decryptMsgNonce(c);
 		System.out.println();
-		String msg = "Please work so that crypto will be complete";
-		String c = m1.encryptMsg(msg).replace("\r\n", "_");
-		String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
+		//System.out.println(c);
+		System.out.println();
 		
-		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
-		
-		/*System.out.println();
-		System.out.println(c.replace("\r\n", "_"));*/
-		/*System.out.println(m1.pubKey);
-		System.out.println(m2.pubKey);*/		
+		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));		
 	}
 }
