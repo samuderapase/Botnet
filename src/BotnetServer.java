@@ -123,7 +123,7 @@ public class BotnetServer extends PircBot {
 				PubInfo info = MsgEncrypt.getPubParams();
 				MsgEncrypt m2 = MsgEncrypt.getInstance();
 				m2.setPubParams(info.toString());
-				try {
+				try { 
 					DccChat chat = dccSendChatRequest(bots[i].getNick(), TIMEOUT);
 					if (chat == null) {
 						System.out.println("\tThe chat request was rejected.");

