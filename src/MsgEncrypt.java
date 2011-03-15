@@ -376,7 +376,7 @@ public class MsgEncrypt {
 			String encMsg = encMsgParts[0];
 			String checkM = encMsgParts[1];
 			byte[] encBytes = new Base64().decode(encMsg);
-			byte[] message = cipher.doFinal(encBytes);
+			byte[] message = cipher.doFinal(encBytes);	
 			byte[] m = mac.doFinal(encBytes);
 			String mStr = new Base64().encodeToString(m);
 			if (mStr.equals(checkM)) {
@@ -386,9 +386,15 @@ public class MsgEncrypt {
 				int n = Integer.parseInt(parts[1]);
 				if (n == this.nonce)
 					return msg;
-			}
-			if (DEBUG) {
-				System.out.println("Verification failed...");
+				else {
+					System.out.println("Nonces don't match...");
+					return null;
+				}
+			} else {
+				if (DEBUG) {
+					System.out.println("MACs don't match...");
+				}
+				return null;
 			}
 		} catch (Exception e) {
 			if (DEBUG) {
