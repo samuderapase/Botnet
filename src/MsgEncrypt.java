@@ -275,7 +275,7 @@ public class MsgEncrypt {
 			String c1Str = new Base64().encodeToString(c1);
 			byte[] m = mac.doFinal(c1);
 			String mStr = new Base64().encodeToString(m);
-			return (c1Str + "::::" + mStr).replace("\r\n", "_");
+			return (c1Str + "::::" + mStr).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
 		} catch (Exception e) {
 			if (DEBUG) {
 				System.out.println("Could not encrypt the message");
@@ -296,7 +296,7 @@ public class MsgEncrypt {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
-			encryptedMsg = encryptedMsg.replace("_", "\r\n");
+			encryptedMsg = encryptedMsg.replace("~", "\n").replace("-", "\r").replace("_", "\r\n");
 			String[] encMsgParts = encryptedMsg.split("::::");
 			String encMsg = encMsgParts[0];
 			String checkM = encMsgParts[1];
