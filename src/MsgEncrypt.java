@@ -17,7 +17,10 @@ import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
+
 import javax.crypto.*;
 import javax.crypto.spec.DHParameterSpec;
 import org.apache.commons.codec.binary.Base64;
@@ -50,6 +53,8 @@ public class MsgEncrypt {
 	private PublicKey pubRSAKey;
 	/** Holds the nonce for a message **/
 	private int nonce;
+	
+	private Set<Integer> nonceSet = new HashSet<Integer>();
 	
 	/**
 	 * Creates a new MsgEncrypt object with the given parameters
@@ -266,6 +271,10 @@ public class MsgEncrypt {
 		try {
 			Random ranGen = SecureRandom.getInstance("SHA1PRNG");
 			nonce = ranGen.nextInt();
+			while (nonceSet.contains(nonce)) {
+				nonce = ranGen.nextInt();
+			}
+			nonceSet.add(nonce);
 			return nonce;
 		} catch (Exception e) {
 			System.out.println("Nonce could not be generated");
@@ -384,9 +393,11 @@ public class MsgEncrypt {
 				String[] parts = mess.split(":::");
 				String msg = parts[0];
 				int n = Integer.parseInt(parts[1]);
-				if (n == this.nonce)
+				//if (n == this.nonce)
+				if (nonceSet.contains(n)) {
+					nonceSet.remove(n);
 					return msg;
-				else {
+				} else {
 					System.out.println("Nonces don't match...");
 					System.out.println("Expected: " + this.nonce + ", Actual: " + n);
 					return null;
