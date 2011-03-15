@@ -166,6 +166,10 @@ public class BotnetServer extends PircBot {
 		System.out.println("<" + sender + ">: " + message);
 	}
 	
+	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+		System.out.println(sender + ": " + message);
+	}
+	
 	protected void onFileTransferFinished(DccFileTransfer transfer, Exception e) {
 		if (e != null) {
 			System.out.println("\tThere was a problem trasferring the file\n\t" + e.getMessage());
