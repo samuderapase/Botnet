@@ -388,6 +388,7 @@ public class MsgEncrypt {
 					return msg;
 				else {
 					System.out.println("Nonces don't match...");
+					System.out.println("Expected: " + this.nonce + ", Actual: " + n);
 					return null;
 				}
 			} else {
