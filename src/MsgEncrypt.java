@@ -52,7 +52,7 @@ public class MsgEncrypt {
 	/** Holds the public RSA key of this object **/
 	private PublicKey pubRSAKey;
 	/** Holds the nonce for a message **/
-	private int nonce;
+	//private int nonce;
 	
 	private Set<Integer> nonceSet = new HashSet<Integer>();
 	
@@ -270,7 +270,7 @@ public class MsgEncrypt {
 	public int getNonce() {
 		try {
 			Random ranGen = SecureRandom.getInstance("SHA1PRNG");
-			nonce = ranGen.nextInt();
+			int nonce = ranGen.nextInt();
 			while (nonceSet.contains(nonce)) {
 				nonce = ranGen.nextInt();
 			}
@@ -399,7 +399,7 @@ public class MsgEncrypt {
 					return msg;
 				} else {
 					System.out.println("Nonces don't match...");
-					System.out.println("Expected: " + this.nonce + ", Actual: " + n);
+					System.out.println("Expected: " + nonceSet.toString() + ", Actual: " + n);
 					return null;
 				}
 			} else {

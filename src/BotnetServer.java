@@ -202,6 +202,7 @@ public class BotnetServer extends PircBot {
 			chat.sendLine("nonce");
 			int nonce = Integer.parseInt(chat.readLine());
 			chat.close();
+			System.out.println("nonce: " + nonce);
 			return nonce;
 		} catch (Exception e) {
 			System.out.println("\tThere was an error fetching a nonce from " + bot);
