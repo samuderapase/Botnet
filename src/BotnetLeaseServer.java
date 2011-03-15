@@ -110,6 +110,10 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
+	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
+		System.out.println(sender + ": " + message);
+	}
+	
 	protected void onConnect() {
 		joinChannel(CHANNEL);
 		setMode(CHANNEL, "s");
