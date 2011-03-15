@@ -184,6 +184,7 @@ public class BotnetLeaseServer extends PircBot {
 	}
 	
 	protected void onIncomingChatRequest(DccChat chat) {
+		System.out.println("incoming chat request from " + chat.getNick());
 		if (chat.getNick().equals(CC)) {
 			try {
 				chat.accept();
