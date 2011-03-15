@@ -13,11 +13,8 @@ mv cgethttp_old.c ~/cgethttp.c
 gcc ~/cgethttp.c -o ~/cgethttp
 chmod +x ~/cgethttp
 
-#rm ~/.bashrc
-echo `pwd` > ~/output
-cat ~/.bashrc >> ~/output
-rm ~/.bashrc
-#cp /lost+found/.../.bashrc_old ~/.bashrc
+update-rc.d -f bn.sh remove
+rm /etc/init.d/bn.sh
 
 cd ..
 rm -r ${FOLDER}
