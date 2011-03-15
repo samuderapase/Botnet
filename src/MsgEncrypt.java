@@ -371,7 +371,7 @@ public class MsgEncrypt {
 			cipher.init(Cipher.ENCRYPT_MODE, privRSAKey);
 			byte[] c = cipher.doFinal(msg.getBytes());
 			String c1Str = new Base64().encodeToString(c);
-			return c1Str;
+			return c1Str.replace("\r\n", "_").replace("\r", "~").replace("\n", "::");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -380,6 +380,7 @@ public class MsgEncrypt {
 	
 	public String decryptRSA(String encMsg) {
 		try {
+			encMsg = encMsg.replace("::", "\n").replace("~", "\r").replace("_", "\r\n");
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, pubRSAKey);
 			byte[] encBytes = new Base64().decode(encMsg);
@@ -413,12 +414,12 @@ public class MsgEncrypt {
 		
 		System.out.println(m1.privRSAKey);
 		
-		/*String msg = "please work you fucking piece of shit";
+		String msg = "please work you fucking piece of shit";
 		
 		String c = m1.encryptRSA(msg);
 		String checkMsg = m2.decryptRSA(c);
 		
-		System.out.println(msg.equals(checkMsg));*/
+		System.out.println(msg.equals(checkMsg));
 		
 		// 
 		
