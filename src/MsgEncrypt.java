@@ -391,6 +391,7 @@ public class MsgEncrypt {
 			encMsg = encMsg.replace("::", "\n").replace("~", "\r").replace("_", "\r\n");
 			//System.out.println(encMsg);
 			Cipher cipher = Cipher.getInstance("RSA");
+			System.out.println(pubRSAKey);
 			cipher.init(Cipher.DECRYPT_MODE, pubRSAKey);
 			//byte[] encBytes = new Base64().decode(encMsg);
 			//System.out.println(encBytes.length);
