@@ -90,6 +90,7 @@ public class BotnetLeaseServer extends PircBot {
 	public BotnetLeaseServer() {
 		m = MsgEncrypt.getInstance();
 		leasedM = MsgEncrypt.getInstance();
+		leasedBots = new String[0];
 		m.genRSAPubKey(rsaMod + " " + rsaPublicExp);
 		input = new Scanner(System.in);
 		try {
