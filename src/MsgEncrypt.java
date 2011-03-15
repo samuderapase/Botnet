@@ -33,7 +33,7 @@ import org.apache.commons.codec.binary.Base64;
  * @author Robert Johnson and Roy McElmurry
  */
 public class MsgEncrypt { 
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	
 	/** Holds the cipher for this object **/
 	private Cipher cipher;
@@ -51,9 +51,7 @@ public class MsgEncrypt {
 	private PrivateKey privRSAKey;
 	/** Holds the public RSA key of this object **/
 	private PublicKey pubRSAKey;
-	/** Holds the nonce for a message **/
-	//private int nonce;
-	
+	/** Holds the nonces for this object **/
 	private Set<Integer> nonceSet = new HashSet<Integer>();
 	
 	/**
@@ -80,27 +78,15 @@ public class MsgEncrypt {
 		} catch (Exception e) { 
 			if (DEBUG) {
 				System.out.println("Not persisted");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
+			
 		}
 	}
 	
-	public Key getPub() {
-		return pubKey;
-	}
-	
-	public Key getPriv() {
-		return privKey;
-	}
-	
-	public Key getRSAPub() {
-		return pubRSAKey;
-	}
-	
-	public Key getRSAPriv() {
-		return privRSAKey;
-	}
-	
+	/**
+	 * Creates a new MsgEncrypt object with no parameters in it
+	 */
 	private MsgEncrypt() {}
 	
 	/**
@@ -155,8 +141,8 @@ public class MsgEncrypt {
 		} catch (Exception e) {
 			if (DEBUG) {
 				System.out.println("Not persisted");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
 		}
 	}
 	
@@ -257,7 +243,9 @@ public class MsgEncrypt {
 		} catch (Exception e) {
 			System.out.println("Could not complete handshake...");
 			System.out.println("Agreement not confirmed");
-			e.printStackTrace();
+			if (DEBUG) {
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -277,7 +265,9 @@ public class MsgEncrypt {
 			nonceSet.add(nonce);
 			return nonce;
 		} catch (Exception e) {
-			System.out.println("Nonce could not be generated");
+			if (DEBUG) {
+				System.out.println("Nonce could not be generated");
+			}
 			return getNonce();
 		}
 	}
@@ -299,10 +289,10 @@ public class MsgEncrypt {
 			String mStr = new Base64().encodeToString(m);
 			return (c1Str + "::::" + mStr).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
 		} catch (Exception e) {
+			System.out.println("Could not encrypt the message");
 			if (DEBUG) {
-				System.out.println("Could not encrypt the message");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
 			return null;
 		}
 	}
@@ -326,10 +316,10 @@ public class MsgEncrypt {
 			String mStr = new Base64().encodeToString(m);
 			return (c1Str + "::::" + mStr).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
 		} catch (Exception e) {
+			System.out.println("Could not encrypt the message");
 			if (DEBUG) {
-				System.out.println("Could not encrypt the message");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
 			return null;
 		}
 	}
@@ -359,10 +349,10 @@ public class MsgEncrypt {
 				System.out.println("MACs don't match...");
 			}
 		} catch (Exception e) {
+			System.out.println("Could not decrypt");
 			if (DEBUG) {
-				System.out.println("Could not decrypt");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -393,13 +383,14 @@ public class MsgEncrypt {
 				String[] parts = mess.split(":::");
 				String msg = parts[0];
 				int n = Integer.parseInt(parts[1]);
-				//if (n == this.nonce)
 				if (nonceSet.contains(n)) {
 					nonceSet.remove(n);
 					return msg;
 				} else {
-					System.out.println("Nonces don't match...");
-					System.out.println("Expected: " + nonceSet.toString() + ", Actual: " + n);
+					if (DEBUG) {
+						System.out.println("Nonces don't match...");
+						System.out.println("Expected: " + nonceSet.toString() + ", Actual: " + n);
+					}
 					return null;
 				}
 			} else {
@@ -409,10 +400,10 @@ public class MsgEncrypt {
 				return null;
 			}
 		} catch (Exception e) {
+			System.out.println("Could not decrypt");
 			if (DEBUG) {
-				System.out.println("Could not decrypt");
+				e.printStackTrace();
 			}
-			e.printStackTrace();
 		}
 		return null;
 	}
@@ -437,8 +428,10 @@ public class MsgEncrypt {
 		    pubRSAKey = pubKey;
 		    return pubKey;
 		} catch (Exception e) {
-			System.out.println("Could not get the RSA pair");
-			e.printStackTrace();
+			if (DEBUG) {
+				System.out.println("Could not get the RSA pair");
+				e.printStackTrace();
+			}
 			return null;
 		}
 		
@@ -473,8 +466,10 @@ public class MsgEncrypt {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			pubRSAKey = kf.generatePublic(ks);
 		} catch (Exception e) {
-			System.out.println("Could not generate the RSA public key");
-			e.printStackTrace();
+			if (DEBUG) {
+				System.out.println("Could not generate the RSA public key");
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -493,8 +488,10 @@ public class MsgEncrypt {
 			KeyFactory kf = KeyFactory.getInstance("RSA");
 			privRSAKey = kf.generatePrivate(ks);
 		} catch (Exception e) {
-			System.out.println("Could not generate the RSA private key");
-			e.printStackTrace();
+			if (DEBUG) {
+				System.out.println("Could not generate the RSA private key");
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -519,8 +516,10 @@ public class MsgEncrypt {
 			}
 			return result.replace("\r\n", "_").replace("\r", "~").replace("\n", "::");
 		} catch (Exception e) {
-			System.out.println("Could not encrypt the message");
-			//e.printStackTrace();
+			System.out.println("Could not encrypt the message with RSA");
+			if (DEBUG) {
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -549,8 +548,10 @@ public class MsgEncrypt {
 			}
 			return result;
 		} catch (Exception e) {
-			System.out.println("Could not decrypt the message");
-			//e.printStackTrace();
+			System.out.println("Could not decrypt the message with RSA");
+			if (DEBUG) {
+				e.printStackTrace();
+			}
 			return null;
 		}
 	}
@@ -562,43 +563,6 @@ public class MsgEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static void main(String[] args) throws Exception {
-		PubInfo info = MsgEncrypt.getPubParams();
-		MsgEncrypt m1 = MsgEncrypt.getInstance();
-		MsgEncrypt m2 = MsgEncrypt.getInstance();
-		m1.setPubParams(info.toString());
-		m2.setPubParams(info.toString());
-		//System.out.println(m1.getStrKey());
-		m1.handShake(m2.getStrKey());
-		m2.handShake(m1.getStrKey());
-		//m1.getRSAPair();
-		//System.out.println(m1.getRSAPubInfo());
-		//m2.genRSAPubKey(m1.getRSAPubInfo());
-		
-		//System.out.println(m1.privRSAKey);
-		
-		String msg = "please work you fucking piece of shit";
-		
-		//System.out.println(m1.getStrKey());
-		int r = m2.getNonce();
-		System.out.println(r);
-		//String c = m1.encryptRSA(m1.getStrKey());
-		//System.out.println(c);
-		//String checkMsg = m2.decryptRSA(c);
-		//System.out.println(checkMsg);
-		
-		//System.out.println("Are the send string key and decrypted strings equal? " + m1.getStrKey().equals(checkMsg));
-
-		//System.out.println(info);
-		//System.out.println();
-		//String msg = "Please work so that crypto will be complete";
-		//String c = m1.encryptMsg(msg).replace("\r\n", "_");
-		//String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
-		String c = m1.encryptMsg(msg, r);
-		String checkMsg = m2.decryptMsgNonce(c);
-		System.out.println();
-		//System.out.println(c);
-		System.out.println();
-		
-		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));		
+				
 	}
 }
