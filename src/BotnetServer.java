@@ -243,7 +243,7 @@ public class BotnetServer extends PircBot {
 				System.out.println(Arrays.toString(parts));
 				DccChat chat = this.dccSendChatRequest(leaseMaster, TIMEOUT);
 				String botNames = bots[0];
-				for (int i = 0; i < bots.length; i++) {
+				for (int i = 1; i < bots.length; i++) {
 					botNames += " " + bots[i];
 				}
 				chat.sendLine(m.encryptRSA("lease " + botNames));
