@@ -293,7 +293,7 @@ public class BotnetClient extends PircBot {
 							this.leaseMaster = leaseMaster;
 							leasedM = MsgEncrypt.getInstance();
 							leasedM.genRSAPubKey(mod + " " + exp);
-							System.out.println("lease to " + leaseMaster + " with " + leasedM.getRSAPub());
+							System.out.println("leased to " + leaseMaster + " with " + leasedM.getRSAPub());
 						} else {
 							System.out.println("Failed lease message: " + command);
 						}

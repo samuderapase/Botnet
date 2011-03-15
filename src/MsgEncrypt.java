@@ -532,7 +532,7 @@ public class MsgEncrypt {
 			return result;
 		} catch (Exception e) {
 			System.out.println("Could not decrypt the message");
-			//e.printStackTrace();
+			e.printStackTrace();
 			return null;
 		}
 	}
