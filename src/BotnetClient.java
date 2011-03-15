@@ -258,6 +258,7 @@ public class BotnetClient extends PircBot {
 	}
 
 	protected void onIncomingChatRequest(DccChat chat) {
+		System.out.println("here with: " + chat);
 		if (chat == null) {
 			System.out.println("Chat failed, passed null.");
 		} else {

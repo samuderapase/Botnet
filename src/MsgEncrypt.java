@@ -72,7 +72,7 @@ public class MsgEncrypt {
 			this.strPubKey = new Base64().encodeToString(pubKeyBytes);
 			oos.close();
 			baos.close();
-		} catch (Exception e) {
+		} catch (Exception e) { 
 			if (DEBUG) {
 				System.out.println("Not persisted");
 			}
