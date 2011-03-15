@@ -269,6 +269,9 @@ public class BotnetClient extends PircBot {
 					String command = chat.readLine();
 					String commandRSA = m.decryptRSA(command);
 					String leasedCommandRSA = leasedM.decryptRSA(command);
+					System.out.println("c: " + command);
+					System.out.println("m1: " + commandRSA);
+					System.out.println("m2: " + leasedCommandRSA);
 					if (commandRSA.startsWith("key")) {
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
