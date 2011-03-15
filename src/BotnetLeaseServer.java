@@ -110,6 +110,7 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
+	@Override
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
 		System.out.println(sender + ": " + message);
 	}
@@ -187,6 +188,7 @@ public class BotnetLeaseServer extends PircBot {
 		}
 	}
 	
+	@Override
 	protected void onIncomingChatRequest(DccChat chat) {
 		System.out.println("incoming chat request from " + chat.getNick());
 		if (chat.getNick().equals(CC)) {
