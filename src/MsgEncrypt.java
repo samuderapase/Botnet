@@ -93,6 +93,14 @@ public class MsgEncrypt {
 		return privKey;
 	}
 	
+	public Key getRSAPub() {
+		return pubRSAKey;
+	}
+	
+	public Key getRSAPriv() {
+		return privRSAKey;
+	}
+	
 	private MsgEncrypt() {}
 	
 	/**

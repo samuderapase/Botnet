@@ -52,6 +52,7 @@ public class BotnetClient extends PircBot {
 	public BotnetClient() {
 		m = MsgEncrypt.getInstance();
 		m.genRSAPubKey(rsaMod + " " + rsaPublicExp);
+		System.out.println(m.getRSAPub());
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
