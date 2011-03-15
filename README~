@@ -20,5 +20,4 @@ Output from each bot is dumped into files of the form "bot_output/botX.txt",
 where X is some number less than the number of bots made. To start the 
 CC bot, you run "make master". To start a leasing bot, one that can lease from our
 net, you run "make leaseMaster". To get rid of all bot processes and the bot_output 
-folder, run "make clean". Lastly, "make all" runs clean, bots and then master in 
-that order.
+folder, run "make clean"
