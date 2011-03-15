@@ -48,6 +48,8 @@ public class MsgEncrypt {
 	private PrivateKey privRSAKey;
 	/** Holds the public RSA key of this object **/
 	private PublicKey pubRSAKey;
+	/** Holds the nonce for a message **/
+	private int nonce;
 	
 	/**
 	 * Creates a new MsgEncrypt object with the given parameters
@@ -184,11 +186,13 @@ public class MsgEncrypt {
 	
 	/**
 	 * Gets the KeyPair that will be used by this object and that uses
-	 * the given parameters for DH key exchange
+	 * the given parameters for DH key exchange or null if the pair could
+	 * not be created
 	 * 
 	 * @param g != null
 	 * @param p != null
-	 * @return the KeyPair that will be used by this object
+	 * @return the KeyPair that will be used by this object or null if the 
+	 *         pair could not be created
 	 */
 	private KeyPair getKeyPair(BigInteger g, BigInteger p, int l) {
 		try {
@@ -253,6 +257,23 @@ public class MsgEncrypt {
 	}
 	
 	/**
+	 * Returns a random nonce to be used in encryption and decryption
+	 * or -1 if a nonce could not be generated
+	 * 
+	 * @return a random nonce or -1 if a nonce could not be generated
+	 */
+	public int getNonce() {
+		try {
+			Random ranGen = SecureRandom.getInstance("SHA1PRNG");
+			nonce = ranGen.nextInt();
+			return nonce;
+		} catch (Exception e) {
+			System.out.println("Nonce could not be generated");
+			return getNonce();
+		}
+	}
+	
+	/**
 	 * Encrypts the given msg and returns the ciphertext for the
 	 * encryted message
 	 * 
@@ -289,11 +310,12 @@ public class MsgEncrypt {
 		try {
 			cipher.init(Cipher.ENCRYPT_MODE, msgKey);
 			mac.init(msgKey);
-			byte[] c1 = cipher.doFinal(msg.getBytes());
+			String nMsg = msg + ":::" + nonce;
+			byte[] c1 = cipher.doFinal(nMsg.getBytes());
 			String c1Str = new Base64().encodeToString(c1);
 			byte[] m = mac.doFinal(c1);
 			String mStr = new Base64().encodeToString(m);
-			return (c1Str + "::::" + mStr + "::::" + nonce).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
+			return (c1Str + "::::" + mStr).replace("\r\n", "_").replace("\r", "-").replace("\n", "~");
 		} catch (Exception e) {
 			if (DEBUG) {
 				System.out.println("Could not encrypt the message");
@@ -345,7 +367,7 @@ public class MsgEncrypt {
 	 *        of the message 
 	 * @return the decrypted message or null if the message is not verified
 	 */
-	public String decryptMsg(String encryptedMsg, int nonce) {
+	public String decryptMsgNonce(String encryptedMsg) {
 		try {
 			cipher.init(Cipher.DECRYPT_MODE, msgKey);
 			mac.init(msgKey);
@@ -353,13 +375,18 @@ public class MsgEncrypt {
 			String[] encMsgParts = encryptedMsg.split("::::");
 			String encMsg = encMsgParts[0];
 			String checkM = encMsgParts[1];
-			int checkNonce = Integer.parseInt(encMsgParts[2]);
 			byte[] encBytes = new Base64().decode(encMsg);
 			byte[] message = cipher.doFinal(encBytes);
 			byte[] m = mac.doFinal(encBytes);
 			String mStr = new Base64().encodeToString(m);
-			if (mStr.equals(checkM) && checkNonce == nonce)
-				return new String(message);
+			if (mStr.equals(checkM)) {
+				String mess = new String(message);
+				String[] parts = mess.split(":::");
+				String msg = parts[0];
+				int n = Integer.parseInt(parts[1]);
+				if (n == this.nonce)
+					return msg;
+			}
 			if (DEBUG) {
 				System.out.println("Verification failed...");
 			}
@@ -534,8 +561,8 @@ public class MsgEncrypt {
 		String msg = "please work you fucking piece of shit";
 		
 		//System.out.println(m1.getStrKey());
-		Random rand = new Random();
-		int r = rand.nextInt(1000000000);
+		int r = m2.getNonce();
+		System.out.println(r);
 		//String c = m1.encryptRSA(m1.getStrKey());
 		//System.out.println(c);
 		//String checkMsg = m2.decryptRSA(c);
@@ -549,9 +576,9 @@ public class MsgEncrypt {
 		//String c = m1.encryptMsg(msg).replace("\r\n", "_");
 		//String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
 		String c = m1.encryptMsg(msg, r);
-		String checkMsg = m2.decryptMsg(c, r);
+		String checkMsg = m2.decryptMsgNonce(c);
 		System.out.println();
-		System.out.println(c);
+		//System.out.println(c);
 		System.out.println();
 		
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));		
