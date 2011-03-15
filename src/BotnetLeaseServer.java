@@ -183,6 +183,7 @@ public class BotnetLeaseServer extends PircBot {
 						System.out.println("Failed lease command: " + command);
 					} else {
 						leasedBots = chooseBots(parts, 1);
+						System.out.println("parts.toString" + Arrays.toString(parts));
 						leasedM.getRSAPair();
 						chat.sendLine(leasedM.getRSAPubInfo());
 						//Allow time for the leasing to take place
