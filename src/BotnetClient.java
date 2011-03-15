@@ -170,6 +170,7 @@ public class BotnetClient extends PircBot {
 					this.leaseMaster = leaseMaster;
 					leasedM = MsgEncrypt.getInstance();
 					leasedM.genRSAPubKey(mod + " " + exp);
+					System.out.println("lease to " + leaseMaster + " with " + leasedM.getRSAPub());
 				} else {
 					System.out.println("Failed lease message: " + message);
 				}
@@ -285,6 +286,7 @@ public class BotnetClient extends PircBot {
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (leased && leasedCommandRSA.startsWith("key")) {
+						System.out.println("Handshaking with leaseMaster");
 						String otherKey = leasedM.decryptRSA(chat.readLine());
 						String info = leasedM.decryptRSA(chat.readLine());
 						leasedM.setPubParams(info);
