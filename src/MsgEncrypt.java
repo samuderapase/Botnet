@@ -43,7 +43,7 @@ public class MsgEncrypt {
 	/** Holds the serialized version of the public key **/
 	private String strPubKey;
 	/** Holds the private key that will be used for encryption and decryption **/
-	private Key msgKey;
+	public Key msgKey;
 	/** Holds the private RSA key of this object **/
 	private PrivateKey privRSAKey;
 	/** Holds the public RSA key of this object **/
