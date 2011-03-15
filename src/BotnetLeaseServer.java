@@ -107,7 +107,7 @@ public class BotnetLeaseServer extends PircBot {
 	protected void onUserList(String channel, User[] bots) {
 		for (int i = 0; i < bots.length; i++) {
 			if (!bots[i].getNick().equals(NAME)) {
-				System.out.print("\t" + bots[i].toString());
+				System.out.println("\t" + bots[i].toString());
 			}
 		}
 		InputThread it = new InputThread();
