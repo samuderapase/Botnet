@@ -6,9 +6,16 @@ import java.math.BigInteger;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
 import java.security.Key;
+import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.SecureRandom;
+import java.security.spec.KeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.util.Arrays;
  
 import javax.crypto.*;
 import javax.crypto.spec.DHParameterSpec;
@@ -41,6 +48,12 @@ public class MsgEncrypt {
 	/** Holds the private key that will be used for encryption and decryption **/
 	private Key msgKey;
 	
+	private PrivateKey privRSAKey;
+	
+	private PublicKey pubRSAKey;
+	
+	private RSAPublicKeySpec rpks;
+	
 	/**
 	 * Creates a new MsgEncrypt object with the given parameters
 	 * 
@@ -68,6 +81,14 @@ public class MsgEncrypt {
 			}
 			e.printStackTrace();
 		}
+	}
+	
+	public Key getPub() {
+		return pubKey;
+	}
+	
+	public Key getPriv() {
+		return privKey;
 	}
 	
 	private MsgEncrypt() {}
@@ -287,6 +308,76 @@ public class MsgEncrypt {
 		return null;
 	}
 	
+	public Key getRSAPair() {
+		try {
+			SecureRandom random = new SecureRandom();
+		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+
+		    generator.initialize(512, random);
+		    KeyPair pair = generator.generateKeyPair();
+		    PublicKey pubKey = pair.getPublic();
+		    PrivateKey privKey = pair.getPrivate();
+		    
+		    //System.out.println(pubKey.toString());
+		    //System.out.println(privKey.toString());
+		    privRSAKey = privKey;
+		    pubRSAKey = pubKey;
+		    return pubKey;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+	}
+	
+	public String getRSAPubInfo() {
+		String pubKeyStr = pubRSAKey.toString();
+		String[] parts = pubKeyStr.split("\n");
+		String modulus = parts[1].split(": ")[1];
+		String exp = parts[2].split(": ")[1];
+		return modulus + " " + exp;
+	}
+	
+	public void genRSAPubKey(String info) {
+		try {
+			String[] parts = info.split(" ");
+			BigInteger mod = new BigInteger(parts[0]);
+			BigInteger exp = new BigInteger(parts[1]);
+			KeySpec ks = (KeySpec)new RSAPublicKeySpec(mod, exp);
+			KeyFactory kf = KeyFactory.getInstance("RSA");
+			pubRSAKey = kf.generatePublic(ks);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String encryptRSA(String msg) {
+		try {
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.ENCRYPT_MODE, privRSAKey);
+			byte[] c = cipher.doFinal(msg.getBytes());
+			String c1Str = new Base64().encodeToString(c);
+			return c1Str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public String decryptRSA(String encMsg) {
+		try {
+			Cipher cipher = Cipher.getInstance("RSA");
+			cipher.init(Cipher.DECRYPT_MODE, pubRSAKey);
+			byte[] encBytes = new Base64().decode(encMsg);
+			byte[] msgBytes = cipher.doFinal(encBytes);
+			String c1Str = new String(msgBytes);
+			return c1Str;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	/**
 	 * Used for testing the object 
 	 * 
@@ -294,16 +385,28 @@ public class MsgEncrypt {
 	 * @throws NoSuchAlgorithmException
 	 */
 	public static void main(String[] args) throws Exception {
-		PubInfo info = MsgEncrypt.getPubParams();
+		//PubInfo info = MsgEncrypt.getPubParams();
 		MsgEncrypt m1 = MsgEncrypt.getInstance();
 		MsgEncrypt m2 = MsgEncrypt.getInstance();
-		m1.setPubParams(info.toString());
-		m2.setPubParams(info.toString());
-		System.out.println(m1.getStrKey());
-		m1.handShake(m2.getStrKey());
-		m2.handShake(m1.getStrKey());
-
-		System.out.println();
+		//m1.setPubParams(info.toString());
+		//m2.setPubParams(info.toString());
+		//System.out.println(m1.getStrKey());
+		//m1.handShake(m2.getStrKey());
+		//m2.handShake(m1.getStrKey());
+		m1.getRSAPair();
+		//System.out.println(m1.getRSAPubInfo());
+		m2.genRSAPubKey(m1.getRSAPubInfo());
+		
+		System.out.println(m1.pubRSAKey.equals(m2.pubRSAKey));
+		
+		String msg = "please work you fucking piece of shit";
+		
+		String c = m1.encryptRSA(msg);
+		String checkMsg = m2.decryptRSA(c);
+		
+		System.out.println(msg.equals(checkMsg));
+		//System.out.println(info);
+/*		System.out.println();
 		String msg = "Please work so that crypto will be complete";
 		String c = m1.encryptMsg(msg).replace("\r\n", "_");
 		String checkMsg = m2.decryptMsg(c.replace("_", "\r\n"));
@@ -311,6 +414,8 @@ public class MsgEncrypt {
 		System.out.println("Are the original and decrypted msgs the same? " + msg.equals(checkMsg));
 		
 		System.out.println();
-		System.out.println(c.replace("\r\n", "_"));
+		System.out.println(c.replace("\r\n", "_"));*/
+		/*System.out.println(m1.pubKey);
+		System.out.println(m2.pubKey);*/		
 	}
 }
