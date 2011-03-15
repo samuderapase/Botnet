@@ -16,6 +16,7 @@ import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.security.spec.RSAPrivateKeySpec;
 import java.security.spec.RSAPublicKeySpec;
+import java.util.ArrayList;
 import java.util.Arrays;
  
 import javax.crypto.*;
@@ -314,7 +315,7 @@ public class MsgEncrypt {
 			SecureRandom random = new SecureRandom();
 		    KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
 
-		    generator.initialize(4096, random);
+		    generator.initialize(1024, random);
 		    KeyPair pair = generator.generateKeyPair();
 		    PublicKey pubKey = pair.getPublic();
 		    PrivateKey privKey = pair.getPrivate();
@@ -369,9 +370,16 @@ public class MsgEncrypt {
 		try {
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.ENCRYPT_MODE, privRSAKey);
-			byte[] c = cipher.doFinal(msg.getBytes());
-			String c1Str = new Base64().encodeToString(c);
-			return c1Str.replace("\r\n", "_").replace("\r", "~").replace("\n", "::");
+			byte[] msgBytes = msg.getBytes();
+			String result = "";
+			for (int i = 0; i < (int)Math.ceil(msgBytes.length * 1.0 /100); i++) {
+				byte[] c = cipher.doFinal(Arrays.copyOfRange(msgBytes, i*100, Math.min((i+1)*100, msgBytes.length)));
+				//System.out.println(c.length);
+				//System.out.println(new Base64().encodeToString(c).length());
+				result += new Base64().encodeToString(c);
+			}
+			//System.out.println("result length = " + result.length());
+			return result.replace("\r\n", "_").replace("\r", "~").replace("\n", "::");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -381,12 +389,19 @@ public class MsgEncrypt {
 	public String decryptRSA(String encMsg) {
 		try {
 			encMsg = encMsg.replace("::", "\n").replace("~", "\r").replace("_", "\r\n");
+			//System.out.println(encMsg);
 			Cipher cipher = Cipher.getInstance("RSA");
 			cipher.init(Cipher.DECRYPT_MODE, pubRSAKey);
-			byte[] encBytes = new Base64().decode(encMsg);
-			byte[] msgBytes = cipher.doFinal(encBytes);
-			String c1Str = new String(msgBytes);
-			return c1Str;
+			//byte[] encBytes = new Base64().decode(encMsg);
+			//System.out.println(encBytes.length);
+			String result = "";
+			for (int i = 0; i < encMsg.length()/178; i++) {
+				String subMsg = encMsg.substring(i*178, Math.min((i+1)*178, encMsg.length()));
+				
+				byte[] msgBytes = cipher.doFinal(new Base64().decode(subMsg));
+				result += new String(msgBytes);
+			}
+			return result;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -412,12 +427,15 @@ public class MsgEncrypt {
 		//System.out.println(m1.getRSAPubInfo());
 		m2.genRSAPubKey(m1.getRSAPubInfo());
 		
-		System.out.println(m1.privRSAKey);
+		//System.out.println(m1.privRSAKey);
 		
 		//String msg = "please work you fucking piece of shit";
 		
+		System.out.println(m1.getStrKey());
 		String c = m1.encryptRSA(m1.getStrKey());
+		//System.out.println(c);
 		String checkMsg = m2.decryptRSA(c);
+		System.out.println(checkMsg);
 		
 		System.out.println(m1.getStrKey().equals(checkMsg));
 		
