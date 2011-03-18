@@ -52,7 +52,7 @@ public class MsgEncrypt {
 	/** Holds the public RSA key of this object **/
 	private PublicKey pubRSAKey;
 	/** Holds the nonces for this object **/
-	private Set<Integer> nonceSet = new HashSet<Integer>();
+	public Set<Integer> nonceSet = new HashSet<Integer>();
 	
 	/**
 	 * Creates a new MsgEncrypt object with the given parameters
