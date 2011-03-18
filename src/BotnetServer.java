@@ -186,7 +186,7 @@ public class BotnetServer extends PircBot {
 			DccChat chat = dccSendChatRequest(bot, TIMEOUT);
 			chat.sendLine("nonce");
 			int nonce = Integer.parseInt(chat.readLine());
-			System.out.println("sever recieved nonce:" + nonce);
+			System.out.println("server recieved nonce:" + nonce);
 			chat.close();
 			return nonce;
 		} catch (Exception e) {
