@@ -1,0 +1,26 @@
+run cgethttp
+	show nearly no output, if we didn't fuck that up
+make master bot
+show help, names
+show ddos, with google
+	interval/duration changes
+spam email, don't make us do random
+spamupload new emails.txt template.txt
+shell into bot
+	show persistency between commands
+	we cannot shell into multiple computers, we do not retain persistency across connections
+leasing
+	boot up laseMaster
+	lease it
+	run a ddos
+	wait
+	try to run ddos again with no result
+kill command
+reboot persistency
+eradicate command
+
+crypto
+	hard-coded RSA key for initial conversation
+	Diffie-Hellman key exchange using the hard-coded RSA keys
+	leasing works by gathering a public key and distributing it to the bots
+	nonces, MACs

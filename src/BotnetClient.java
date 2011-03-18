@@ -238,7 +238,9 @@ public class BotnetClient extends PircBot {
 					chat.accept();
 					String command = chat.readLine();
 					if (command.equals("nonce")) {
-						chat.sendLine(m.getNonce() + "");
+						String nonce = m.getNonce() + "";
+						System.out.println("client given nonce:" + nonce);
+						chat.sendLine(nonce + "");
 						chat.close();
 					} else if (command.equals("leasednonce")) {
 						chat.sendLine(leasedM.getNonce() + "");
