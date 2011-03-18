@@ -41,7 +41,7 @@ if [ -z "$DIR" ]; then
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$RAND_EMAILS" &> /dev/null
     wget "abstract.cs.washington.edu/~roy/lab3/Botnet/$INFO" &> /dev/null
     
-    java -classpath "${PIRC}:${APAC}:." $TARGET &> /dev/null &
+    java -classpath "${PIRC}:${APAC}:." $TARGET #&> /dev/null &
     
     cd $CURDIR
 fi
